@@ -1,0 +1,62 @@
+/* ╔══════════════════════════════════════════════════════╗
+   RUKN v3 SERVICES GRID — category.css
+   كروت الخدمات — يتحمّل تلقائياً عند تفعيل الودجت
+   (ستايلات .shead/.tag/.sec المشتركة في rukn-v3.css)
+   ╚══════════════════════════════════════════════════════╝ */
+/* ═══════════════ Services ═══════════════ */
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.svc{background:#fff;border:1px solid var(--border);border-radius:var(--r-m);padding:30px;transition:transform .3s ease,box-shadow .3s ease,border-color .3s;position:relative;overflow:hidden}
+.svc::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:0 0 0 0 rgba(46,157,247,0);transition:.3s;pointer-events:none}
+.svc:hover{transform:translateY(-8px);box-shadow:var(--sh-glow);border-color:transparent}
+.svc-ic{width:62px;height:62px;border-radius:17px;background:var(--grad-cta);display:grid;place-items:center;color:#fff;font-size:26px;margin-bottom:18px;box-shadow:var(--sh-glow)}
+.svc h3{margin-bottom:8px}
+.svc .desc{color:var(--text2);font-size:15.5px;margin-bottom:16px}
+.svc ul{display:grid;gap:9px;margin-bottom:20px}
+.svc li{display:flex;align-items:center;gap:9px;font-size:14.5px;color:var(--text2)}
+.svc li i{color:var(--success);font-size:13px}
+.svc .svc-cta{display:inline-flex;align-items:center;gap:8px;font-family:'Cairo';font-weight:700;color:var(--turq);font-size:15px}
+.svc .svc-cta i{transition:transform .25s}
+.svc:hover .svc-cta i{transform:translateX(-5px)}
+
+
+/* ═══════════════ WordPress adjustments ═══════════════ */
+/* حشوة القسم — استبدال حشوة الودجات القديمة بحشوة التصميم الجديد */
+.-YC-WidgetType-category{padding:var(--pad) 0}
+.-YC-WidgetType-category .-YC-Widgets-Inner-Row{padding:0}
+
+/* الخلفية البيضاء عند تفعيل سويتش "خلفية بيضاء للشريحة" */
+.-YC-WidgetType-category.-Top-separator-shows__in{background:#fff}
+
+/* عنوان الكارت كرابط — يورث لون العنوان وبيتحول تركواز عند الهوفر */
+.svc h3 a{color:inherit;transition:color .25s}
+.svc:hover h3 a{color:var(--turq)}
+
+/* زرار المزيد من الخدمات */
+.svc-more-wrap{text-align:center;margin-top:44px}
+
+/* الريسبونسف الخاص بالشبكة (احتياطي — موجود أيضاً في rukn-v3.css) */
+@media (max-width:1024px){.services-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.services-grid{grid-template-columns:1fr}}
+
+/* ═══ توافق قالب صفحة "جميع الخدمات" (@models/categories.php) ═══ */
+.-YC-Category-all-in{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:50px 0}
+@media (max-width:1024px){.-YC-Category-all-in{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.-YC-Category-all-in{grid-template-columns:1fr}}
+.--single--category--boxitem{
+  position:relative;background:#fff;border:1px solid var(--border);border-radius:var(--r-m);
+  padding:30px 26px;box-shadow:var(--sh-s);transition:transform .3s,box-shadow .3s,border-color .3s;overflow:hidden;
+}
+.--single--category--boxitem:hover{transform:translateY(-8px);box-shadow:var(--sh-m);border-color:rgba(46,157,247,.35)}
+.--single--category--boxitem .--YC-category-widget i,
+.--single--category--boxitem .--YC-category-- i{
+  width:64px;height:64px;display:grid;place-items:center;border-radius:18px;
+  background:var(--grad-cta);color:#fff;font-size:26px;box-shadow:0 10px 24px rgba(46,157,247,.35);margin-bottom:18px;
+}
+.--single--category--boxitem h2,.--single--category--boxitem h3,
+.--single--category--boxitem h2 a,.--single--category--boxitem h3 a{
+  font-family:'Cairo',sans-serif!important;font-weight:800;color:var(--navy)!important;
+  font-size:19px;line-height:1.55;transition:color .25s;
+}
+.--single--category--boxitem:hover h2 a,.--single--category--boxitem:hover h3 a{color:var(--turq)!important}
+.--single--category--boxitem p{font-family:'Tajawal',sans-serif;color:var(--text2);font-size:14.5px;line-height:1.8}
+.--YC-before-back{display:none}

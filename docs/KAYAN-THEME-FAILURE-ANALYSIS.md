@@ -1,5 +1,9 @@
 # تحليل شامل: لماذا لا يعمل قالب KAYAN
 
+> **حالة الإصلاح (v1.4.3):** تم إصلاح أسباب P0/P1 في هذا الفرع.
+> ارفع المجلد `kayan-theme/` من `kayan-theme-v1.4.3-fixed.zip` بعد حذف النسخة القديمة ومسح الكاش، ثم أعد حفظ الروابط الدائمة.
+
+
 **المصدر:** `kayan-theme-phase1-2-booking-payment.zip`  
 **القالب بعد الفك:** `kayan-theme/kayan-theme/`  
 **الإصدار المعلن:** 1.4.2 (Phase 1 Booking + Phase 2 Payment)  

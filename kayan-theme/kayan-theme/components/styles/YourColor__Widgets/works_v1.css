@@ -1,0 +1,34 @@
+/* ==== RUKN v3 PROJECTS - works_v1.css ====
+   الفلاتر التفاعلية + كروت المشاريع
+   (ستايلات .shead/.tag المشتركة في rukn-v3.css) */
+/* ═══════════════ Projects ═══════════════ */
+.filters{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:34px}
+.filters button{font-family:'Cairo';font-weight:700;font-size:14.5px;padding:10px 20px;border-radius:999px;border:1.5px solid var(--border);background:#fff;color:var(--text2);cursor:pointer;transition:.25s}
+.filters button.active,.filters button:hover{background:var(--grad-cta);color:#fff;border-color:transparent}
+.proj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.proj{background:#fff;border:1px solid var(--border);border-radius:var(--r-m);overflow:hidden;transition:.35s}
+.proj.hide{display:none}
+.proj:hover{transform:translateY(-8px);box-shadow:var(--sh-l)}
+.proj-img{height:200px;display:grid;place-items:center;color:#fff;font-size:40px;position:relative}
+.proj-img .cat{position:absolute;top:14px;inset-inline-end:14px;background:rgba(255,255,255,.92);color:var(--navy);font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px}
+.proj-body{padding:22px}
+.proj-body h3{font-size:19px;margin-bottom:6px}
+.proj-meta{display:flex;flex-wrap:wrap;gap:14px;color:var(--muted);font-size:13.5px;margin:10px 0}
+.proj-meta span{display:inline-flex;align-items:center;gap:6px}
+.proj-res{display:flex;align-items:center;gap:8px;color:var(--success);font-weight:700;font-size:14px;border-top:1px solid var(--border);padding-top:14px;margin-top:4px}
+
+/* ==== WordPress adjustments ==== */
+/* حشوة القسم */
+.-YC-WidgetType-works_v1{padding:var(--pad) 0}
+.-YC-WidgetType-works_v1 .-YC-Widgets-Inner-Row{padding:0}
+
+/* الخلفية البيضاء عند تفعيل السويتش */
+.-YC-WidgetType-works_v1.-Top-separator-shows__in{background:#fff}
+
+/* عنوان المشروع كرابط */
+.proj-body h3 a{color:inherit;transition:color .25s}
+.proj:hover .proj-body h3 a{color:var(--turq)}
+
+/* الريسبونسف الخاص بالشبكة */
+@media (max-width:1024px){.proj-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.proj-grid{grid-template-columns:1fr}}
