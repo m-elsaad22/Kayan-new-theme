@@ -35,7 +35,7 @@ add_action( 'wp_enqueue_scripts', 'remove_youtube_embed_scripts', 999 );
 
 /**
  * تعطيل السكربتات الزائدة مع حماية كاملة لـ Rank Math وتبعياته
- * KAYAN v1.4.5+
+ * KAYAN v1.4.6+
  */
 function kayan_is_rank_math_active() {
     return class_exists( 'RankMath' )
@@ -49,6 +49,7 @@ function kayan_is_protected_asset_handle( $handle ) {
     $protected_prefixes = array(
         'rank-math',
         'rank_math',
+        'seo-by-rank-math',
         'kayan-',
         'yourcolor-',
         // تبعيات Rank Math / WP الأساسية التي يعتمد عليها الإضافة
@@ -72,6 +73,19 @@ function kayan_is_protected_asset_handle( $handle ) {
     return false;
 }
 
+function kayan_is_protected_asset_src( $src ) {
+    if ( ! is_string( $src ) || '' === $src ) {
+        return false;
+    }
+    $needles = array( 'rank-math', 'seo-by-rank-math', '/kayan-', 'fa-free-fixes' );
+    foreach ( $needles as $needle ) {
+        if ( false !== strpos( $src, $needle ) ) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function disable_all_scripts() {
     // في الأدمن لا نلمس أي شيء — Rank Math ولوحة التحكم يحتاجان كل الأصول
     if ( is_admin() ) {
@@ -80,22 +94,64 @@ function disable_all_scripts() {
 
     global $wp_scripts, $wp_styles;
 
-    foreach ( (array) $wp_scripts->queue as $handle ) {
-        if ( kayan_is_protected_asset_handle( $handle ) ) {
-            continue;
+    if ( isset( $wp_scripts->queue ) && is_array( $wp_scripts->queue ) ) {
+        foreach ( $wp_scripts->queue as $handle ) {
+            if ( kayan_is_protected_asset_handle( $handle ) ) {
+                continue;
+            }
+            $src = isset( $wp_scripts->registered[ $handle ]->src ) ? $wp_scripts->registered[ $handle ]->src : '';
+            if ( kayan_is_protected_asset_src( $src ) ) {
+                continue;
+            }
+            wp_dequeue_script( $handle );
         }
-        wp_dequeue_script( $handle );
-        // لا نستخدم wp_deregister حتى لا نكسر تبعيات Rank Math المسجّلة
     }
 
-    foreach ( (array) $wp_styles->queue as $handle ) {
-        if ( kayan_is_protected_asset_handle( $handle ) ) {
-            continue;
+    if ( isset( $wp_styles->queue ) && is_array( $wp_styles->queue ) ) {
+        foreach ( $wp_styles->queue as $handle ) {
+            if ( kayan_is_protected_asset_handle( $handle ) ) {
+                continue;
+            }
+            $src = isset( $wp_styles->registered[ $handle ]->src ) ? $wp_styles->registered[ $handle ]->src : '';
+            if ( kayan_is_protected_asset_src( $src ) ) {
+                continue;
+            }
+            wp_dequeue_style( $handle );
         }
-        wp_dequeue_style( $handle );
     }
 }
 add_action('wp_enqueue_scripts', 'disable_all_scripts', 999999);
+
+# تأكيد إعادة صفّ Rank Math فقط بعد أي dequeue متأخر
+function kayan_force_rank_math_assets() {
+    if ( is_admin() || ! kayan_is_rank_math_active() ) {
+        return;
+    }
+    global $wp_scripts, $wp_styles;
+    if ( isset( $wp_scripts->registered ) && is_array( $wp_scripts->registered ) ) {
+        foreach ( $wp_scripts->registered as $handle => $obj ) {
+            $handle = (string) $handle;
+            $src = isset( $obj->src ) ? (string) $obj->src : '';
+            $is_rm = ( 0 === strpos( $handle, 'rank-math' ) || 0 === strpos( $handle, 'rank_math' )
+                || false !== strpos( $src, 'rank-math' ) || false !== strpos( $src, 'seo-by-rank-math' ) );
+            if ( $is_rm && ! in_array( $handle, (array) $wp_scripts->queue, true ) ) {
+                wp_enqueue_script( $handle );
+            }
+        }
+    }
+    if ( isset( $wp_styles->registered ) && is_array( $wp_styles->registered ) ) {
+        foreach ( $wp_styles->registered as $handle => $obj ) {
+            $handle = (string) $handle;
+            $src = isset( $obj->src ) ? (string) $obj->src : '';
+            $is_rm = ( 0 === strpos( $handle, 'rank-math' ) || 0 === strpos( $handle, 'rank_math' )
+                || false !== strpos( $src, 'rank-math' ) || false !== strpos( $src, 'seo-by-rank-math' ) );
+            if ( $is_rm && ! in_array( $handle, (array) $wp_styles->queue, true ) ) {
+                wp_enqueue_style( $handle );
+            }
+        }
+    }
+}
+add_action( 'wp_enqueue_scripts', 'kayan_force_rank_math_assets', 1000000 );
 
 # لا تحذف ?ver= من أصول Rank Math (قد يسبب كاش قديم)
 function remove_script_version($src) {

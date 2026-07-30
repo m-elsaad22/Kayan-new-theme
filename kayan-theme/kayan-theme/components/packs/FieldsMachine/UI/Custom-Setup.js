@@ -1522,22 +1522,6 @@ jQuery(function($){
 			}
 	// # FIELDS SETUP.
 
-		$(".apbsortable").each(function(e,aps) {
-			var $list = $(aps);
-			var handle = $list.attr('data-connect-with') || $list.data('connectWith') || 'sortbyme, .-widget-item-title-';
-			if ( $.fn.sortable ) {
-				try { if ( $list.data('ui-sortable') ) { $list.sortable('destroy'); } } catch (err) {}
-				$list.sortable({
-					handle: handle,
-					cursor: 'grabbing',
-					tolerance: 'pointer',
-					placeholder: 'kayan-sort-placeholder',
-					forcePlaceholderSize: true,
-					opacity: 0.92,
-					axis: 'y'
-				});
-			}
-		});
 		if ( typeof window.kayanInitSortables === 'function' ) {
 			window.kayanInitSortables($);
 		}

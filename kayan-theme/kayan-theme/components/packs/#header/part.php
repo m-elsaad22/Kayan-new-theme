@@ -49,7 +49,8 @@ if ( empty( $hide__theme_seo ) && ! $yc__rankmath_active ) {
 		echo '<link rel="preload" as="style" href="'.esc_url( $yc__fa_url ).'" />';
 		echo '<link rel="stylesheet" href="'.esc_url( $yc__fa_url ).'" media="print" onload="this.media=\'all\';this.onload=null;" />';
 		echo '<noscript><link rel="stylesheet" href="'.esc_url( $yc__fa_url ).'" /></noscript>';
-		echo '<link rel="stylesheet" href="'.esc_url( get_template_directory_uri().'/components/styles/fa-free-fixes.css?v=1.4.4' ).'" />';
+		echo '<link rel="stylesheet" href="'.esc_url( get_template_directory_uri().'/components/styles/fa-free-fixes.css?v=1.4.6' ).'" />';
+		echo '<style id="kayan-logo-critical">a.logo,a.flogo{display:inline-flex!important;align-items:center;gap:8px;visibility:visible!important;opacity:1!important;z-index:5;position:relative}a.logo.has-logo-image .mark,a.flogo.has-logo-image .mark{display:none!important}a.logo img,a.flogo img,.kayan-logo-img{display:block!important;max-height:56px!important;max-width:min(55vw,240px)!important;width:auto!important;height:auto!important;visibility:visible!important;opacity:1!important;object-fit:contain!important}</style>';
 
 		echo ( ( IsSpeed() == false && ( is_single() || is_page() || ( isset( $Widgets__list ) && in_array( 'works_v1',$Widgets__list ) ) ) ) ) ? '<link rel="stylesheet" data-loader-href="https://unpkg.com/photoswipe@5.2.2/dist/photoswipe.css">' : '';
 
@@ -129,68 +130,73 @@ if ( empty( $hide__theme_seo ) && ! $yc__rankmath_active ) {
 		$logo__data = array( 'logo__mode'=>'Text','Text'=>array('logo_Text'=>'ركن {%التطور%}') );
 
 	# دالة صغيرة بترسم اللوجو بكلاسات التصميم الجديد (هيدر أو فوتر)
+	# v1.4.6: أولوية الرابط الكامل المحفوظ + منع LazyLoad (LiteSpeed) + إخفاء أيقونة الدرع مع الصورة
 	if( !function_exists('rukn_v3_render_logo') ){
-		function rukn_v3_render_logo( $logo__data, $css_class = 'logo', $img_size = 'logo__size' ){
+		function rukn_v3_render_logo( $logo__data, $css_class = 'logo', $img_size = 'full' ){
 			$logo__data = is_array( $logo__data ) ? $logo__data : array();
 			$mode = isset( $logo__data['logo__mode'] ) ? $logo__data['logo__mode'] : 'Text';
-			$alt  = ( isset( $logo__data[ $mode ]['header__alt'] ) && !empty( $logo__data[ $mode ]['header__alt'] ) ) ? $logo__data[ $mode ]['header__alt'] : get_bloginfo('name');
+			$site_name = get_bloginfo( 'name' );
+			$alt  = ( isset( $logo__data[ $mode ]['header__alt'] ) && !empty( $logo__data[ $mode ]['header__alt'] ) ) ? $logo__data[ $mode ]['header__alt'] : $site_name;
 
-			echo '<a href="'.esc_url( home_url( '/' ) ).'" class="'.esc_attr( $css_class ).'" title="'.esc_attr( $alt ).'">';
-				echo '<span class="mark"><i class="fas fa-shield-halved" aria-hidden="true"></i></span>';
+			$logo_id = 0;
+			$logo_url = '';
+			if ( 'Image' === $mode && isset( $logo__data['Image'] ) && is_array( $logo__data['Image'] ) ) {
+				$img_box = $logo__data['Image'];
+				# حقل File يحفظ الرابط في image_logo والـ ID في image_logo_id
+				if ( ! empty( $img_box['image_logo_id'] ) ) {
+					$logo_id = absint( $img_box['image_logo_id'] );
+				} elseif ( ! empty( $img_box['image_logo']['id'] ) ) {
+					$logo_id = absint( $img_box['image_logo']['id'] );
+				} elseif ( ! empty( $img_box['image_logo'] ) && is_numeric( $img_box['image_logo'] ) ) {
+					$logo_id = absint( $img_box['image_logo'] );
+				}
+				if ( ! empty( $img_box['image_logo']['url'] ) && is_string( $img_box['image_logo']['url'] ) ) {
+					$logo_url = $img_box['image_logo']['url'];
+				} elseif ( ! empty( $img_box['image_logo'] ) && is_string( $img_box['image_logo'] ) && preg_match( '#^(https?:)?//#', $img_box['image_logo'] ) ) {
+					$logo_url = $img_box['image_logo'];
+				}
+				# فضّل الملف الأصلي دائماً (تجنّب مقاسات وسيطة ناقصة/مكسورة)
+				if ( $logo_id ) {
+					$full = wp_get_attachment_url( $logo_id );
+					if ( $full ) {
+						$logo_url = $full;
+					} elseif ( ! $logo_url ) {
+						$logo_url = wp_get_attachment_image_url( $logo_id, 'full' );
+					}
+				}
+			}
+
+			$has_image = ( 'Image' === $mode && ! empty( $logo_url ) );
+			$classes = trim( $css_class . ( $has_image ? ' has-logo-image' : ' has-logo-text' ) );
+
+			echo '<a href="'.esc_url( home_url( '/' ) ).'" class="'.esc_attr( $classes ).'" title="'.esc_attr( $alt ).'">';
+				# أيقونة الدرع فقط مع الشعار النصي
+				if ( ! $has_image ) {
+					echo '<span class="mark" aria-hidden="true"><i class="fas fa-shield-halved"></i></span>';
+				}
 
 				$rendered = false;
-				if ( 'Image' === $mode ) {
-					$logo_id = 0;
-					if ( ! empty( $logo__data[ $mode ]['image_logo_id'] ) ) {
-						$logo_id = absint( $logo__data[ $mode ]['image_logo_id'] );
-					} elseif ( ! empty( $logo__data[ $mode ]['image_logo']['id'] ) ) {
-						$logo_id = absint( $logo__data[ $mode ]['image_logo']['id'] );
-					} elseif ( ! empty( $logo__data[ $mode ]['image_logo'] ) && is_numeric( $logo__data[ $mode ]['image_logo'] ) ) {
-						$logo_id = absint( $logo__data[ $mode ]['image_logo'] );
-					}
-
-					if ( $logo_id && function_exists( 'YC_get_attachment' ) ) {
-						$img = YC_get_attachment(
-							array(
-								'alt'      => $alt,
-								'id'       => $logo_id,
-								'size'     => $img_size,
-								'LazyLoad' => false, # مهم: الشعار يظهر فوراً بدون انتظار lazy-load
-							)
-						);
-						if ( $img ) {
-							echo $img;
-							$rendered = true;
-						} else {
-							$url = wp_get_attachment_image_url( $logo_id, 'full' );
-							if ( $url ) {
-								echo '<img src="'.esc_url( $url ).'" alt="'.esc_attr( $alt ).'" class="YourColor--Theme--image kayan-logo-img" />';
-								$rendered = true;
-							}
-						}
-					} elseif ( ! empty( $logo__data[ $mode ]['image_logo'] ) && is_string( $logo__data[ $mode ]['image_logo'] ) ) {
-						echo '<img src="'.esc_url( $logo__data[ $mode ]['image_logo'] ).'" alt="'.esc_attr( $alt ).'" class="YourColor--Theme--image kayan-logo-img" />';
-						$rendered = true;
-					} elseif ( ! empty( $logo__data[ $mode ]['image_logo']['url'] ) ) {
-						echo '<img src="'.esc_url( $logo__data[ $mode ]['image_logo']['url'] ).'" alt="'.esc_attr( $alt ).'" class="YourColor--Theme--image kayan-logo-img" />';
-						$rendered = true;
-					}
+				if ( $has_image ) {
+					# data-no-lazy + skip-lazy: منع LiteSpeed/كاش من كسر src
+					echo '<img class="YourColor--Theme--image kayan-logo-img skip-lazy" src="'.esc_url( $logo_url ).'" alt="'.esc_attr( $alt ).'" loading="eager" decoding="async" fetchpriority="high" data-no-lazy="1" data-skip-lazy="1" onerror="this.onerror=null;this.style.display=\'none\';var t=document.createElement(\'span\');t.className=\'kayan-logo-fallback\';t.textContent=\''.esc_js( $site_name ).'\';this.parentNode.appendChild(t);" />';
+					$rendered = true;
 				}
 
 				if ( ! $rendered ) {
-					$logo_Text = isset( $logo__data[ $mode ]['logo_Text'] ) ? $logo__data[ $mode ]['logo_Text'] : '';
-					if ( '' === $logo_Text && isset( $logo__data['Text']['logo_Text'] ) ) {
+					$logo_Text = '';
+					if ( isset( $logo__data[ $mode ]['logo_Text'] ) ) {
+						$logo_Text = $logo__data[ $mode ]['logo_Text'];
+					} elseif ( isset( $logo__data['Text']['logo_Text'] ) ) {
 						$logo_Text = $logo__data['Text']['logo_Text'];
 					}
 					if ( '' === $logo_Text ) {
-						$logo_Text = get_bloginfo( 'name' );
+						$logo_Text = $site_name;
 					}
-					# صيغة {% %} القديمة بتتحول للكلمة الملونة <b> في التصميم الجديد
 					if( strpos( $logo_Text,'{%') !== FALSE && strpos( $logo_Text,'%}') !== FALSE ){
 						$logo_Text = str_replace('{%','<b>',$logo_Text);
 						$logo_Text = str_replace('%}','</b>',$logo_Text);
 					}
-					echo wp_kses( $logo_Text, array( 'b' => array(), 'span' => array( 'class' => true ), 'strong' => array() ) );
+					echo '<span class="kayan-logo-text">'.wp_kses( $logo_Text, array( 'b' => array(), 'span' => array( 'class' => true ), 'strong' => array() ) ).'</span>';
 				}
 			echo '</a>';
 		}

@@ -136,8 +136,8 @@ if ( ! function_exists( 'kayan_lockdown_get_external_dependency_registry' ) ) {
 				'type'     => 'plugin',
 				'path'     => 'wp-content/plugins/seo-by-rank-math/',
 				'injects'  => 'Meta, canonical, OG, rank-math-schema JSON-LD via wp_head',
-				'why'      => 'SEO plugin — keep for meta storage only; frontend disabled by KAYAN SEO',
-				'decision' => 'KEEP (data) / DISABLE frontend output',
+				'why'      => 'SEO plugin — KAYAN v1.4.6+ keeps Rank Math fully active on frontend',
+				'decision' => 'KEEP (full frontend + admin)',
 			),
 			array(
 				'name'     => 'LiteSpeed Cache',

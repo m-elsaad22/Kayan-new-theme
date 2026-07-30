@@ -103,20 +103,45 @@ a.flogo,
 	visibility: visible !important;
 	opacity: 1 !important;
 	text-decoration: none;
+	z-index: 5;
+	position: relative;
+}
+a.logo.has-logo-image .mark,
+a.flogo.has-logo-image .mark {
+	display: none !important;
 }
 a.logo img,
 a.flogo img,
-.kayan-logo-img {
-	display: inline-block !important;
-	max-height: 56px;
-	width: auto;
-	height: auto;
+.kayan-logo-img,
+.YourColor--Theme--image.kayan-logo-img,
+header .logo img,
+footer .flogo img {
+	display: block !important;
+	max-height: 56px !important;
+	max-width: min(55vw, 240px) !important;
+	width: auto !important;
+	height: auto !important;
 	visibility: visible !important;
 	opacity: 1 !important;
+	object-fit: contain !important;
+}
+a.logo .kayan-logo-text,
+a.flogo .kayan-logo-text,
+a.logo .kayan-logo-fallback,
+a.flogo .kayan-logo-fallback {
+	display: inline-block !important;
+	font-weight: 800;
+	line-height: 1.2;
 }
 a.logo .mark,
 a.flogo .mark {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+}
+@media (max-width: 640px) {
+	a.logo img, a.flogo img, .kayan-logo-img {
+		max-height: 44px !important;
+		max-width: min(48vw, 180px) !important;
+	}
 }

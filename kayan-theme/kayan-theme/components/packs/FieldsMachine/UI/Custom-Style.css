@@ -3987,25 +3987,34 @@ descor > p {
 
 .-fix-forms-title-fields {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     position: relative;
     width: 100%;
     margin: 0px 0 10px;
     background: #f7fbff;
     padding: 25px;
     border-radius: var(--miniradius);
+    min-width: 0;
+    overflow: visible;
+    box-sizing: border-box;
 }
 
 .-fix-forms-title-fields > i {
     margin-inline-end: 10px;
     font-size: 20px;
     color: var(--uicolor);
+    flex: none;
+    margin-top: 2px;
 }
 
 .-fix-form-InnerTitle {
     display: flex;
+    flex-direction: column;
     position: relative;
-    align-items: center;
+    align-items: flex-start;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .-fix-forms-title-fields:after {
@@ -4018,22 +4027,33 @@ descor > p {
 }
 
 .-fix-form-InnerTitle > descor {
-    margin-top: 0 !important;
+    display: block;
+    width: 100%;
+    margin-top: 8px !important;
     font-size: 15px;
-    margin-inline-start: 10px !important;
+    margin-inline-start: 0 !important;
+    white-space: normal;
+    overflow: visible;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+    color: #858497;
 }
 
 .-fix-form-InnerTitle > descor:before {
-    content: '\f053';
-    font-family: "Font Awesome 6 Free";
-    font-weight: 900;
-    margin-inline-end: 10px;
+    content: none;
+    display: none;
 }
 
 .-fix-form-InnerTitle > h3 {
     margin: 0 0 0px !important;
     font-size: 20px;
-    min-width: max-content;
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    overflow: visible;
+    word-break: break-word;
+    line-height: 1.45;
 }
 
 .-sorter__id_sort {

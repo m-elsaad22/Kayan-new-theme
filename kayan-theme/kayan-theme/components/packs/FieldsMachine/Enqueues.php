@@ -26,7 +26,7 @@ class YC__CFM_Enqueues {
 
 		# jquery-ui (CDN كاحتياطي — ووردبريس sortable يُحمَّل أيضاً عبر wp_enqueue)
 			echo '<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>';
-			echo '<script>window.kayanInitSortables=function($){if(!$)return;$(".apbsortable").each(function(){var $list=$(this);if($list.data("ui-sortable")){try{$list.sortable("destroy");}catch(e){}}var handle=$list.attr("data-connect-with")||$list.data("connectWith")||"sortbyme, .-widget-item-title-";if($.fn.sortable){$list.sortable({handle:handle,cursor:"grabbing",tolerance:"pointer",placeholder:"kayan-sort-placeholder",forcePlaceholderSize:true,opacity:0.92,axis:"y",update:function(){/* order preserved by DOM */}});}});};</script>';
+			echo '<script>window.kayanInitSortables=function($){if(!$)return;if(!$.fn||!$.fn.sortable){return;}$(".apbsortable").each(function(){var $list=$(this);try{if($list.data("ui-sortable")){$list.sortable("destroy");}}catch(e){}var handle=$list.attr("data-connect-with");if(handle==="sortbyme"){handle="sortbyme, .-widget-item-title-";}if(!handle){handle=".-widget-item-title-, sortbyme, .Title-MoreForms-Dublicate, .move-btn";}$list.sortable({items:"> *",handle:handle,cancel:"input,textarea,button,select,option,a,.-widget-open,.-widget-remove",cursor:"grabbing",tolerance:"pointer",placeholder:"kayan-sort-placeholder",forcePlaceholderSize:true,opacity:0.95,delay:50,distance:4,scroll:true,scrollSensitivity:60,axis:"y"});});};jQuery(function($){window.kayanInitSortables($);setTimeout(function(){window.kayanInitSortables($);},400);setTimeout(function(){window.kayanInitSortables($);},1200);});</script>';
 
 		# owl carousel
 			echo '<script src="'.$this->JS__URL.'owl.carousel.min.js"></script>';
@@ -61,9 +61,9 @@ class YC__CFM_Enqueues {
 		echo '<link href="'.$this->Style__URL.'bootstrap-colorpicker.css" rel="stylesheet">';
 
 		echo '<link rel="stylesheet" type="text/css" media="all" href="'.$this->UI__URL.'Custom-Style.css?'.rand().'" />';
-		echo '<link rel="stylesheet" type="text/css" media="all" href="'.$this->Style__URL.'admin-mobile.css?v=1.4.5" />';
-		echo '<link rel="stylesheet" type="text/css" media="all" href="'.$this->Style__URL.'admin-ui-fixes.css?v=1.4.5" />';
-		echo '<link rel="stylesheet" href="'.get_template_directory_uri().'/components/styles/fa-free-fixes.css?v=1.4.5">';
+		echo '<link rel="stylesheet" type="text/css" media="all" href="'.$this->Style__URL.'admin-mobile.css?v=1.4.6" />';
+		echo '<link rel="stylesheet" type="text/css" media="all" href="'.$this->Style__URL.'admin-ui-fixes.css?v=1.4.6" />';
+		echo '<link rel="stylesheet" href="'.get_template_directory_uri().'/components/styles/fa-free-fixes.css?v=1.4.6">';
 		echo '<link href="'.$this->Style__URL.'flatpickr.min.css" rel="stylesheet">';
 		# تأكيد تحميل jQuery UI Sortable من ووردبريس (لترتيب عناصر الرئيسية)
 		wp_enqueue_script( 'jquery-ui-sortable' );
