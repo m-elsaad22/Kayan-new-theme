@@ -59,7 +59,7 @@ echo '<div class="-primary-body">';
 								echo '<div class="kayan-card__thumb"><a href="'.get_permalink($service->ID).'" title="'.esc_attr($service->post_title).'"><img src="'.esc_url($thumb_url).'" alt="'.esc_attr($service->post_title).'" loading="lazy" /></a></div>';
 							}else{
 								echo '<div class="kayan-card__icon">';
-									echo ( !empty( $service_icon ) ) ? $service_icon : '<i class="fa-solid fa-screwdriver-wrench"></i>';
+									echo ( !empty( $service_icon ) ) ? kayan_icon_html( $service_icon ) : '<i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i>';
 								echo '</div>';
 							}
 

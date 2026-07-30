@@ -64,7 +64,7 @@ echo '<div class="-primary-body">';
 							}
 
 							echo '<div class="kayan-card__icon">';
-								echo ( !empty( $offer_icon ) ) ? $offer_icon : '<i class="fa-solid fa-gift"></i>';
+								echo ( !empty( $offer_icon ) ) ? kayan_icon_html( $offer_icon ) : '<i class="fa-solid fa-gift" aria-hidden="true"></i>';
 							echo '</div>';
 
 							echo '<h3 class="kayan-card__title">'.$offer_title.'</h3>';

@@ -58,10 +58,10 @@ class YC__CFM_Enqueues {
 		echo '<link rel="stylesheet" type="text/css" media="all" href="'.$this->Style__URL.'richtext.min.css" />';
 		echo '<link rel="stylesheet" href="'.get_template_directory_uri().'/components/styles/FontAwesome/css/all.min.css">';
 		echo '<link href="'.$this->Style__URL.'bootstrap-colorpicker.css" rel="stylesheet">';
-		
-
 
 		echo '<link rel="stylesheet" type="text/css" media="all" href="'.$this->UI__URL.'Custom-Style.css?'.rand().'" />';
+		echo '<link rel="stylesheet" type="text/css" media="all" href="'.$this->Style__URL.'admin-mobile.css?v=1.4.4" />';
+		echo '<link rel="stylesheet" href="'.get_template_directory_uri().'/components/styles/fa-free-fixes.css?v=1.4.4">';
 		echo '<link href="'.$this->Style__URL.'flatpickr.min.css" rel="stylesheet">';
 	}
 

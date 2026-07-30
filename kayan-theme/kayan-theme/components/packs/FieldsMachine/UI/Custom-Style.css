@@ -1470,7 +1470,7 @@ necessary {
 .Insert-FormStep > i {
     margin-inline-end: 10px;
     font-size: 18px;
-    font-weight: 800;
+    font-weight: 900;
     z-index: 1;
     transition: 180ms all ease;
 }
@@ -2504,7 +2504,7 @@ sorteditemstaps > ul > li > em {
     flex: 1;
     position: relative;
     color: #253152;
-    font-weight: 800;
+    font-weight: 900;
     font-family: var(--numberffont);
 }
 
@@ -5070,7 +5070,7 @@ div#screen-meta-links {
 
 .YourColorEdits-Class-Style #wpadminbar .ab-top-menu > li > a.ab-item > span > i, .YourColorEdits-Class-Style #wpadminbar .ab-top-menu > li > a.ab-item > i {
     /* font-size: 20px; */
-    font-weight: 800 !important;
+    font-weight: 900 !important;
     font-family: 'Font Awesome 6 Free', 'Font Awesome 6 Free';
 }
 
@@ -5078,7 +5078,7 @@ div#screen-meta-links {
 
 .YourColorEdits-Class-Style #wpadminbar #wp-admin-bar-wp-logo>.ab-item > span> i {
     font-size: 23px;
-    font-weight: 800 !important;
+    font-weight: 900 !important;
     line-height: inherit;
 }
 
@@ -6083,7 +6083,7 @@ body #post-body-content .AddPostSwitchParent > ul, .AddPostSwitchParent > ul {
     transition: 180ms all ease;
 }
 body #post-body-content .AddPostSwitchParent > ul > li.active > i {
-    font-weight: 800;
+    font-weight: 900;
     color: white;
 }
 
@@ -6849,7 +6849,7 @@ p.link-to-original {
     display: flex;
     align-items: center;
     font-size: 20px;
-    font-weight: 800;
+    font-weight: 900;
     color: var(--primary-text);
     flex-direction: row-reverse;
 }
@@ -6933,7 +6933,7 @@ p.link-to-original {
 
 .-inner-price-thankyou-boxed  > span.price-value {
     font-size: 38px;
-    font-weight: 800;
+    font-weight: 900;
     line-height: .8;
     margin-inline-end: 7px;
     color: var(--primary-text);
@@ -7874,7 +7874,7 @@ title--tooltip {position: fixed;z-index: 120;pointer-events: none;background: #0
 
 .--translate--too-alerts > span {
     border-radius: 10px;
-    font-weight: 800 !important;
+    font-weight: 900 !important;
     position: relative;
     cursor: pointer;
     display: block;
@@ -7910,7 +7910,7 @@ title--tooltip {position: fixed;z-index: 120;pointer-events: none;background: #0
     border-radius: var(--largeradius);
     margin: 0 5px;
     font-family: var(--numberffont);
-    font-weight: 800;
+    font-weight: 900;
     font-size: 23px;
 }
 

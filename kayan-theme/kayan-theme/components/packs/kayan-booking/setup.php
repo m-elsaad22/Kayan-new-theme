@@ -14,6 +14,8 @@
  * ════════════════════════════════════════════════════════════════
  */
 
+require_once get_template_directory() . '/components/packs/SvgCenter/icon-helpers.php';
+
 if ( ! class_exists( 'Kayan_Booking' ) ) {
 
 	class Kayan_Booking {
@@ -78,7 +80,7 @@ if ( ! class_exists( 'Kayan_Booking' ) ) {
 			return array(
 				'id'         => $post->ID,
 				'title'      => get_the_title( $post ),
-				'icon'       => (string) get_post_meta( $post->ID, 'service_icon', true ),
+				'icon'       => kayan_icon_html( (string) get_post_meta( $post->ID, 'service_icon', true ), 'fa-solid fa-screwdriver-wrench' ),
 				'color'      => (string) get_post_meta( $post->ID, 'service_color', true ),
 				'price'      => (string) get_post_meta( $post->ID, 'service_price', true ),
 				'price_from' => (bool) get_post_meta( $post->ID, 'service_price_from', true ),

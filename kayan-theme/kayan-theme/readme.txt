@@ -3,7 +3,7 @@ Contributors: melsaad
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.4.3
+Stable tag: 1.4.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Tags: rtl-language-support, custom-menu, featured-images, translation-ready
@@ -19,6 +19,12 @@ Tags: rtl-language-support, custom-menu, featured-images, translation-ready
 * Font Awesome 6 Free مستضاف محلياً داخل القالب — بلا اعتماد على CDN خارجي وبلا أي أيقونات مدفوعة.
 
 == Changelog ==
+
+= 1.4.4 =
+* استبدال منتقي SVG-Icon شبه الفارغ بمنتقي Font Awesome 6 Free مرئي (بحث + معاينة) للخدمات والعروض.
+* دالة موحّدة kayan_icon_html(): تعرض FA/HTML/SvgCenter وتحوّل أنماط Pro (fa-light/fal/أسهم far) إلى Free.
+* إصلاح أوزان أيقونات لوحة التحكم (800→900) + fa-free-fixes.css في الأدمن والواجهة + تفعيل admin-mobile.css.
+* تحسين استجابة معالج الحجز على الموبايل (عمود واحد، أزرار لاصقة، شبكات كاملة العرض).
 
 = 1.4.3 =
 * إصلاح خطأ PHP قاتل في الهيدر (#header/part.php): قوس } زائد بعد بلوك Rank Math كان يسبب Parse error وشاشة بيضاء على كل الصفحات.
