@@ -1084,13 +1084,16 @@ listscatsseleco {}
 
 .-Radio-Box-Item em {
     display: block;
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
     position: relative;
     z-index: 1;
     font-weight: 400;
     font-size: 14px;
     color: var(--secondarytext);
     font-style: normal;
+    line-height: 1.45;
 }
 
 .-Radio-Box-Item input[type=radio]:checked + span + em {
@@ -1571,7 +1574,9 @@ input[type=checkbox]:focus, input[type=color]:focus, input[type=date]:focus, inp
 
 .-CheckBox-Box-Item em {
     display: block;
-    white-space: nowrap;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
     position: relative;
     z-index: 1;
     font-weight: 400;
@@ -1579,7 +1584,9 @@ input[type=checkbox]:focus, input[type=color]:focus, input[type=date]:focus, inp
     color: var(--secondarytext);
     font-style: normal;
     flex: 1;
+    min-width: 0;
     transition: 180ms all ease;
+    line-height: 1.45;
 }
 
 .-CheckBox-Box-Item:hover > em {
@@ -3365,13 +3372,19 @@ sortbyme.-widget-item-title-.has-loader {
 
 .-widget-item-title- > h2 {
     flex: 1;
+    min-width: 0;
     margin: 0;
-    display: flex;
+    display: block;
     align-content: center;
     align-items: center;
     font-size: 18px !important;
     flex-wrap: wrap;
     font-weight: 400 !important;
+    white-space: normal;
+    overflow: visible;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
 }
 
 .-widget-item-title- > h2 > p {

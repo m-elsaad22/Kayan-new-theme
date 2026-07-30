@@ -91,3 +91,32 @@ widgets-select:before,
 	max-width: 42px;
 	max-height: 42px;
 }
+
+/* شعار الهيدر/الفوتر — يظهر دائماً */
+a.logo,
+a.flogo,
+.flogo-wrap a.flogo,
+.nav a.logo {
+	display: inline-flex !important;
+	align-items: center;
+	gap: 8px;
+	visibility: visible !important;
+	opacity: 1 !important;
+	text-decoration: none;
+}
+a.logo img,
+a.flogo img,
+.kayan-logo-img {
+	display: inline-block !important;
+	max-height: 56px;
+	width: auto;
+	height: auto;
+	visibility: visible !important;
+	opacity: 1 !important;
+}
+a.logo .mark,
+a.flogo .mark {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}

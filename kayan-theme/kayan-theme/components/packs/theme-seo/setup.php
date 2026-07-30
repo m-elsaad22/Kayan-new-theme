@@ -28,7 +28,7 @@ class ThemeSeo {
      */
     public function Title(){
         // إذا كان Rank Math مثبتاً، لا تخرج <title> — wp_head() يتولى الأمر
-        if ( class_exists( 'RankMath' ) || class_exists( 'RankMath\RankMath' ) ) {
+        if ( function_exists( 'kayan_is_rank_math_active' ) ? kayan_is_rank_math_active() : ( class_exists( 'RankMath' ) || class_exists( 'RankMath\RankMath' ) || defined( 'RANK_MATH_VERSION' ) ) ) {
             return;
         }
 

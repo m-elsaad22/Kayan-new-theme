@@ -17,7 +17,7 @@ if( !isset($_GET['ajax']) ) {
 // ═══ KAYAN v1.4.2+ — meta description يُخرجه Rank Math عبر wp_head() ═══
 // Rank Math يطبع meta description صحيحة لكل صفحة — لا نتدخل يدوياً
 $hide__description_show = get_option('hide__description_show');
-if ( empty( $hide__description_show ) && ! class_exists( 'RankMath' ) && ! class_exists( 'RankMath\\RankMath' ) ) {
+if ( empty( $hide__description_show ) && ! ( function_exists( 'kayan_is_rank_math_active' ) ? kayan_is_rank_math_active() : ( class_exists( 'RankMath' ) || class_exists( 'RankMath\\RankMath' ) || defined( 'RANK_MATH_VERSION' ) ) ) ) {
     $yc__desc = is_singular() ? wp_strip_all_tags( get_the_excerpt() ) : get_bloginfo('description');
     if ( ! empty( $yc__desc ) ) {
         echo '<meta name="description" content="' . esc_attr( $yc__desc ) . '">';
@@ -28,7 +28,7 @@ if ( empty( $hide__description_show ) && ! class_exists( 'RankMath' ) && ! class
 // Rank Math موجود → wp_head() يُخرج <title> تلقائياً (add_theme_support active في theme-seo)
 // Rank Math غائب → ThemeSeo()->Title() تُخرجه مباشرةً (fallback)
 $hide__theme_seo = get_option('hide__theme_seo');
-$yc__rankmath_active = class_exists( 'RankMath' ) || class_exists( 'RankMath\\RankMath' );
+$yc__rankmath_active = function_exists( 'kayan_is_rank_math_active' ) ? kayan_is_rank_math_active() : ( class_exists( 'RankMath' ) || class_exists( 'RankMath\\RankMath' ) || defined( 'RANK_MATH_VERSION' ) );
 if ( empty( $hide__theme_seo ) && ! $yc__rankmath_active ) {
     (new ThemeSeo)->Title();
 }
@@ -131,27 +131,66 @@ if ( empty( $hide__theme_seo ) && ! $yc__rankmath_active ) {
 	# دالة صغيرة بترسم اللوجو بكلاسات التصميم الجديد (هيدر أو فوتر)
 	if( !function_exists('rukn_v3_render_logo') ){
 		function rukn_v3_render_logo( $logo__data, $css_class = 'logo', $img_size = 'logo__size' ){
+			$logo__data = is_array( $logo__data ) ? $logo__data : array();
 			$mode = isset( $logo__data['logo__mode'] ) ? $logo__data['logo__mode'] : 'Text';
 			$alt  = ( isset( $logo__data[ $mode ]['header__alt'] ) && !empty( $logo__data[ $mode ]['header__alt'] ) ) ? $logo__data[ $mode ]['header__alt'] : get_bloginfo('name');
 
-			echo '<a href="'.home_url().'" class="'.$css_class.'" title="'.$alt.'">';
-				echo '<span class="mark"><i class="fas fa-shield-halved"></i></span>';
-				if( $mode == 'Image' && isset( $logo__data[ $mode ]['image_logo_id'] ) ){
-					echo YC_get_attachment(
-						array(
-							'alt'  => $alt,
-							'id'   => $logo__data[ $mode ]['image_logo_id'],
-							'size' => $img_size,
-						)
-					);
-				}else{
-					$logo_Text = isset( $logo__data[ $mode ]['logo_Text'] ) ? $logo__data[ $mode ]['logo_Text'] : get_bloginfo('name');
+			echo '<a href="'.esc_url( home_url( '/' ) ).'" class="'.esc_attr( $css_class ).'" title="'.esc_attr( $alt ).'">';
+				echo '<span class="mark"><i class="fas fa-shield-halved" aria-hidden="true"></i></span>';
+
+				$rendered = false;
+				if ( 'Image' === $mode ) {
+					$logo_id = 0;
+					if ( ! empty( $logo__data[ $mode ]['image_logo_id'] ) ) {
+						$logo_id = absint( $logo__data[ $mode ]['image_logo_id'] );
+					} elseif ( ! empty( $logo__data[ $mode ]['image_logo']['id'] ) ) {
+						$logo_id = absint( $logo__data[ $mode ]['image_logo']['id'] );
+					} elseif ( ! empty( $logo__data[ $mode ]['image_logo'] ) && is_numeric( $logo__data[ $mode ]['image_logo'] ) ) {
+						$logo_id = absint( $logo__data[ $mode ]['image_logo'] );
+					}
+
+					if ( $logo_id && function_exists( 'YC_get_attachment' ) ) {
+						$img = YC_get_attachment(
+							array(
+								'alt'      => $alt,
+								'id'       => $logo_id,
+								'size'     => $img_size,
+								'LazyLoad' => false, # مهم: الشعار يظهر فوراً بدون انتظار lazy-load
+							)
+						);
+						if ( $img ) {
+							echo $img;
+							$rendered = true;
+						} else {
+							$url = wp_get_attachment_image_url( $logo_id, 'full' );
+							if ( $url ) {
+								echo '<img src="'.esc_url( $url ).'" alt="'.esc_attr( $alt ).'" class="YourColor--Theme--image kayan-logo-img" />';
+								$rendered = true;
+							}
+						}
+					} elseif ( ! empty( $logo__data[ $mode ]['image_logo'] ) && is_string( $logo__data[ $mode ]['image_logo'] ) ) {
+						echo '<img src="'.esc_url( $logo__data[ $mode ]['image_logo'] ).'" alt="'.esc_attr( $alt ).'" class="YourColor--Theme--image kayan-logo-img" />';
+						$rendered = true;
+					} elseif ( ! empty( $logo__data[ $mode ]['image_logo']['url'] ) ) {
+						echo '<img src="'.esc_url( $logo__data[ $mode ]['image_logo']['url'] ).'" alt="'.esc_attr( $alt ).'" class="YourColor--Theme--image kayan-logo-img" />';
+						$rendered = true;
+					}
+				}
+
+				if ( ! $rendered ) {
+					$logo_Text = isset( $logo__data[ $mode ]['logo_Text'] ) ? $logo__data[ $mode ]['logo_Text'] : '';
+					if ( '' === $logo_Text && isset( $logo__data['Text']['logo_Text'] ) ) {
+						$logo_Text = $logo__data['Text']['logo_Text'];
+					}
+					if ( '' === $logo_Text ) {
+						$logo_Text = get_bloginfo( 'name' );
+					}
 					# صيغة {% %} القديمة بتتحول للكلمة الملونة <b> في التصميم الجديد
 					if( strpos( $logo_Text,'{%') !== FALSE && strpos( $logo_Text,'%}') !== FALSE ){
 						$logo_Text = str_replace('{%','<b>',$logo_Text);
 						$logo_Text = str_replace('%}','</b>',$logo_Text);
 					}
-					echo $logo_Text;
+					echo wp_kses( $logo_Text, array( 'b' => array(), 'span' => array( 'class' => true ), 'strong' => array() ) );
 				}
 			echo '</a>';
 		}

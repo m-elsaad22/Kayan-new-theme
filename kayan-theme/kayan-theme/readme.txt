@@ -3,7 +3,7 @@ Contributors: melsaad
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.4.4
+Stable tag: 1.4.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Tags: rtl-language-support, custom-menu, featured-images, translation-ready
@@ -19,6 +19,12 @@ Tags: rtl-language-support, custom-menu, featured-images, translation-ready
 * Font Awesome 6 Free مستضاف محلياً داخل القالب — بلا اعتماد على CDN خارجي وبلا أي أيقونات مدفوعة.
 
 == Changelog ==
+
+= 1.4.5 =
+* تفعيل Rank Math بالكامل: حماية أقوى للأصول، إيقاف schema المكرر من القالب عند وجود Rank Math، وعدم deregister لتبعياته.
+* إصلاح شعار الهيدر/الفوتر: LazyLoad=false + دعم كل أشكال تخزين image_logo/image_logo_id + CSS إظهار.
+* إصلاح النصوص المقطوعة في لوحة التحكم: التفاف طبيعي بدل nowrap/overflow.
+* إصلاح ترتيب عناصر الرئيسية: jQuery UI Sortable يعمل بمقبض السحب ويُعاد تفعيله بعد إضافة ودجت.
 
 = 1.4.4 =
 * استبدال منتقي SVG-Icon شبه الفارغ بمنتقي Font Awesome 6 Free مرئي (بحث + معاينة) للخدمات والعروض.

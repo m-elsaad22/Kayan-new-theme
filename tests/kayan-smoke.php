@@ -155,7 +155,21 @@ assert_true( strlen( $admin_m ) > 1000, 'admin-mobile.css non-empty' );
 
 # 9) Version
 $style = file_get_contents( "$theme/style.css" );
-assert_true( false !== strpos( $style, 'Version: 1.4.4' ), 'style.css version 1.4.4' );
+assert_true( false !== strpos( $style, 'Version: 1.4.5' ), 'style.css version 1.4.5' );
+
+# Rank Math / logo / sortable / wrap fixes
+$enq = file_get_contents( "$theme/components/packs/Enqueues/setup.php" );
+assert_true( false !== strpos( $enq, 'kayan_is_rank_math_active' ), 'rank math helper present' );
+assert_true( false === strpos( $enq, 'wp_deregister_script( $handle )' ), 'no deregister of front scripts' );
+$header = file_get_contents( "$theme/components/packs/#header/part.php" );
+assert_true( false !== strpos( $header, "'LazyLoad' => false" ) || false !== strpos( $header, 'LazyLoad' ), 'logo LazyLoad disabled' );
+$schema = file_get_contents( "$theme/components/packs/schema/setup.php" );
+assert_true( false !== strpos( $schema, 'kayan_is_rank_math_active' ) || false !== strpos( $schema, 'RANK_MATH' ), 'schema skips when Rank Math active' );
+assert_true( file_exists( "$theme/components/packs/FieldsMachine/UI/css/admin-ui-fixes.css" ), 'admin-ui-fixes.css exists' );
+$js = file_get_contents( "$theme/components/packs/FieldsMachine/UI/Custom-Setup.js" );
+assert_true( false !== strpos( $js, 'kayanInitSortables' ) || false !== strpos( $js, "attr('data-connect-with')" ), 'sortable uses attr connect-with' );
+$cssfix = file_get_contents( "$theme/components/packs/FieldsMachine/UI/Custom-Style.css" );
+assert_true( false !== strpos( $cssfix, '.-Radio-Box-Item em' ) && false !== strpos( $cssfix, 'white-space: normal' ), 'radio labels wrap' );
 
 echo "\n=== Result: $passed passed, $failed failed ===\n";
 exit( $failed > 0 ? 1 : 0 );
