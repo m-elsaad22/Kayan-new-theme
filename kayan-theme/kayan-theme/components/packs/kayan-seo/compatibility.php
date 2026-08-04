@@ -3,9 +3,10 @@
  * kayan-seo / compatibility.php
  *
  * تعطيل إخراج Rank Math في الواجهة فقط — الإضافة تظل Active.
- * الهدف: منع تكرار <head> و JSON-LD مع مخرجات KAYAN SEO.
+ * يعمل فقط بينما KAYAN SEO مفعّل (kayan_seo_disable فارغ).
  *
- * مطابق لمنطق ServicesTheme(YourColor)/components/packs/kayan-seo/compatibility.php
+ * لاستعادة واجهة Rank Math: فعّل خيار «تعطيل KAYAN SEO»
+ * أو اجعل option: kayan_seo_disable = 1
  */
 
 if ( ! function_exists( 'kayan_seo_disable_rank_math_frontend' ) ) {
@@ -22,8 +23,13 @@ if ( ! function_exists( 'kayan_seo_disable_rank_math_frontend' ) ) {
 
 	/**
 	 * تعطيل واجهة Rank Math بالكامل على الفرونت.
+	 * لا يعمل إذا كان KAYAN SEO معطّلاً عبر kayan_seo_disable.
 	 */
 	function kayan_seo_disable_rank_math_frontend() {
+		# الخيار الأفضل لاستعادة Rank Math: kayan_seo_disable غير فارغ
+		if ( function_exists( 'kayan_seo_is_disabled' ) && kayan_seo_is_disabled() ) {
+			return;
+		}
 		if ( is_admin() || ! kayan_seo_rank_math_plugin_active() ) {
 			return;
 		}
@@ -43,7 +49,6 @@ if ( ! function_exists( 'kayan_seo_disable_rank_math_frontend' ) ) {
 		# 3) إزالة Head::head من wp_head إن كانت مسجّلة
 		if ( class_exists( 'RankMath\\Frontend\\Head' ) ) {
 			remove_action( 'wp_head', array( 'RankMath\\Frontend\\Head', 'head' ), 1 );
-			# بعض الإصدارات تسجّل كائن instance
 			global $wp_filter;
 			if ( isset( $wp_filter['wp_head'] ) ) {
 				foreach ( (array) $wp_filter['wp_head']->callbacks as $priority => $callbacks ) {
@@ -61,9 +66,9 @@ if ( ! function_exists( 'kayan_seo_disable_rank_math_frontend' ) ) {
 		}
 	}
 
-	# مبكراً + متأخراً لضمان التنفيذ بعد تسجيل Rank Math لأكشناته
-	add_action( 'plugins_loaded', 'kayan_seo_disable_rank_math_frontend', 20 );
-	add_action( 'init', 'kayan_seo_disable_rank_math_frontend', 20 );
-	add_action( 'wp', 'kayan_seo_disable_rank_math_frontend', 1 );
+	# مطابق لـ ServicesTheme: أولوية 0 على هذه الخطافات
+	add_action( 'plugins_loaded', 'kayan_seo_disable_rank_math_frontend', 0 );
+	add_action( 'init', 'kayan_seo_disable_rank_math_frontend', 0 );
+	add_action( 'wp', 'kayan_seo_disable_rank_math_frontend', 0 );
 	add_action( 'wp_head', 'kayan_seo_disable_rank_math_frontend', 0 );
 }

@@ -3,17 +3,14 @@
 ## Rank Math SEO (مهم)
 
 - **أبقِ إضافة Rank Math Active** — لا تعطّل الإضافة من شاشة الإضافات.
-- **عطّل واجهة Rank Math فقط** عبر `components/packs/kayan-seo/compatibility.php`:
-  - `rank_math/frontend/disable` → `true`
-  - `rank_math/json_ld` → `false`
-  - تعطيل OpenGraph
-  - إزالة أكشنات `rank_math/head` و `rank_math/json_ld` و `rank_math/opengraph/*`
-- السبب: منع تكرار `<head>` و JSON-LD مع مخرجات **KAYAN SEO**.
-- التخزين يبقى عبر ميتا Rank Math، والجسر يقرأ:
-  - `rank_math_title`
-  - `rank_math_description`
-  من `components/packs/kayan-seo/rank-math-bridge.php`
-- **لا** تُعد تفعيل إخراج Rank Math في الواجهة (`__return_false` على `rank_math/frontend/disable`) إلا بطلب صريح يغيّر هذه السياسة.
+- **الوضع الافتراضي:** عطّل واجهة Rank Math فقط عبر `kayan-seo/compatibility.php` بينما KAYAN SEO يعمل، لتفادي تكرار `<head>` / JSON-LD.
+- التخزين عبر ميتا Rank Math؛ الجسر يقرأ `rank_math_title` و `rank_math_description`.
+- **لاستعادة واجهة Rank Math:** اجعل option `kayan_seo_disable` غير فارغ (`1`) — عندها يتوقف KAYAN SEO ولا يُستدعى تعطيل واجهة Rank Math.
+  - من إعدادات القالب → إعدادات العنوان → «تعطيل KAYAN SEO»
+  - أو: `update_option( 'kayan_seo_disable', '1' );`
+- **لا تشغّل KAYAN SEO وواجهة Rank Math معاً** على الفرونت.
+
+انظر: `docs/RANK-MATH-POLICY.md`
 
 ## حجز الأسعار / الدفع
 

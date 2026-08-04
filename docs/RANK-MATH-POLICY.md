@@ -1,6 +1,6 @@
 # سياسة Rank Math في KAYAN
 
-## الخلاصة
+## الوضع الافتراضي
 
 | العنصر | الحالة |
 |--------|--------|
@@ -9,29 +9,43 @@
 | تخزين العنوان/الوصف | `rank_math_title` / `rank_math_description` |
 | من يطبع `<title>` و meta و Schema | **KAYAN SEO** (+ schema القالب) |
 
-## أين يتم التعطيل؟
+## استعادة واجهة Rank Math (الخيار الأفضل)
 
-`components/packs/kayan-seo/compatibility.php`
+KAYAN SEO يعمل طالما `kayan_seo_disable` **فارغ**.  
+إذا صار غير فارغ → KAYAN SEO يتوقف → Rank Math يرجع يطبع العنوان والميتا والسكيما.
 
-- `rank_math/frontend/disable` → `true`
-- `rank_math/json_ld` → `false`
-- تعطيل OpenGraph
-- إزالة أكشنات `rank_math/head` و JSON-LD و OpenGraph
-- إزالة `RankMath\Frontend\Head::head` من `wp_head`
+### من لوحة التحكم
+المظهر / إعدادات القالب → **إعدادات العنوان (SEO)** →  
+فعّل: **«تعطيل KAYAN SEO (استعادة واجهة Rank Math)»**
 
-## أين تُقرأ البيانات؟
+### برمجياً / من قاعدة البيانات
+```php
+update_option( 'kayan_seo_disable', '1' );
+```
+أو عبر WP-CLI:
+```bash
+wp option update kayan_seo_disable 1
+```
 
-`components/packs/kayan-seo/rank-math-bridge.php`
+لإعادة تفعيل KAYAN SEO:
+```bash
+wp option delete kayan_seo_disable
+# أو
+wp option update kayan_seo_disable ''
+```
 
-- `kayan_seo_get_rank_math_title()`
-- `kayan_seo_get_rank_math_description()`
+### الخيار البرمجي البديل
+علّق/احذف استدعاءات التعطيل في  
+`components/packs/kayan-seo/compatibility.php`  
+(الأسطر التي تسجّل `kayan_seo_disable_rank_math_frontend` على `plugins_loaded` / `init` / `wp`).
 
-ثم:
+## تنبيه
 
-- العنوان → فلتر `pre_get_document_title`
-- الوصف → `wp_head` عبر `kayan_seo_print_meta_description`
-- Schema → `components/packs/schema/setup.php` (لا يُتخطى عند وجود Rank Math)
+**لا تشغّل KAYAN SEO وواجهة Rank Math معاً** — قد يتكرر title/meta/schema في `<head>`.  
+اختر واحداً فقط يطبع في الواجهة.
 
-## لماذا؟
+## الملفات
 
-حتى لا يتكرر `<head>` و JSON-LD بين Rank Math و KAYAN SEO، مع الإبقاء على محرر Rank Math وبياناته في الأدمن.
+- `kayan-seo/helpers.php` — `kayan_seo_is_disabled()` / `kayan_seo_is_enabled()`
+- `kayan-seo/compatibility.php` — تعطيل واجهة Rank Math (فقط إذا KAYAN SEO مفعّل)
+- `kayan-seo/rank-math-bridge.php` — قراءة `rank_math_title` / `rank_math_description`

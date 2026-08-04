@@ -408,9 +408,13 @@ class YourColor__Schema{
 	}
 
 	public function Setup(){
-		# KAYAN SEO يملك مخرجات Schema في الواجهة.
-		# Rank Math Active للتخزين فقط — واجهته JSON-LD معطّلة عبر kayan-seo/compatibility.php
-		# لذلك لا نتخطى Schema القالب عند وجود الإضافة (وإلا لن يظهر أي JSON-LD).
+		# عند تعطيل KAYAN SEO (kayan_seo_disable): Rank Math يملك JSON-LD — لا نكرر Schema القالب.
+		if ( function_exists( 'kayan_seo_is_disabled' ) && kayan_seo_is_disabled() ) {
+			if ( function_exists( 'kayan_seo_rank_math_plugin_active' ) && kayan_seo_rank_math_plugin_active() ) {
+				return;
+			}
+		}
+		# الوضع الافتراضي: KAYAN SEO يعمل وواجهة Rank Math معطّلة → Schema القالب يُطبع.
 		add_action('wp_head', array( $this,'insert__schema') );
 	}
 }
