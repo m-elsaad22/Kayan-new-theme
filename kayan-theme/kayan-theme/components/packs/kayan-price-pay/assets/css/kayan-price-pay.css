@@ -1,0 +1,340 @@
+/**
+ * KAYAN Price Pay — حجز تفاعلي + زر عائم 3D
+ * هوية زرقاء مطابقة لـ RUKN v3
+ */
+
+:root {
+	--kpp-navy: #0a1f4e;
+	--kpp-blue: #2980d4;
+	--kpp-turq: #2e9df7;
+	--kpp-aqua: #4fa8ff;
+	--kpp-grad: linear-gradient(135deg, #0a1f4e 0%, #1a4f9c 45%, #2980d4 100%);
+	--kpp-cta: linear-gradient(145deg, #4fa8ff 0%, #2e9df7 40%, #1a6fd4 100%);
+}
+
+/* ═══ زر الحجز العائم 3D (يسار الشاشة — معاكس للواتساب/الاتصال) ═══ */
+.kayan-book-cta {
+	position: fixed;
+	bottom: 28px;
+	left: 22px;
+	inset-inline-end: auto;
+	inset-inline-start: auto;
+	z-index: 860;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	min-height: 54px;
+	padding: 14px 26px;
+	border: none;
+	border-radius: 50px;
+	background: var(--kpp-cta);
+	color: #fff !important;
+	font-family: 'Cairo', 'Tajawal', sans-serif;
+	font-weight: 800;
+	font-size: 16px;
+	text-decoration: none !important;
+	cursor: pointer;
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(18px);
+	transition: opacity .35s ease, visibility .35s ease, transform .18s ease, box-shadow .18s ease;
+	box-shadow:
+		0 2px 0 #0d4a9a,
+		0 8px 0 #0a3a7a,
+		0 14px 28px rgba(10, 31, 78, .38),
+		inset 0 1px 0 rgba(255, 255, 255, .35);
+	-webkit-tap-highlight-color: transparent;
+}
+.kayan-book-cta.is-visible {
+	opacity: 1;
+	visibility: visible;
+	transform: translateY(0);
+}
+.kayan-book-cta:hover {
+	transform: translateY(-2px);
+	box-shadow:
+		0 2px 0 #0d4a9a,
+		0 10px 0 #0a3a7a,
+		0 18px 32px rgba(10, 31, 78, .42),
+		inset 0 1px 0 rgba(255, 255, 255, .4);
+	color: #fff !important;
+}
+.kayan-book-cta:active {
+	transform: translateY(2px);
+	box-shadow:
+		0 1px 0 #0d4a9a,
+		0 4px 0 #0a3a7a,
+		0 8px 16px rgba(10, 31, 78, .3),
+		inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+.kayan-book-cta i {
+	font-size: 18px;
+	line-height: 1;
+}
+.fab-stack {
+	/* تأكيد: مكدس الاتصال/واتساب لا يتداخل مع زر الحجز */
+	z-index: 850;
+}
+
+/* ═══ صندوق الحجز / الباقات ═══ */
+.kayan-price-booking,
+.yc-shortcode--price_list.kayan-price-booking {
+	scroll-margin-top: 100px;
+	background: #fff;
+	border: 1px solid rgba(41, 128, 212, .14);
+	border-radius: 22px;
+	padding: 28px 22px 32px;
+	box-shadow: 0 16px 40px rgba(10, 31, 78, .06);
+	margin: 28px 0;
+}
+.kayan-price-booking .--short--code--title,
+.kayan-price-booking .kpp-heading {
+	font-family: 'Cairo', sans-serif;
+	font-weight: 900;
+	color: var(--kpp-navy);
+	font-size: clamp(22px, 2.4vw, 30px);
+	margin: 0 0 10px;
+}
+.kayan-price-booking .--short--code--content,
+.kayan-price-booking .kpp-lead {
+	color: #5a6478;
+	font-size: 15.5px;
+	line-height: 1.75;
+	margin: 0 0 22px;
+}
+
+.kpp-packages {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 16px;
+	margin-bottom: 26px;
+}
+.kpp-package {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	text-align: start;
+	background: #f7fbff;
+	border: 2px solid #e4eef8;
+	border-radius: 18px;
+	padding: 22px 18px;
+	cursor: pointer;
+	transition: border-color .25s, box-shadow .25s, transform .25s, background .25s;
+	font: inherit;
+	color: inherit;
+	width: 100%;
+}
+.kpp-package:hover {
+	transform: translateY(-4px);
+	border-color: rgba(46, 157, 247, .45);
+	box-shadow: 0 12px 28px rgba(46, 157, 247, .12);
+}
+.kpp-package.is-active {
+	background: linear-gradient(180deg, rgba(46, 157, 247, .1), #fff 55%);
+	border-color: var(--kpp-turq);
+	box-shadow: 0 14px 34px rgba(46, 157, 247, .22);
+}
+.kpp-package.is-active::after {
+	content: '\f058';
+	font-family: 'Font Awesome 6 Free';
+	font-weight: 900;
+	position: absolute;
+	top: 12px;
+	inset-inline-end: 12px;
+	color: var(--kpp-turq);
+	font-size: 20px;
+}
+.kpp-package-name {
+	font-family: 'Cairo', sans-serif;
+	font-weight: 800;
+	font-size: 18px;
+	color: var(--kpp-navy);
+}
+.kpp-package-price {
+	font-family: 'Cairo', sans-serif;
+	font-weight: 900;
+	font-size: 26px;
+	color: var(--kpp-blue);
+	line-height: 1.2;
+}
+.kpp-package-price small {
+	font-size: 13px;
+	font-weight: 700;
+	color: #7a8699;
+	margin-inline-start: 4px;
+}
+.kpp-package-desc {
+	font-size: 13.5px;
+	color: #667085;
+	line-height: 1.55;
+}
+
+/* ودجت الأسعار / كروت الخطط — حالة نشطة */
+.price-grid .pcard.kpp-selectable,
+.-PriceBox-v1-box.kpp-selectable {
+	cursor: pointer;
+}
+.price-grid .pcard.is-active,
+.-PriceBox-v1-box.is-active {
+	border: 2px solid var(--kpp-turq) !important;
+	box-shadow: 0 16px 36px rgba(46, 157, 247, .22) !important;
+	background: linear-gradient(180deg, rgba(46, 157, 247, .08), #fff 50%);
+}
+
+/* النموذج */
+.kpp-form {
+	border-top: 1px solid #e8eef6;
+	padding-top: 24px;
+}
+.kpp-form-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 14px 16px;
+}
+.kpp-field {
+	display: flex;
+	flex-direction: column;
+	gap: 7px;
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--kpp-navy);
+}
+.kpp-field em {
+	color: #e11d48;
+	font-style: normal;
+}
+.kpp-field-full {
+	grid-column: 1 / -1;
+}
+.kpp-field input,
+.kpp-field textarea {
+	width: 100%;
+	border: 1.5px solid #d7e3f2;
+	border-radius: 14px;
+	background: #fafcff;
+	padding: 13px 14px;
+	font-family: 'Tajawal', sans-serif;
+	font-size: 15px;
+	font-weight: 500;
+	color: #1f2937;
+	transition: border-color .2s, box-shadow .2s;
+	box-sizing: border-box;
+}
+.kpp-field input:focus,
+.kpp-field textarea:focus {
+	outline: none;
+	border-color: var(--kpp-turq);
+	box-shadow: 0 0 0 4px rgba(46, 157, 247, .12);
+	background: #fff;
+}
+.kpp-field.is-invalid input,
+.kpp-field.is-invalid textarea {
+	border-color: #e11d48;
+	box-shadow: 0 0 0 3px rgba(225, 29, 72, .1);
+}
+
+.kpp-summary {
+	margin: 18px 0 16px;
+	background: var(--kpp-grad);
+	color: #fff;
+	border-radius: 16px;
+	padding: 16px 18px;
+	display: grid;
+	gap: 10px;
+}
+.kpp-summary-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	font-size: 14.5px;
+}
+.kpp-summary-row strong {
+	font-family: 'Cairo', sans-serif;
+	font-weight: 900;
+	font-size: 18px;
+}
+
+.kpp-pay-btn {
+	width: 100%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	min-height: 56px;
+	border: none;
+	border-radius: 50px;
+	background: var(--kpp-cta);
+	color: #fff;
+	font-family: 'Cairo', sans-serif;
+	font-weight: 900;
+	font-size: 18px;
+	cursor: pointer;
+	box-shadow:
+		0 2px 0 #0d4a9a,
+		0 7px 0 #0a3a7a,
+		0 14px 26px rgba(10, 31, 78, .28),
+		inset 0 1px 0 rgba(255, 255, 255, .3);
+	transition: transform .15s ease, box-shadow .15s ease;
+}
+.kpp-pay-btn:hover {
+	transform: translateY(-2px);
+}
+.kpp-pay-btn:active {
+	transform: translateY(2px);
+	box-shadow:
+		0 1px 0 #0d4a9a,
+		0 3px 0 #0a3a7a,
+		0 8px 14px rgba(10, 31, 78, .22);
+}
+.kpp-form-hint {
+	text-align: center;
+	color: #7a8699;
+	font-size: 13px;
+	margin: 12px 0 0;
+}
+.kpp-alert {
+	margin: 0 0 14px;
+	padding: 12px 14px;
+	border-radius: 12px;
+	background: rgba(225, 29, 72, .08);
+	color: #b91c1c;
+	font-weight: 700;
+	font-size: 14px;
+	display: none;
+}
+.kpp-alert.is-show {
+	display: block;
+}
+
+@media (max-width: 1024px) {
+	.kpp-packages {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+@media (max-width: 640px) {
+	.kpp-packages,
+	.kpp-form-grid {
+		grid-template-columns: 1fr;
+	}
+	.kayan-book-cta {
+		left: 14px;
+		bottom: 18px;
+		padding: 12px 18px;
+		font-size: 14.5px;
+		min-height: 48px;
+	}
+	.kayan-price-booking {
+		padding: 20px 14px 24px;
+		border-radius: 16px;
+	}
+	/* إبقاء مكدس الاتصال بعيداً عن زر الحجز */
+	.fab-stack {
+		inset-inline-start: auto !important;
+		right: 14px !important;
+		left: auto !important;
+		bottom: 18px;
+	}
+}

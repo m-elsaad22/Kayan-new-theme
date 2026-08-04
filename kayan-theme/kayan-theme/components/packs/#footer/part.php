@@ -199,6 +199,12 @@
 			echo '<a href="https://wa.me/'.$whatsapp_number.'" target="_blank" rel="noopener" class="fab-btn fab-wa" aria-label="واتساب" data-call="whatsapp"><i class="fab fa-whatsapp"></i></a>';
 	echo '</div>';
 
+	# ═══ زر الحجز العائم 3D — يسار الشاشة (معاكس للواتساب/الاتصال) ═══
+	echo '<a href="#kayan-price-booking" id="kayanBookCta" class="kayan-book-cta" aria-label="احجز الآن">';
+		echo '<i class="fas fa-calendar-check" aria-hidden="true"></i>';
+		echo '<span>احجز الآن</span>';
+	echo '</a>';
+
 echo '</root>';
 
 $HTML_otput = ob_get_clean();

@@ -155,7 +155,21 @@ assert_true( strlen( $admin_m ) > 1000, 'admin-mobile.css non-empty' );
 
 # 9) Version
 $style = file_get_contents( "$theme/style.css" );
-assert_true( false !== strpos( $style, 'Version: 1.4.6' ), 'style.css version 1.4.6' );
+assert_true( false !== strpos( $style, 'Version: 1.4.7' ), 'style.css version 1.4.7' );
+
+# Interactive price booking + floating CTA + Rank Math pack
+assert_true( file_exists( "$theme/components/packs/kayan-price-pay/setup.php" ), 'kayan-price-pay pack exists' );
+assert_true( file_exists( "$theme/components/packs/kayan-price-pay/assets/js/kayan-price-pay.js" ), 'kayan-price-pay.js exists' );
+assert_true( file_exists( "$theme/components/packs/kayan-rankmath/setup.php" ), 'kayan-rankmath pack exists' );
+$price_list = file_get_contents( "$theme/components/packs/shortcodes/codes/price_list.php" );
+assert_true( false !== strpos( $price_list, 'kayan-price-booking' ), 'price_list interactive booking' );
+assert_true( false !== strpos( $price_list, 'kpp-package' ), 'price_list package cards' );
+$footer = file_get_contents( "$theme/components/packs/#footer/part.php" );
+assert_true( false !== strpos( $footer, 'kayanBookCta' ), 'footer floating book CTA' );
+$pay_js = file_get_contents( "$theme/components/packs/kayan-price-pay/assets/js/kayan-price-pay.js" );
+assert_true( false !== strpos( $pay_js, 'rukn-eltatawer-pay.tanceq.com' ), 'pay URL in JS' );
+$rm = file_get_contents( "$theme/components/packs/kayan-rankmath/setup.php" );
+assert_true( false !== strpos( $rm, "rank_math/frontend/disable" ), 'rank math frontend force-enable' );
 
 # Rank Math / logo / sortable / wrap fixes
 $enq = file_get_contents( "$theme/components/packs/Enqueues/setup.php" );
@@ -165,7 +179,7 @@ assert_true( false === strpos( $enq, 'wp_deregister_script( $handle )' ), 'no de
 $header = file_get_contents( "$theme/components/packs/#header/part.php" );
 assert_true( false !== strpos( $header, 'has-logo-image' ), 'logo has-logo-image class' );
 assert_true( false !== strpos( $header, 'data-no-lazy' ), 'logo skips LiteSpeed lazy' );
-assert_true( false !== strpos( $header, 'fa-free-fixes.css?v=1.4.6' ), 'header asset version 1.4.6' );
+assert_true( false !== strpos( $header, 'fa-free-fixes.css?v=1.4.7' ), 'header asset version 1.4.7' );
 $schema = file_get_contents( "$theme/components/packs/schema/setup.php" );
 assert_true( false !== strpos( $schema, 'kayan_is_rank_math_active' ) || false !== strpos( $schema, 'RANK_MATH' ), 'schema skips when Rank Math active' );
 assert_true( file_exists( "$theme/components/packs/FieldsMachine/UI/css/admin-ui-fixes.css" ), 'admin-ui-fixes.css exists' );

@@ -4,6 +4,20 @@ class price_list_short_code{
 		
 	}
 
+	/**
+	 * استخراج رقم السعر من النص (مثال: "250 درهم" أو "1,200 AED")
+	 */
+	private function extract_amount( $raw ) {
+		if ( class_exists( 'Kayan_Price_Pay' ) ) {
+			return Kayan_Price_Pay::extract_amount( $raw );
+		}
+		$raw = (string) $raw;
+		if ( preg_match( '/(\d+(?:[.,]\d+)?)/u', $raw, $m ) ) {
+			return str_replace( ',', '', $m[1] );
+		}
+		return preg_replace( '/[^\d.]/', '', $raw );
+	}
+
 	public function ShortCodeAppend(){
 		global $post;
 		
@@ -14,43 +28,49 @@ class price_list_short_code{
 		$post__price_list__data = ( ( is_array( $post__price_list__data ) ) ) ? $post__price_list__data : array();
 		if( empty( $post__price_list__data ) ) return ;
 
-		# SHORTCODE OUTPUT .
-     		ob_start();
-				echo '<div class="yc-shortcode--box yc-shortcode--price_list">';
+		$service_title = get_the_title( $post );
+		$currency = get_option( 'currency' );
+		if ( empty( $currency ) ) $currency = 'AED';
+		$uid = 'kpp_' . $post->ID;
 
-					echo ( ( isset( $post__price_list__data['price_list__title'] ) && !empty( $post__price_list__data['price_list__title'] ) ) ) ? '<h2 class="--short--code--title">'.$post__price_list__data['price_list__title'].'</h2>' : '';
+		# SHORTCODE OUTPUT — حجز تفاعلي + دفع خارجي
+     		ob_start();
+				echo '<div id="kayan-price-booking" class="yc-shortcode--box yc-shortcode--price_list kayan-price-booking" data-service="'.esc_attr( $service_title ).'">';
+
+					echo ( ( isset( $post__price_list__data['price_list__title'] ) && !empty( $post__price_list__data['price_list__title'] ) ) ) ? '<h2 class="--short--code--title kpp-heading">'.$post__price_list__data['price_list__title'].'</h2>' : '<h2 class="--short--code--title kpp-heading">اختر باقتك واحجز الآن</h2>';
 					
-					echo ( ( isset( $post__price_list__data['price_list__content'] ) && !empty( $post__price_list__data['price_list__content'] ) ) ) ? '<p class="--short--code--content">'.$post__price_list__data['price_list__content'].'</p>' : '';
+					echo ( ( isset( $post__price_list__data['price_list__content'] ) && !empty( $post__price_list__data['price_list__content'] ) ) ) ? '<p class="--short--code--content kpp-lead">'.$post__price_list__data['price_list__content'].'</p>' : '<p class="--short--code--content kpp-lead">اختر الباقة المناسبة ثم أدخل بياناتك لإتمام الدفع.</p>';
 
 					if( isset( $post__price_list__data['price_list__items'] ) && !empty( $post__price_list__data['price_list__items'] ) ){
 						$post__price_list__data['price_list__items'] = ( ( is_array( $post__price_list__data['price_list__items'] ) ) ) ? $post__price_list__data['price_list__items'] : array();
 
-						$price_list__table_title1 = ( ( isset( $post__price_list__data['price_list__table_title1'] ) && !empty( $post__price_list__data['price_list__table_title1'] ) ) ) ? $post__price_list__data['price_list__table_title1'] : 'الخدمة';
-						$price_list__table_title2 = ( ( isset( $post__price_list__data['price_list__table_title2'] ) && !empty( $post__price_list__data['price_list__table_title2'] ) ) ) ? $post__price_list__data['price_list__table_title2'] : 'القيمة';
-
-						echo '<div class="yc-shortcode--price_list--items">';
-
-				           	echo '<table class="price-table">';
-				        		echo '<thead>';
-			            			echo '<tr>';
-			                			echo '<th style="width:50%">'.$price_list__table_title1.'</th>';
-			            				echo '<th style="width:50%">'.$price_list__table_title2.'</th>';
-			            			echo '</tr>';
-			            		echo '</thead>';
-
-				            	echo '<tbody>';	            
-						            foreach ($post__price_list__data['price_list__items'] as $tr) {
-						                echo '<tr>';
-							                echo '<td>'.$tr['title'].'</td>';
-							                echo '<td>'.$tr['value'].'</td>';
-						                echo '</tr>';
-						            }
-			            		echo '</tbody>';
-
-			            	echo '</table>';
-
+						echo '<div class="kpp-packages" role="listbox" aria-label="باقات الأسعار">';
+						$i = 0;
+						foreach ( $post__price_list__data['price_list__items'] as $tr ) {
+							$title = isset( $tr['title'] ) ? $tr['title'] : '';
+							$value = isset( $tr['value'] ) ? $tr['value'] : '';
+							if ( '' === trim( (string) $title ) ) continue;
+							$amount = $this->extract_amount( $value );
+							$active = ( 0 === $i ) ? ' is-active' : '';
+							echo '<button type="button" class="kpp-package'.$active.'" role="option" aria-pressed="'.( 0 === $i ? 'true' : 'false' ).'" data-package="'.esc_attr( $title ).'" data-amount="'.esc_attr( $amount ).'" data-amount-raw="'.esc_attr( $value ).'" data-currency="'.esc_attr( $currency ).'">';
+								echo '<span class="kpp-package-name">'.esc_html( $title ).'</span>';
+								echo '<span class="kpp-package-price">'.esc_html( $value );
+									if ( $amount && false === strpos( (string) $value, (string) $currency ) ) {
+										echo ' <small>'.esc_html( $currency ).'</small>';
+									}
+								echo '</span>';
+							echo '</button>';
+							$i++;
+						}
 						echo '</div>';
+					}
 
+					# نموذج الحجز + زر ادفع الآن
+					if ( class_exists( 'Kayan_Price_Pay' ) ) {
+						Kayan_Price_Pay::render_form( array(
+							'service' => $service_title,
+							'uid'     => $uid,
+						) );
 					}
 
 				echo '</div>';
@@ -76,18 +96,18 @@ class price_list_short_code{
                 array(
                     'id'=> 'title_price_list_short_code',
                     'type'=>'Title',
-                    'title'=>'قم باضافة المميزات في المكان المراد اضافته ف المحتوى ',
-                    'disc'=>'انسخ هذا الكود   <code data-copy-action="[post_prices]"><input type="hidden" value="[post_prices]">[post_prices]</code>'
+                    'title'=>'حجز تفاعلي + دفع — ضع الكود داخل المحتوى',
+                    'disc'=>'انسخ هذا الكود   <code data-copy-action="[post_prices]"><input type="hidden" value="[post_prices]">[post_prices]</code> — كل صف في الجدول يتحول إلى باقة قابلة للاختيار (مثال: الأساسية / المتقدمة / البريميوم).'
                 ),
 
                 array(
                     'id'=> 'hide_price_list__section',
                     'type'=>'SwitchBox',
-                    'title'=>'إخفاء المميزات من المحتوى',
+                    'title'=>'إخفاء شريحة الأسعار/الحجز من المحتوى',
                 ),
 
 				array(
-					'title'  =>'إعدادات المميزات',
+					'title'  =>'إعدادات الباقات والحجز',
 					'type'  => 'SingleGroup',
 					'id'    => 'post__price_list__data',
 					'is__open'=>true,
@@ -95,45 +115,45 @@ class price_list_short_code{
 		                array(
 		                    'id'=> 'price_list__title',
 		                    'type'=>'Text',
-		                    'title'=>'عنوان الجدول',
+		                    'title'=>'عنوان قسم الحجز',
 		                ),
 		                array(
 		                    'id'=> 'price_list__content',
 		                    'type'=>'TextArea',
-		                    'title'=> 'وصف الجدول',
+		                    'title'=> 'وصف قسم الحجز',
 		                ),
 
 		                array(
 		                    'id'=> 'price_exptes__title',
 		                    'type'=>'Title',
-		                    'title'=>'إعدادات رأس الجدول',
+		                    'title'=>'أسماء أعمدة الجدول (للمرجع في الأدمن)',
 		                ),
 
 		                array(
 		                    'id'=> 'price_list__table_title1',
 		                    'type'=>'Text',
-		                    'title'=>'عنوان الخدمة',
+		                    'title'=>'عنوان اسم الباقة (مثال: الباقة)',
 		                ),
 		                array(
 		                    'id'=> 'price_list__table_title2',
 		                    'type'=>'Text',
-		                    'title'=> 'عنوان القيمة',
+		                    'title'=> 'عنوان السعر (مثال: القيمة)',
 		                ),
 
 				        array(
-				            'title'=>'إضافة عناصر الجدول',
+				            'title'=>'باقات الأسعار (كل صف = باقة قابلة للاختيار)',
 				            'id'=> 'price_list__items',
 				            'type'=>'GroupsField',
 				            'fields'=>array(
 				                array(
 				                    'id'=> 'title',
 				                    'type'=>'Text',
-				                    'title'=>'الخدمة',
+				                    'title'=>'اسم الباقة (الأساسية / المتقدمة / البريميوم)',
 				                ),
 				                array(
 				                    'id'=> 'value',
 				                    'type'=>'Text',
-				                    'title'=> 'القيمة',
+				                    'title'=> 'السعر (مثال: 299 أو 299 درهم)',
 				                ),		                
 				            ),
 				        ),
