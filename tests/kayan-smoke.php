@@ -155,12 +155,11 @@ assert_true( strlen( $admin_m ) > 1000, 'admin-mobile.css non-empty' );
 
 # 9) Version
 $style = file_get_contents( "$theme/style.css" );
-assert_true( false !== strpos( $style, 'Version: 1.4.7' ), 'style.css version 1.4.7' );
+assert_true( false !== strpos( $style, 'Version: 1.4.8' ), 'style.css version 1.4.8' );
 
-# Interactive price booking + floating CTA + Rank Math pack
+# Interactive price booking + floating CTA
 assert_true( file_exists( "$theme/components/packs/kayan-price-pay/setup.php" ), 'kayan-price-pay pack exists' );
 assert_true( file_exists( "$theme/components/packs/kayan-price-pay/assets/js/kayan-price-pay.js" ), 'kayan-price-pay.js exists' );
-assert_true( file_exists( "$theme/components/packs/kayan-rankmath/setup.php" ), 'kayan-rankmath pack exists' );
 $price_list = file_get_contents( "$theme/components/packs/shortcodes/codes/price_list.php" );
 assert_true( false !== strpos( $price_list, 'kayan-price-booking' ), 'price_list interactive booking' );
 assert_true( false !== strpos( $price_list, 'kpp-package' ), 'price_list package cards' );
@@ -168,20 +167,31 @@ $footer = file_get_contents( "$theme/components/packs/#footer/part.php" );
 assert_true( false !== strpos( $footer, 'kayanBookCta' ), 'footer floating book CTA' );
 $pay_js = file_get_contents( "$theme/components/packs/kayan-price-pay/assets/js/kayan-price-pay.js" );
 assert_true( false !== strpos( $pay_js, 'rukn-eltatawer-pay.tanceq.com' ), 'pay URL in JS' );
-$rm = file_get_contents( "$theme/components/packs/kayan-rankmath/setup.php" );
-assert_true( false !== strpos( $rm, "rank_math/frontend/disable" ), 'rank math frontend force-enable' );
+
+# Rank Math = storage only via kayan-seo (NOT full frontend)
+assert_true( file_exists( "$theme/components/packs/kayan-seo/compatibility.php" ), 'kayan-seo compatibility exists' );
+assert_true( file_exists( "$theme/components/packs/kayan-seo/rank-math-bridge.php" ), 'kayan-seo bridge exists' );
+assert_true( ! file_exists( "$theme/components/packs/kayan-rankmath/setup.php" ), 'legacy kayan-rankmath force-enable removed' );
+$compat = file_get_contents( "$theme/components/packs/kayan-seo/compatibility.php" );
+assert_true( false !== strpos( $compat, "rank_math/frontend/disable" ), 'RM frontend disable filter' );
+assert_true( false !== strpos( $compat, '__return_true' ), 'RM frontend disable = true' );
+$bridge = file_get_contents( "$theme/components/packs/kayan-seo/rank-math-bridge.php" );
+assert_true( false !== strpos( $bridge, 'rank_math_title' ), 'bridge reads rank_math_title' );
+assert_true( false !== strpos( $bridge, 'rank_math_description' ), 'bridge reads rank_math_description' );
 
 # Rank Math / logo / sortable / wrap fixes
 $enq = file_get_contents( "$theme/components/packs/Enqueues/setup.php" );
 assert_true( false !== strpos( $enq, 'kayan_is_rank_math_active' ), 'rank math helper present' );
-assert_true( false !== strpos( $enq, 'kayan_force_rank_math_assets' ), 'rank math force enqueue present' );
+assert_true( false === strpos( $enq, 'function kayan_force_rank_math_assets' ), 'no force RM frontend enqueue' );
 assert_true( false === strpos( $enq, 'wp_deregister_script( $handle )' ), 'no deregister of front scripts' );
 $header = file_get_contents( "$theme/components/packs/#header/part.php" );
 assert_true( false !== strpos( $header, 'has-logo-image' ), 'logo has-logo-image class' );
 assert_true( false !== strpos( $header, 'data-no-lazy' ), 'logo skips LiteSpeed lazy' );
-assert_true( false !== strpos( $header, 'fa-free-fixes.css?v=1.4.7' ), 'header asset version 1.4.7' );
+assert_true( false !== strpos( $header, 'fa-free-fixes.css?v=1.4.8' ), 'header asset version 1.4.8' );
 $schema = file_get_contents( "$theme/components/packs/schema/setup.php" );
-assert_true( false !== strpos( $schema, 'kayan_is_rank_math_active' ) || false !== strpos( $schema, 'RANK_MATH' ), 'schema skips when Rank Math active' );
+assert_true( false !== strpos( $schema, "add_action('wp_head', array( \$this,'insert__schema')" ), 'schema always registered for KAYAN SEO' );
+# Setup يجب ألا يخرج مبكراً بسبب وجود Rank Math (واجهة RM معطّلة)
+assert_true( false === strpos( $schema, 'kayan_is_rank_math_active' ), 'schema Setup ignores Rank Math plugin presence' );
 assert_true( file_exists( "$theme/components/packs/FieldsMachine/UI/css/admin-ui-fixes.css" ), 'admin-ui-fixes.css exists' );
 $fm = file_get_contents( "$theme/components/packs/FieldsMachine/Enqueues.php" );
 assert_true( false !== strpos( $fm, 'kayanInitSortables' ), 'admin sortable bootstrap present' );

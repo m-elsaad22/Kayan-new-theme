@@ -122,36 +122,9 @@ function disable_all_scripts() {
 }
 add_action('wp_enqueue_scripts', 'disable_all_scripts', 999999);
 
-# تأكيد إعادة صفّ Rank Math فقط بعد أي dequeue متأخر
-function kayan_force_rank_math_assets() {
-    if ( is_admin() || ! kayan_is_rank_math_active() ) {
-        return;
-    }
-    global $wp_scripts, $wp_styles;
-    if ( isset( $wp_scripts->registered ) && is_array( $wp_scripts->registered ) ) {
-        foreach ( $wp_scripts->registered as $handle => $obj ) {
-            $handle = (string) $handle;
-            $src = isset( $obj->src ) ? (string) $obj->src : '';
-            $is_rm = ( 0 === strpos( $handle, 'rank-math' ) || 0 === strpos( $handle, 'rank_math' )
-                || false !== strpos( $src, 'rank-math' ) || false !== strpos( $src, 'seo-by-rank-math' ) );
-            if ( $is_rm && ! in_array( $handle, (array) $wp_scripts->queue, true ) ) {
-                wp_enqueue_script( $handle );
-            }
-        }
-    }
-    if ( isset( $wp_styles->registered ) && is_array( $wp_styles->registered ) ) {
-        foreach ( $wp_styles->registered as $handle => $obj ) {
-            $handle = (string) $handle;
-            $src = isset( $obj->src ) ? (string) $obj->src : '';
-            $is_rm = ( 0 === strpos( $handle, 'rank-math' ) || 0 === strpos( $handle, 'rank_math' )
-                || false !== strpos( $src, 'rank-math' ) || false !== strpos( $src, 'seo-by-rank-math' ) );
-            if ( $is_rm && ! in_array( $handle, (array) $wp_styles->queue, true ) ) {
-                wp_enqueue_style( $handle );
-            }
-        }
-    }
-}
-add_action( 'wp_enqueue_scripts', 'kayan_force_rank_math_assets', 1000000 );
+# Rank Math على الواجهة: الإخراج معطّل عبر kayan-seo/compatibility.php (تخزين فقط).
+# نحمي أصول Rank Math في الأدمن فقط — disable_all_scripts لا يعمل أصلاً في is_admin().
+# لا نُعيد فرض enqueue لأصول Rank Math على الفرونت (غير مطلوبة بعد تعطيل الواجهة).
 
 # لا تحذف ?ver= من أصول Rank Math (قد يسبب كاش قديم)
 function remove_script_version($src) {

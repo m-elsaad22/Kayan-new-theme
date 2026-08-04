@@ -408,10 +408,9 @@ class YourColor__Schema{
 	}
 
 	public function Setup(){
-		# عند وجود Rank Math: لا نخرج schema مكرر من القالب
-		if ( function_exists( 'kayan_is_rank_math_active' ) ? kayan_is_rank_math_active() : ( class_exists( 'RankMath' ) || class_exists( 'RankMath\\RankMath' ) || defined( 'RANK_MATH_VERSION' ) ) ) {
-			return;
-		}
+		# KAYAN SEO يملك مخرجات Schema في الواجهة.
+		# Rank Math Active للتخزين فقط — واجهته JSON-LD معطّلة عبر kayan-seo/compatibility.php
+		# لذلك لا نتخطى Schema القالب عند وجود الإضافة (وإلا لن يظهر أي JSON-LD).
 		add_action('wp_head', array( $this,'insert__schema') );
 	}
 }
