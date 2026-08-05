@@ -155,7 +155,7 @@ assert_true( strlen( $admin_m ) > 1000, 'admin-mobile.css non-empty' );
 
 # 9) Version
 $style = file_get_contents( "$theme/style.css" );
-assert_true( false !== strpos( $style, 'Version: 1.4.9' ), 'style.css version 1.4.9' );
+assert_true( false !== strpos( $style, 'Version: 1.4.10' ), 'style.css version 1.4.10' );
 
 # Interactive price booking + floating CTA
 assert_true( file_exists( "$theme/components/packs/kayan-price-pay/setup.php" ), 'kayan-price-pay pack exists' );
@@ -208,7 +208,7 @@ assert_true( false === strpos( $enq, 'wp_deregister_script( $handle )' ), 'no de
 $header = file_get_contents( "$theme/components/packs/#header/part.php" );
 assert_true( false !== strpos( $header, 'has-logo-image' ), 'logo has-logo-image class' );
 assert_true( false !== strpos( $header, 'data-no-lazy' ), 'logo skips LiteSpeed lazy' );
-assert_true( false !== strpos( $header, 'fa-free-fixes.css?v=1.4.9' ), 'header asset version 1.4.9' );
+assert_true( false !== strpos( $header, 'fa-free-fixes.css?v=1.4.10' ), 'header asset version 1.4.10' );
 $schema = file_get_contents( "$theme/components/packs/schema/setup.php" );
 assert_true( false !== strpos( $schema, "add_action('wp_head', array( \$this,'insert__schema')" ), 'schema always registered for KAYAN SEO' );
 # Setup يجب ألا يخرج مبكراً بسبب وجود Rank Math (واجهة RM معطّلة)
