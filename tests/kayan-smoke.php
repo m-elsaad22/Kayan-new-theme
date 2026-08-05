@@ -217,6 +217,8 @@ assert_true( file_exists( "$theme/components/packs/FieldsMachine/UI/css/admin-ui
 $fm = file_get_contents( "$theme/components/packs/FieldsMachine/Enqueues.php" );
 assert_true( false !== strpos( $fm, 'kayanInitSortables' ), 'admin sortable bootstrap present' );
 assert_true( false === strpos( $fm, '. -widget-open' ), 'sortable cancel selectors not broken' );
+assert_true( false !== strpos( $fm, 'should_load_admin_assets' ), 'FieldsMachine admin assets are page-scoped' );
+assert_true( false !== strpos( $fm, "stripos( \$page, 'yts-'" ) || false !== strpos( $fm, "stripos( $page, 'yts-'" ) || false !== strpos( $fm, "yts-" ), 'FieldsMachine scopes to yts pages' );
 $js = file_get_contents( "$theme/components/packs/FieldsMachine/UI/Custom-Setup.js" );
 assert_true( false !== strpos( $js, 'kayanInitSortables' ), 'Custom-Setup calls kayanInitSortables' );
 $cssfix = file_get_contents( "$theme/components/packs/FieldsMachine/UI/Custom-Style.css" );

@@ -9,8 +9,39 @@ class YC__CFM_Enqueues {
 
 	}
 
-	public function YC__CFM_AdminFooter(){
+	/**
+	 * أصول FieldsMachine فقط في صفحات إعدادات القالب (YTS / yts-*)
+	 * وشاشات تحرير المنشورات/التصنيفات — لا تُحمَّل على صفحات Rank Math وغيرها.
+	 */
+	private function should_load_admin_assets( $hook = '' ) {
+		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+		if ( 'YTS' === $page || 'yts' === $page || 0 === stripos( $page, 'yts-' ) ) {
+			return true;
+		}
+		if ( is_string( $hook ) && '' !== $hook && false !== stripos( $hook, 'yts' ) ) {
+			return true;
+		}
+		if ( in_array( $hook, array( 'post.php', 'post-new.php', 'term.php', 'edit-tags.php' ), true ) ) {
+			return true;
+		}
+		# admin_footer لا يمرّر $hook — استخدم $pagenow / الشاشة الحالية
+		global $pagenow;
+		if ( in_array( (string) $pagenow, array( 'post.php', 'post-new.php', 'term.php', 'edit-tags.php' ), true ) ) {
+			return true;
+		}
+		if ( function_exists( 'get_current_screen' ) ) {
+			$screen = get_current_screen();
+			if ( $screen && ! empty( $screen->id ) && false !== stripos( (string) $screen->id, 'yts' ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
 
+	public function YC__CFM_AdminFooter(){
+		if ( ! $this->should_load_admin_assets() ) {
+			return;
+		}
 
 		# echo '<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>';
 		echo '<script type="text/javascript" src="'.$this->JS__URL.'bootstrap.bundle.min.js"></script>';
@@ -54,7 +85,10 @@ class YC__CFM_Enqueues {
 
 	}
 
-	public function YC__CFM_Admin_Enqueue(){
+	public function YC__CFM_Admin_Enqueue( $hook = '' ){
+		if ( ! $this->should_load_admin_assets( $hook ) ) {
+			return;
+		}
 		echo '<link rel="stylesheet" type="text/css" media="all" href="'.$this->Style__URL.'codemirror.css" />';
 		echo '<link rel="stylesheet" type="text/css" media="all" href="'.$this->Style__URL.'richtext.min.css" />';
 		echo '<link rel="stylesheet" href="'.get_template_directory_uri().'/components/styles/FontAwesome/css/all.min.css">';
