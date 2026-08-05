@@ -61,7 +61,7 @@ if ( ! class_exists( 'Kayan_Price_Pay' ) ) {
 					'payBase'     => self::PAY_BASE,
 					'service'     => self::service_title(),
 					'currency'    => (string) get_option( 'currency', 'AED' ),
-					'scrollRatio' => 0.01,
+					'scrollRatio' => 0,
 					'i18n'        => array(
 						'selectPackage' => 'اختر باقة أولاً',
 						'required'      => 'يرجى تعبئة الحقول المطلوبة',

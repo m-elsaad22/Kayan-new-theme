@@ -102,7 +102,8 @@ class price extends YC__WidgetsMachine{
 		$service_title = is_singular() ? get_the_title() : get_bloginfo( 'name' );
 		$uid = 'kpp_widget_' . uniqid();
 
-		echo '<div class="wrap kayan-price-booking" id="kayan-price-booking" data-service="'.esc_attr( $service_title ).'">';
+		echo '<div class="wrap">';
+		echo '<div class="kayan-price-booking kayan-price-booking--widget" id="kayan-price-booking" data-service="'.esc_attr( $service_title ).'">';
 
 			# رأس القسم
 			echo '<div class="shead rv">';
@@ -146,7 +147,8 @@ class price extends YC__WidgetsMachine{
 				) );
 			}
 
-		echo '</div>';
+		echo '</div>'; # .kayan-price-booking--widget
+		echo '</div>'; # .wrap
 
 	}
 

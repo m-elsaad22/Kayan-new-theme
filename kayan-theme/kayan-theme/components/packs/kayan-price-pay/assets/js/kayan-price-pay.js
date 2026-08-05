@@ -157,10 +157,17 @@
 		var parent = boxes[0].parentElement;
 		if (!parent) return;
 
-		if (!parent.classList.contains('kayan-price-booking')) {
-			parent.classList.add('kayan-price-booking');
-			parent.id = parent.id || 'kayan-price-booking';
-			parent.setAttribute('data-service', CFG.service || '');
+		// غلاف مستقل حتى لا نكسر صف/شبكة كروت الأسعار
+		var root = parent.classList.contains('kayan-price-booking')
+			? parent
+			: (parent.closest && parent.closest('.kayan-price-booking'));
+		if (!root) {
+			root = document.createElement('div');
+			root.className = 'kayan-price-booking kayan-price-booking--boxes';
+			root.id = 'kayan-price-booking';
+			root.setAttribute('data-service', CFG.service || '');
+			parent.parentNode.insertBefore(root, parent);
+			root.appendChild(parent);
 		}
 
 		boxes.forEach(function (box) {
@@ -183,14 +190,14 @@
 			if (oldBtn) {
 				oldBtn.addEventListener('click', function (e) {
 					e.preventDefault();
-					setActivePackage(parent, box);
-					var form = qs('.kpp-form', parent);
+					setActivePackage(root, box);
+					var form = qs('.kpp-form', root);
 					if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
 				});
 			}
 		});
 
-		if (!qs('.kpp-form', parent)) {
+		if (!qs('.kpp-form', root)) {
 			var formWrap = document.createElement('div');
 			formWrap.className = 'kpp-form-mount';
 			formWrap.innerHTML =
@@ -213,10 +220,10 @@
 				'<button type="submit" class="kpp-pay-btn"><i class="fas fa-lock" aria-hidden="true"></i><span>ادفع الآن</span></button>' +
 				'<p class="kpp-form-hint">بعد الضغط سيتم تحويلك لصفحة الدفع الآمنة لإتمام الطلب.</p>' +
 				'</form>';
-			parent.appendChild(formWrap);
+			root.appendChild(formWrap);
 		}
 
-		bindBookingRoot(parent);
+		bindBookingRoot(root);
 	}
 
 	function fieldHtml(name, label, type, required, placeholder, full) {
@@ -262,21 +269,23 @@
 	}
 
 	function initFloatingCta() {
+		var hasBooking =
+			qs('.yc-shortcode--price_list') ||
+			qs('#kayan-price-booking') ||
+			qs('.kayan-price-booking .kpp-form') ||
+			qs('.kpp-form');
+
 		var cta = qs('#kayanBookCta');
-		if (!cta) return;
 
-		var ratio = typeof CFG.scrollRatio === 'number' ? CFG.scrollRatio : 0.01;
-
-		function onScroll() {
-			var doc = document.documentElement;
-			var max = Math.max(doc.scrollHeight - window.innerHeight, 1);
-			var p = window.scrollY / max;
-			if (p >= ratio) cta.classList.add('is-visible');
-			else cta.classList.remove('is-visible');
+		// لا يظهر زر احجز الآن إلا بوجود بلوك الأسعار/الحجز
+		if (!hasBooking) {
+			if (cta) cta.parentNode.removeChild(cta);
+			return;
 		}
 
-		window.addEventListener('scroll', onScroll, { passive: true });
-		onScroll();
+		if (!cta) return;
+
+		cta.classList.add('is-visible');
 
 		cta.addEventListener('click', function (e) {
 			e.preventDefault();
@@ -284,13 +293,9 @@
 				qs('#kayan-price-booking') ||
 				qs('.kayan-price-booking') ||
 				qs('.yc-shortcode--price_list') ||
-				qs('#kayan-booking-wizard') ||
-				qs('.kbw-wizard') ||
+				qs('.kpp-form') ||
 				qs('.price-grid');
-			if (!target) {
-				window.location.hash = 'kayan-price-booking';
-				return;
-			}
+			if (!target) return;
 			target.scrollIntoView({ behavior: 'smooth', block: 'start' });
 		});
 	}

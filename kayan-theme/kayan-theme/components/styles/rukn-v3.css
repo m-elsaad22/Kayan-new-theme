@@ -171,8 +171,8 @@ footer{background:var(--footer);color:rgba(255,255,255,.82);padding:70px 0 0}
 
 .fbottom{border-top:1px solid rgba(255,255,255,.12);padding:22px 0;text-align:center;font-size:13.5px}
 
-/* ═══════════════ Floating call + WhatsApp stack ═══════════════ */
-.fab-stack{position:fixed;bottom:26px;inset-inline-start:26px;z-index:850;display:flex;flex-direction:column;gap:14px;opacity:0;visibility:hidden;transform:translateY(14px);transition:.3s}
+/* ═══════════════ Floating call + WhatsApp stack (يمين في RTL — يظهر فوراً) ═══════════════ */
+.fab-stack{position:fixed;bottom:26px;inset-inline-start:26px;inset-inline-end:auto;left:auto;right:auto;z-index:850;display:flex;flex-direction:column;gap:14px;opacity:1;visibility:visible;transform:none;transition:.3s;pointer-events:auto}
 .fab-stack.show{opacity:1;visibility:visible;transform:none}
 .fab-btn{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:23px;box-shadow:0 12px 30px rgba(10,31,78,.35);position:relative}
 .fab-call{background:linear-gradient(135deg,var(--blue),var(--turq))}
