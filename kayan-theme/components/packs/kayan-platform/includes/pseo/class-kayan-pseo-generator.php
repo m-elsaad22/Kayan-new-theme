@@ -239,7 +239,7 @@ class Kayan_PSEO_Generator {
 	 */
 	public function status() {
 		return array(
-			'phase'                => '2.5.1',
+			'phase'                => '2.6.0',
 			'generation_enabled'   => false,
 			'entity_types'         => count( $this->entities->get_entity_types() ),
 			'patterns'             => count( $this->patterns->all() ),
