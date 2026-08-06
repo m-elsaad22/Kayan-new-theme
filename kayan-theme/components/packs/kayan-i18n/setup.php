@@ -16,6 +16,10 @@ if ( ! function_exists( 'kayan_i18n_register_rewrites' ) ) {
 		if ( ! kayan_i18n_is_enabled() ) {
 			return;
 		}
+		// Phase 2+: kayan-platform Country Router owns rewrites (no duplication).
+		if ( function_exists( 'kayan_platform_owns_routing' ) && kayan_platform_owns_routing() ) {
+			return;
+		}
 
 		foreach ( kayan_i18n_get_countries() as $code => $data ) {
 			$prefix = isset( $data['path'] ) ? trim( (string) $data['path'], '/' ) : '';
@@ -52,6 +56,10 @@ add_action( 'init', 'kayan_i18n_flush_rewrites_once', 99 );
 if ( ! function_exists( 'kayan_i18n_resolve_localized_request' ) ) {
 	function kayan_i18n_resolve_localized_request( $query ) {
 		if ( is_admin() || ! $query->is_main_query() ) {
+			return;
+		}
+		// Phase 2+: Content Resolution Engine owns localized queries.
+		if ( function_exists( 'kayan_platform_owns_routing' ) && kayan_platform_owns_routing() ) {
 			return;
 		}
 

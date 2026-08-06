@@ -1,6 +1,6 @@
 <?php
 /**
- * Kayan_Platform — service container / facade for Phase 1 core.
+ * Kayan_Platform — service container / facade (Phase 1 + Phase 2).
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -33,6 +33,15 @@ class Kayan_Platform {
 	/** @var Kayan_SEO_Bridge */
 	public $seo;
 
+	/** @var Kayan_Programmatic_SEO */
+	public $programmatic;
+
+	/** @var Kayan_Country_Router */
+	public $router;
+
+	/** @var Kayan_Content_Resolver */
+	public $resolver;
+
 	/** @var bool */
 	private $booted = false;
 
@@ -47,13 +56,21 @@ class Kayan_Platform {
 	}
 
 	private function __construct() {
-		$this->countries = new Kayan_Country_Engine();
-		$this->languages = new Kayan_Language_Engine();
-		$this->context   = new Kayan_Context( $this->countries, $this->languages );
-		$this->settings  = new Kayan_Country_Settings( $this->countries );
-		$this->content   = new Kayan_Content_Locale();
-		$this->urls      = new Kayan_URL( $this->countries, $this->languages );
-		$this->seo       = new Kayan_SEO_Bridge(
+		$this->countries    = new Kayan_Country_Engine();
+		$this->languages    = new Kayan_Language_Engine();
+		$this->context      = new Kayan_Context( $this->countries, $this->languages );
+		$this->settings     = new Kayan_Country_Settings( $this->countries );
+		$this->content      = new Kayan_Content_Locale();
+		$this->urls         = new Kayan_URL( $this->countries, $this->languages );
+		$this->programmatic = new Kayan_Programmatic_SEO();
+		$this->router       = new Kayan_Country_Router(
+			$this->countries,
+			$this->languages,
+			$this->urls,
+			$this->programmatic
+		);
+		$this->resolver     = new Kayan_Content_Resolver( $this->context, $this->content, $this->router );
+		$this->seo          = new Kayan_SEO_Bridge(
 			$this->context,
 			$this->settings,
 			$this->urls,
@@ -72,11 +89,13 @@ class Kayan_Platform {
 		$this->booted = true;
 
 		$this->content->register();
+		$this->programmatic->register();
+		$this->router->register();
+		$this->resolver->register();
+		$this->seo->set_routing_services( $this->router, $this->content );
 		$this->seo->register();
 
 		/**
-		 * Fires when the platform core is ready.
-		 *
 		 * @param Kayan_Platform $platform Platform instance.
 		 */
 		do_action( 'kayan_platform_booted', $this );

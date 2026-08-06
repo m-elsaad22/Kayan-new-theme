@@ -80,29 +80,50 @@ if ( ! function_exists( 'kayan_i18n_print_switcher_script' ) ) {
 "use strict";
 var CFG=<?php echo $cfg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
 function detect(){
-  var p=location.pathname;
+  var p=location.pathname||"/";
   var country="ae";
   var paths=CFG.countryPaths||{};
+  var lang="ar";
+  var rest=p;
+  // Canonical language-first: /en/{country?}/…
+  if(rest==="/en"||rest==="/en/"||rest.indexOf("/en/")===0){
+    lang="en";
+    rest=rest.replace(/^\/en\/?/,"/")||"/";
+  }
   Object.keys(paths).forEach(function(code){
     var base=paths[code]||"";
     if(!base)return;
-    if(p===base||p===base+"/"||p.indexOf(base+"/")===0)country=code;
+    if(rest===base||rest===base+"/"||rest.indexOf(base+"/")===0)country=code;
   });
+  // Legacy /{country}/en/… detection (pre-301)
+  if(lang==="ar"){
+    Object.keys(paths).forEach(function(code){
+      var base=paths[code]||"";
+      if(!base)return;
+      if(p===base||p===base+"/"||p.indexOf(base+"/")===0){
+        var after=p.slice(base.length)||"/";
+        if(after==="/en"||after==="/en/"||after.indexOf("/en/")===0){country=code;lang="en";rest=after.replace(/^\/en\/?/,"/")||"/";}
+      }
+    });
+  }
   var countryBase=paths[country]||"";
-  var pathAfterCountry=p.slice(countryBase.length)||"/";
-  var isEn=(pathAfterCountry==="/en"||pathAfterCountry==="/en/"||pathAfterCountry.indexOf("/en/")===0);
-  var lang=isEn?"en":"ar";
-  var slug=pathAfterCountry;
-  if(isEn){slug=pathAfterCountry.replace(/^\/en\/?/,"/")||"/"; if(slug!=="/"&&slug[0]!=="/")slug="/"+slug;}
+  if(countryBase&&(rest===countryBase||rest.indexOf(countryBase+"/")===0||rest===countryBase+"/")){
+    rest=rest.slice(countryBase.length)||"/";
+  }
+  var slug=rest||"/";
+  if(slug!=="/"&&slug[0]!=="/")slug="/"+slug;
   if(slug!=="/"&&slug.slice(-1)==="/")slug=slug.slice(0,-1);
   return{country:country,lang:lang,slug:slug};
 }
 function buildURL(country,lang,slug){
   var base=location.protocol+"//"+CFG.baseDomain;
   var countryPath=CFG.countryPaths[country]||"";
-  var s=(slug&&slug!=="/")?slug:"";
-  if(lang==="en") return base+countryPath+"/en"+(s||"")+"/";
-  return base+countryPath+(s||"/");
+  var s=(slug&&slug!=="/")?String(slug).replace(/^\/+|\/+$/g,""):"";
+  var parts=[];
+  if(lang==="en") parts.push("en");
+  if(countryPath) parts.push(countryPath.replace(/^\/+|\/+$/g,""));
+  if(s) parts.push(s);
+  return base+"/"+(parts.length?parts.join("/")+"/":"");
 }
 function navigate(country,lang){
   var s=detect();

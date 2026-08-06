@@ -7,6 +7,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+if ( ! function_exists( 'kayan_platform_owns_routing' ) ) {
+	/**
+	 * When true, kayan-platform owns rewrite rules + content resolution.
+	 * kayan-i18n must not register duplicate rewrites/resolvers.
+	 *
+	 * @return bool
+	 */
+	function kayan_platform_owns_routing() {
+		/**
+		 * @param bool $owns Owns routing.
+		 */
+		return (bool) apply_filters( 'kayan_platform_owns_routing', true );
+	}
+}
+
 if ( ! function_exists( 'kayan_platform_context' ) ) {
 	/**
 	 * @return array{country:string,language:string}

@@ -21,6 +21,14 @@ if ( ! function_exists( 'kayan_i18n_detect_country_from_path' ) ) {
 		$countries = kayan_i18n_get_countries();
 		$matches   = array();
 
+		// Language-first canonical: /en/{country}/…
+		if ( preg_match( '#^/en/([a-z]{2})(/|$)#', $path, $m ) ) {
+			$code = $m[1];
+			if ( isset( $countries[ $code ] ) && ! empty( $countries[ $code ]['path'] ) ) {
+				return $code;
+			}
+		}
+
 		foreach ( $countries as $code => $data ) {
 			$prefix = isset( $data['path'] ) ? trim( (string) $data['path'], '/' ) : '';
 			if ( $prefix === '' ) {
@@ -74,7 +82,14 @@ if ( ! function_exists( 'kayan_i18n_get_country_path' ) ) {
 
 if ( ! function_exists( 'kayan_i18n_detect_lang_from_path' ) ) {
 	function kayan_i18n_detect_lang_from_path( $path = null ) {
-		$path    = null === $path ? kayan_i18n_get_request_path() : $path;
+		$path = null === $path ? kayan_i18n_get_request_path() : $path;
+
+		// Canonical language-first: /en/…
+		if ( $path === '/en' || $path === '/en/' || strpos( $path, '/en/' ) === 0 ) {
+			return 'en';
+		}
+
+		// Legacy /{country}/en/… (still detectable for 301 source paths)
 		$country = kayan_i18n_detect_country_from_path( $path );
 		$base    = kayan_i18n_get_country_path( $country );
 		$rest    = $path;
@@ -87,9 +102,6 @@ if ( ! function_exists( 'kayan_i18n_detect_lang_from_path' ) ) {
 		}
 
 		if ( $rest === '/en' || $rest === '/en/' || strpos( $rest, '/en/' ) === 0 ) {
-			return 'en';
-		}
-		if ( strpos( $path, '/en' ) === 0 && $base === '' ) {
 			return 'en';
 		}
 		return 'ar';
@@ -193,17 +205,28 @@ if ( ! function_exists( 'kayan_i18n_get_switcher_config' ) ) {
 
 if ( ! function_exists( 'kayan_i18n_build_url' ) ) {
 	function kayan_i18n_build_url( $country, $lang, $slug = '/' ) {
-		$base        = trailingslashit( home_url() );
+		// Delegate to platform canonical builder (language-first) — no duplicated URL logic.
+		if ( function_exists( 'kayan_platform' ) && defined( 'KAYAN_PLATFORM_LOADED' ) ) {
+			return kayan_platform()->urls->build( $country, $lang, $slug );
+		}
+
+		$base         = trailingslashit( home_url() );
 		$country_path = kayan_i18n_get_country_path( $country );
-		$slug        = ( $slug && $slug !== '/' ) ? '/' . trim( (string) $slug, '/' ) : '';
+		$slug         = ( $slug && $slug !== '/' ) ? trim( (string) $slug, '/' ) : '';
+		$parts        = array();
 
 		if ( 'en' === $lang ) {
-			return user_trailingslashit( $base . trim( $country_path . '/en' . $slug, '/' ) );
+			$parts[] = 'en';
 		}
-		if ( $slug === '' || $slug === '/' ) {
-			return user_trailingslashit( $base . trim( $country_path, '/' ) ?: '' );
+		$country_path = trim( (string) $country_path, '/' );
+		if ( $country_path !== '' ) {
+			$parts[] = $country_path;
 		}
-		return user_trailingslashit( $base . trim( $country_path . $slug, '/' ) );
+		if ( $slug !== '' ) {
+			$parts[] = $slug;
+		}
+
+		return user_trailingslashit( $base . implode( '/', $parts ) );
 	}
 }
 

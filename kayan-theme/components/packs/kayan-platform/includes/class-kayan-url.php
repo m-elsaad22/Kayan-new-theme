@@ -2,13 +2,10 @@
 /**
  * URL Architecture helper.
  *
- * Phase 1 ACTIVE mode = LEGACY (existing kayan-i18n builders):
- *   / , /sa/ , /en/ , /sa/en/ …
- *
- * TARGET mode (not activated — documented for Phase 2+ routing):
+ * Phase 2 ACTIVE (canonical) mode = LANGUAGE_FIRST:
  *   / , /sa/ , /en/ , /en/sa/ …
  *
- * This class never registers rewrite rules.
+ * Legacy /{country}/en/… is not built anymore; Country Router 301s those requests.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,63 +26,56 @@ class Kayan_URL {
 	}
 
 	/**
-	 * Active URL mode. Phase 1 is always legacy unless explicitly filtered
-	 * (filters are for tests/staging — production must keep legacy).
+	 * Canonical URL mode.
 	 *
 	 * @return string
 	 */
 	public function get_mode() {
-		$mode = KAYAN_PLATFORM_URL_MODE_LEGACY;
+		$mode = KAYAN_PLATFORM_URL_MODE_LANG_FIRST;
 
 		/**
-		 * Do not switch to language_first until a dedicated routing phase lands.
-		 *
 		 * @param string $mode URL mode.
 		 */
 		$mode = apply_filters( 'kayan_platform_url_mode', $mode );
 
-		if ( KAYAN_PLATFORM_URL_MODE_LANG_FIRST === $mode ) {
-			// Hard-guard in Phase 1: never activate language-first in this release.
-			if ( ! defined( 'KAYAN_PLATFORM_ALLOW_LANG_FIRST' ) || ! KAYAN_PLATFORM_ALLOW_LANG_FIRST ) {
-				return KAYAN_PLATFORM_URL_MODE_LEGACY;
-			}
-		}
-
-		return $mode;
+		return ( KAYAN_PLATFORM_URL_MODE_LEGACY === $mode )
+			? KAYAN_PLATFORM_URL_MODE_LEGACY
+			: KAYAN_PLATFORM_URL_MODE_LANG_FIRST;
 	}
 
 	/**
-	 * Target architecture documentation (not used for live URLs in Phase 1).
-	 *
 	 * @return array<string,mixed>
 	 */
 	public function get_target_architecture() {
 		return array(
 			'default_country'  => $this->countries->get_default(),
 			'default_language' => $this->languages->get_default(),
+			'canonical_mode'   => KAYAN_PLATFORM_URL_MODE_LANG_FIRST,
+			'active_mode'      => $this->get_mode(),
 			'patterns'         => array(
 				'ar_default' => '/',
 				'ar_country' => '/{country}/',
 				'en_default' => '/en/',
 				'en_country' => '/en/{country}/',
-				'cpt'        => '/{country?}/{lang?}/{post_type}/{slug}/',
+				'cpt'        => '/{lang?}/{country?}/{post_type}/{slug}/',
 			),
 			'examples'         => array(
 				'/',
+				'/sa/',
+				'/qa/',
+				'/en/',
+				'/en/sa/',
 				'/services/pest-control/',
 				'/sa/services/pest-control/',
-				'/qa/services/pest-control/',
-				'/eg/services/pest-control/',
 				'/en/services/pest-control/',
 				'/en/sa/services/pest-control/',
 			),
-			'active_mode'      => $this->get_mode(),
-			'note'             => 'Target patterns activate in a future routing phase. Phase 1 preserves current /{country}/en/ URLs.',
+			'legacy_redirect'  => '/{country}/en/{path} → 301 → /en/{country}/{path}',
 		);
 	}
 
 	/**
-	 * Build a localized URL using the ACTIVE (legacy) builder — no URL changes.
+	 * Build a localized URL using the active canonical builder.
 	 *
 	 * @param string $country Country code.
 	 * @param string $lang    Language code.
@@ -96,15 +86,15 @@ class Kayan_URL {
 		$country = $this->countries->normalize( $country );
 		$lang    = $this->languages->normalize( $lang );
 
-		if ( function_exists( 'kayan_i18n_build_url' ) ) {
-			return kayan_i18n_build_url( $country, $lang, $slug );
+		if ( KAYAN_PLATFORM_URL_MODE_LEGACY === $this->get_mode() ) {
+			return $this->build_legacy( $country, $lang, $slug );
 		}
 
-		return $this->build_legacy_fallback( $country, $lang, $slug );
+		return $this->build_language_first( $country, $lang, $slug );
 	}
 
 	/**
-	 * Future language-first builder (unused in Phase 1 production).
+	 * Language-first canonical builder.
 	 *
 	 * @param string $country Country code.
 	 * @param string $lang    Language code.
@@ -134,12 +124,14 @@ class Kayan_URL {
 	}
 
 	/**
+	 * Legacy builder (kept for emergency rollback via filter only).
+	 *
 	 * @param string $country Country.
 	 * @param string $lang    Lang.
 	 * @param string $slug    Slug.
 	 * @return string
 	 */
-	private function build_legacy_fallback( $country, $lang, $slug = '/' ) {
+	public function build_legacy( $country, $lang, $slug = '/' ) {
 		$base         = trailingslashit( home_url() );
 		$country_path = trim( $this->countries->get_path( $country ), '/' );
 		$slug         = ( $slug && '/' !== $slug ) ? '/' . trim( (string) $slug, '/' ) : '';
@@ -153,7 +145,6 @@ class Kayan_URL {
 			return user_trailingslashit( $base . $country_path );
 		}
 
-		$prefix = $country_path ? $country_path : '';
-		return user_trailingslashit( $base . trim( $prefix . $slug, '/' ) );
+		return user_trailingslashit( $base . trim( $country_path . $slug, '/' ) );
 	}
 }

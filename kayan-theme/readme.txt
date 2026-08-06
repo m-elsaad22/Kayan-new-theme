@@ -3,7 +3,7 @@ Contributors: melsaad
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.5.0
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Tags: rtl-language-support, custom-menu, featured-images, translation-ready
@@ -19,6 +19,13 @@ Tags: rtl-language-support, custom-menu, featured-images, translation-ready
 * Font Awesome 6 Free مستضاف محلياً داخل القالب — بلا اعتماد على CDN خارجي وبلا أي أيقونات مدفوعة.
 
 == Changelog ==
+
+= 1.6.0 =
+* Phase 2: Country Routing Engine (canonical language-first URLs `/en/{country}/…`) + Content Resolution Engine for all public CPTs/taxonomies.
+* Legacy `/{country}/en/…` automatic 301 redirects to canonical URLs.
+* Programmatic SEO entity registry (architecture foundation for large-scale pages).
+* Rank Math remains the only SEO engine — KAYAN extends via filters only (no competing meta/schema/sitemaps/hreflang tags).
+* No frontend/admin redesign, no data migration.
 
 = 1.5.0 =
 * Phase 1 platform core: kayan-platform pack (Country Engine, Language Engine, Context, Country Settings repository, Content Locale meta contracts, URL architecture helper, Rank Math–compatible SEO Bridge).

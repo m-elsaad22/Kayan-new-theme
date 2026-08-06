@@ -2,14 +2,14 @@
 /**
  * Content Locale contracts — meta registered for all public content types.
  *
- * Hybrid model (Phase 1 registers only; no migration / no query changes):
+ * Hybrid model (used by Content Resolution Engine — no migration required):
  * - Missing meta = legacy behavior (visible everywhere, language Arabic).
- * - Shared content: kayan_content_countries = list of countries.
- * - Country variants: unique WP post_name + kayan_public_slug for public path.
+ * - Shared content: assign multiple countries via kayan_content_countries.
+ * - Country variants: unique WP post_name + kayan_public_slug + variant_group.
  * - Translations: kayan_translation_group links language variants.
  *
  * WP constraint: post_name is globally unique per post type — public_slug
- * is the future resolver key for identical public paths across countries.
+ * is the resolver key for identical public paths across countries.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
