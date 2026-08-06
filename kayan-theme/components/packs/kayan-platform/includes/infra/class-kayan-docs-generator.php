@@ -77,6 +77,7 @@ class Kayan_Docs_Generator {
 			'CacheEngine.md'      => $this->doc_cache( $platform ),
 			'SettingsEngine.md'   => $this->doc_settings( $platform ),
 			'Logger.md'           => $this->doc_logger( $platform ),
+			'MigrationEngine.md'  => $this->doc_migration_engine( $platform ),
 			'AdminPlatform.md'    => $this->doc_admin_platform( $platform ),
 			'AdminModules.md'     => $this->doc_admin_modules( $platform ),
 			'AdminPermissions.md' => $this->doc_admin_permissions( $platform ),
@@ -145,25 +146,26 @@ KAYAN is a single-install WordPress SEO platform (no Multisite, no WPML/Polylang
 1. **Country / Language / Context** — request locale
 2. **Routing + Content Resolution** — language-first URLs
 3. **Entity Relationship Engine** — reusable entities + edges
-4. **Dynamic Data Tags** — `{{tag}}` tokens for templates/AI
-5. **Programmatic SEO** — patterns, templates, blocks, blueprints (no generation yet)
-6. **Core Infrastructure** — Query, Cache, Settings, Logger
-7. **Admin Platform** — Module Registry, Permissions, UI Framework, Dashboard foundation
+4. **Dynamic Data Tags** — `{{tag}}` tokens for templates/blocks/AI
+5. **Programmatic SEO Platform** — patterns, templates, blocks, blueprints, generator, queue, scheduler (Phase 4 — generation is live)
+6. **Core Infrastructure** — Query, Cache, Settings, Logger, Migration & Version Engine
+7. **Admin Platform** — Module Registry, Permissions, UI Framework, Dashboard, functional feature modules
 8. **Theme Integration** — Adapters connecting existing KAYAN Theme packs (Phase 3.1)
 9. **SEO Bridge** — Rank Math only (filters, never competing head tags)
 
 ## Design rules
 
-- Prefer existing WP content types; `kayan_pseo` is fallback only
+- Prefer existing WP content types; `kayan_pseo` hosts true multi-entity combinations only
 - Modules must use Query / Cache / Settings / Logger / Entity APIs
 - Admin features register through `kayan_admin()` — no isolated admin pages
 - Do not call `WP_Query`, `get_posts`, `get_option`, or scatter transients in app code
-- Rank Math remains the only SEO engine
+- Rank Math remains the only SEO engine — the Generator only writes RM's own postmeta fields
 - Reuse / extend / wrap existing theme packs — never duplicate implementations
+- Schema/DB changes go through the Migration Engine — never a manual upgrade step
 
 ## Boot order
 
-Content Locale → Programmatic entities → Entity Engine → Data Tags → Cache → Settings Engine → Logger → Query → PSEO → Router → Resolver → SEO Bridge → Admin Platform → Theme Integration
+Content Locale → Programmatic entities → Entity Engine → Data Tags → Cache → Settings Engine → Logger → Query → Migration Engine → PSEO → Router → Resolver → SEO Bridge → Admin Platform → Theme Integration
 MD;
 	}
 
@@ -182,6 +184,7 @@ kayan_query();             // Query Engine
 kayan_cache();             // Cache Engine
 kayan_settings();          // Settings Engine
 kayan_logger();            // Logger
+kayan_migrations();        // Migration & Version Engine
 kayan_admin();             // Admin Platform
 kayan_integration();       // Theme Integration (adapters)
 kayan_theme_option();      // Theme option + country profile bridge
@@ -279,7 +282,9 @@ kayan_tags()->resolve( 'Book {{service_name}} in {{city_name}} — {{phone}}', a
 ) );
 ```
 
-Templates and future AI must consume tags instead of hardcoded values.
+		Templates and future AI must consume tags instead of hardcoded values.
+The Renderer resolves any `{{tag}}` found in block data at render time, so
+values like phone/WhatsApp always stay fresh without regenerating content.
 MD;
 	}
 
@@ -303,7 +308,9 @@ kayan_pseo()->templates->get( 'tpl_service_city' );
 kayan_pseo()->templates->build_block_instances( 'tpl_service_city' );
 ```
 
-Patterns reference `template_id`. No frontend template redesign in this phase.
+Patterns reference `template_id`. Templates own block order/defaults; the
+Renderer turns them into front-end HTML at request time. No admin builder UI
+for authoring new templates — extend via `kayan_pseo_register_templates`.
 MD;
 	}
 
@@ -321,23 +328,79 @@ kayan_pseo()->blueprint->set_block_lock( \$blueprint, 'hero', true );
 ```
 
 Manual/locked blocks survive template upgrades. Media is first-class via Media Engine.
+`materialize()`/`regenerate()` (Phase 4) sanitize + persist blueprints via
+this engine — locked blocks are never overwritten.
 MD;
 	}
 
 	private function doc_pseo( $platform ) {
+		unset( $platform );
 		return <<<MD
-# Programmatic SEO
+# Programmatic SEO Platform (Phase 4 — complete)
 
-Architecture + APIs only — generation disabled.
+Generation is live: preview → draft/publish/scheduled materialize → queue-backed
+bulk generation → regeneration. Rank Math stays the only SEO engine — the
+platform only writes its own postmeta fields (title/description/focus
+keyword/robots) when a blueprint supplies them.
 
 ```php
 kayan_pseo()->patterns->all();
+kayan_pseo()->rules->save( \$rule );                          // create/update a generation rule
+kayan_pseo()->rules->preview_combinations( \$rule_id );        // real cartesian expansion (Query Engine)
 kayan_pseo()->generator->preview( \$pattern, \$entities, \$country, \$lang, \$tokens );
-kayan_pseo()->generator->materialize( \$preview ); // disabled
-kayan_pseo()->generator->regenerate_block( \$post_id, 'faq', \$args ); // stub
+kayan_pseo()->generator->materialize( \$preview, array( 'post_status' => 'draft' ) );
+kayan_pseo()->generator->regenerate( \$post_id, array( 'mode' => 'content_only' ) );
+kayan_pseo()->bulk_generate( \$rule_id, array( 'post_status' => 'draft' ) ); // enqueues a Queue job
+kayan_pseo()->regenerate_bulk( \$post_ids );
+kayan_pseo()->scheduler->process_now();                       // manual batch trigger (also automatic)
 ```
 
-Prefer existing CPTs (`services`, `faqs`, `pricing`, …); `kayan_pseo` is fallback.
+Prefer existing CPTs (`services`, `faqs`, `pricing`, …); `kayan_pseo` hosts
+true multi-entity combination pages. Every write is keyed by a stable
+fingerprint — regenerating never changes a post's URL. AI-authored block
+content (hero copy, FAQ text, etc.) remains a null-provider stub until
+Phase 5; `regenerate()` refreshes derived data (contact info, related
+entities, breadcrumb) without inventing text.
+
+See [MigrationEngine.md](./MigrationEngine.md) for the Queue's storage and
+[Countries.md](./Countries.md)/[Languages.md](./Languages.md) for locale
+integration.
+MD;
+	}
+
+	private function doc_migration_engine( $platform ) {
+		unset( $platform );
+		return <<<MD
+# Migration & Version Engine
+
+Generic upgrade infrastructure — no manual upgrade step is ever required.
+Runs automatically (`after_switch_theme` + a cheap cached-version check on
+every `boot()`) and is idempotent, incremental, and logged.
+
+```php
+kayan_migrations()->register_migration( 'my_pack_v1', array(
+  'version'          => 10,
+  'type'             => 'table', // schema|table|option|meta|taxonomy|rewrite
+  'description'      => 'Create my_pack table',
+  'rollback_options' => array( 'my_pack_option' ), // auto-snapshotted before `up` runs
+  'up'               => function( \$engine ) {
+    return \$engine->create_or_upgrade_table( 'my_pack_table', 'id BIGINT NOT NULL AUTO_INCREMENT, PRIMARY KEY (id)' );
+  },
+) );
+
+kayan_migrations()->run();               // safe to call anytime; skips already-applied migrations
+kayan_migrations()->rollback( 'my_pack_v1' );
+kayan_migrations()->history();           // paginated history table (also visible in System Health)
+kayan_migrations()->current_version();
+kayan_migrations()->target_version();
+```
+
+Hook: `kayan_migrations_register` — other packs (including existing
+booking/payment/track, which keep their own working version checks) MAY
+register through this engine later; nothing is forced.
+
+Backs the PSEO Queue: the `kayan_pseo_queue` table is created by the
+`pseo_queue_table_v1` core migration, not by application code.
 MD;
 	}
 
@@ -421,6 +484,8 @@ MD;
 - Register admin features via `kayan_admin()->modules->register_module()`
 - Keep Rank Math as the SEO engine
 - Reuse existing packs via adapters — never fork a second implementation
+- Register schema/table/option changes via `kayan_migrations()->register_migration()` — never a manual SQL/upgrade step
+- Use `kayan_pseo()->generator` for any post created/updated by the platform — never a second write path
 
 ## Do not
 
@@ -531,9 +596,9 @@ MD;
 
 Functional modules: Dashboard, Settings, Countries, Languages, Entities,
 Relationships, Permissions, Logs, System Health, Import/Export, Rank Math
-Integration. Templates, Blueprints, Blocks, Programmatic SEO, AI, Media,
-Queue, Analytics, Performance, Security remain architecture shells for
-Phases 4–5.
+Integration (Phase 3); Templates, Blueprints, Blocks, Programmatic SEO,
+Queue (Phase 4 — real Generator + DB-backed Scheduler). AI, Media,
+Analytics, Performance, Security remain architecture shells for Phase 5+.
 
 Centralized administration shell. Future modules register through one API — no isolated admin pages.
 
@@ -577,9 +642,13 @@ Registered modules:
 
 `dashboard` · `settings` · `countries` · `languages` · `entities` · `relationships` · `permissions` · `logs` · `system_health` · `import` (Import/Export) · `rankmath`
 
+## Functional (Phase 4)
+
+`templates` · `blueprints` · `blocks` · `pseo` (rules, preview, bulk generate) · `queue` (real DB-backed jobs + scheduler)
+
 ## Architecture shells (later phases)
 
-`templates` · `blueprints` · `blocks` · `pseo` · `ai` · `media` · `queue` · `analytics` · `performance` · `security` · `tools` (bridges to Theme Options) · `export` (merged into `import` screen)
+`ai` · `media` · `analytics` · `performance` · `security` · `tools` (bridges to Theme Options) · `export` (merged into `import` screen)
 
 ## Registration buckets
 

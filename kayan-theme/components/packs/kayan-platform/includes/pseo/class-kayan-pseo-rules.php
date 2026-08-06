@@ -1,8 +1,10 @@
 <?php
 /**
- * PSEO Generation Rules — selection filters + targets (storage API only).
+ * PSEO Generation Rules — selection filters + targets + combination expansion.
  *
- * Phase 2.5 stores/validates rule definitions. No execution / page creation.
+ * Phase 4: preview_combinations() enumerates real entity data via the
+ * existing Query Engine (never a second query layer). Execution/page
+ * creation lives in Kayan_PSEO_Generator + the Queue/Scheduler.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -198,10 +200,11 @@ class Kayan_PSEO_Rules {
 
 	/**
 	 * Expand a rule into concrete combination specs (dry-run, no writes).
-	 * Returns empty until entity catalogs are queried in a generation phase.
+	 * Enumerates real entity data via the Query Engine — never a second
+	 * query layer, never writes anything.
 	 *
 	 * @param string $rule_id Rule id.
-	 * @return array{ok:bool,combinations?:array,errors?:string[],count?:int}
+	 * @return array{ok:bool,combinations?:array,errors?:string[],count?:int,truncated?:bool}
 	 */
 	public function preview_combinations( $rule_id ) {
 		$rule = $this->get( $rule_id );
@@ -221,24 +224,210 @@ class Kayan_PSEO_Rules {
 		}
 
 		/**
-		 * Future generation phase hooks here to enumerate entity cartesian products.
-		 * Phase 2.5 returns a structured empty preview contract.
+		 * @param int $limit Max combinations returned per preview/expansion.
+		 */
+		$limit = max( 1, (int) apply_filters( 'kayan_pseo_bulk_limit', 2000 ) );
+
+		$countries = ! empty( $rule['filters']['countries'] ) ? $rule['filters']['countries'] : array( $this->default_country() );
+		$languages = ! empty( $rule['filters']['languages'] ) ? $rule['filters']['languages'] : array( 'ar' );
+		$entities  = (array) $pattern['entities'];
+
+		$combinations = array();
+		$truncated    = false;
+
+		foreach ( $countries as $country ) {
+			$country = sanitize_key( $country );
+			foreach ( $languages as $language ) {
+				$language = sanitize_key( $language );
+
+				$sets = array();
+				$empty_set = false;
+				foreach ( $entities as $etype ) {
+					if ( 'country' === $etype ) {
+						$sets[ $etype ] = array( $country );
+						continue;
+					}
+					$candidates = $this->candidates_for( $etype, $rule, $country );
+					if ( empty( $candidates ) ) {
+						$empty_set = true;
+						break;
+					}
+					$sets[ $etype ] = $candidates;
+				}
+				if ( $empty_set ) {
+					continue;
+				}
+
+				foreach ( $this->cartesian( $sets, $limit - count( $combinations ) ) as $combo ) {
+					$tokens = array();
+					foreach ( $combo as $etype => $slug ) {
+						$tokens[ $etype . '_slug' ] = $slug;
+					}
+					$combinations[] = array(
+						'pattern_id' => $rule['pattern_id'],
+						'entities'   => $combo,
+						'country'    => $country,
+						'language'   => $language,
+						'tokens'     => $tokens,
+					);
+					if ( count( $combinations ) >= $limit ) {
+						break;
+					}
+				}
+				if ( count( $combinations ) >= $limit ) {
+					$truncated = true;
+					break 2;
+				}
+			}
+		}
+
+		/**
+		 * Extend or override the default enumeration (e.g. custom entity sources).
 		 *
 		 * @param array $combinations Combinations.
 		 * @param array $rule         Rule.
 		 * @param array $pattern      Pattern.
 		 */
-		$combinations = apply_filters( 'kayan_pseo_preview_combinations', array(), $rule, $pattern );
+		$combinations = apply_filters( 'kayan_pseo_preview_combinations', $combinations, $rule, $pattern );
 
 		return array(
-			'ok'            => true,
-			'rule_id'       => $rule['id'],
-			'pattern_id'    => $rule['pattern_id'],
-			'filters'       => $rule['filters'],
-			'combinations'  => is_array( $combinations ) ? $combinations : array(),
-			'count'         => is_array( $combinations ) ? count( $combinations ) : 0,
-			'note'          => 'Phase 2.5 architecture only — combination expansion executes in a later generation phase.',
+			'ok'           => true,
+			'rule_id'      => $rule['id'],
+			'pattern_id'   => $rule['pattern_id'],
+			'filters'      => $rule['filters'],
+			'combinations' => is_array( $combinations ) ? array_values( $combinations ) : array(),
+			'count'        => is_array( $combinations ) ? count( $combinations ) : 0,
+			'truncated'    => $truncated,
+			'limit'        => $limit,
 		);
+	}
+
+	/**
+	 * Candidate entity refs (slugs) for one entity type, honoring rule filters
+	 * and (when available) country scoping via existing term meta.
+	 *
+	 * @param string               $type    Entity type.
+	 * @param array<string,mixed>  $rule    Rule.
+	 * @param string               $country Country code.
+	 * @return string[]
+	 */
+	private function candidates_for( $type, array $rule, $country ) {
+		if ( ! function_exists( 'kayan_query' ) ) {
+			return array();
+		}
+
+		$resource_map = array(
+			'service'  => 'service',
+			'city'     => 'city',
+			'category' => 'category',
+			'faq'      => 'faq',
+			'pricing'  => 'pricing',
+			'review'   => 'review',
+			'portfolio'=> 'portfolio',
+		);
+		$filter_map = array(
+			'service'  => 'services',
+			'city'     => 'cities',
+			'category' => 'categories',
+			'faq'      => 'faqs',
+			'pricing'  => 'pricing',
+			'review'   => 'services', // no dedicated review filter key yet — safe no-op default
+			'portfolio'=> 'services',
+		);
+
+		if ( ! isset( $resource_map[ $type ] ) ) {
+			// Unimplemented entity source (landmark/brand/building/area/district/neighborhood) —
+			// intentionally empty until those become real WP content (taxonomy/CPT).
+			return array();
+		}
+
+		$result = kayan_query()->query( $resource_map[ $type ], array( 'number' => 500 ) );
+		$items  = isset( $result['items'] ) ? (array) $result['items'] : array();
+
+		$allowed = isset( $rule['filters'][ $filter_map[ $type ] ] ) ? (array) $rule['filters'][ $filter_map[ $type ] ] : array();
+
+		$slugs = array();
+		foreach ( $items as $item ) {
+			$slug = isset( $item['slug'] ) ? (string) $item['slug'] : '';
+			$id   = isset( $item['id'] ) ? (string) $item['id'] : '';
+			if ( '' === $slug ) {
+				continue;
+			}
+			if ( ! empty( $allowed ) && ! in_array( $slug, $allowed, true ) && ! in_array( $id, $allowed, true ) ) {
+				continue;
+			}
+			if ( 'city' === $type && $country && ! $this->city_matches_country( (int) ( $item['id'] ?? 0 ), $country ) ) {
+				continue;
+			}
+			$slugs[] = $slug;
+		}
+
+		return array_values( array_unique( $slugs ) );
+	}
+
+	/**
+	 * City term is included for a country if untagged (legacy/shared) or explicitly tagged.
+	 * Mirrors the "empty meta = all" convention already used by Content Locale.
+	 *
+	 * @param int    $term_id City term id.
+	 * @param string $country Country code.
+	 * @return bool
+	 */
+	private function city_matches_country( $term_id, $country ) {
+		if ( ! $term_id || ! function_exists( 'get_term_meta' ) ) {
+			return true;
+		}
+		$tagged = get_term_meta( $term_id, 'kayan_country', true );
+		if ( '' === $tagged || null === $tagged || false === $tagged ) {
+			return true;
+		}
+		return sanitize_key( (string) $tagged ) === sanitize_key( (string) $country );
+	}
+
+	/**
+	 * Iterative cartesian product with an early-stop limit (avoids building
+	 * the full product in memory for very large entity catalogs).
+	 *
+	 * @param array<string,string[]> $sets  Entity type => candidate slugs.
+	 * @param int                    $limit Max rows to produce.
+	 * @return array<int,array<string,string>>
+	 */
+	private function cartesian( array $sets, $limit ) {
+		if ( empty( $sets ) ) {
+			return array();
+		}
+		$limit  = max( 0, (int) $limit );
+		$result = array( array() );
+
+		foreach ( $sets as $key => $values ) {
+			$next = array();
+			foreach ( $result as $combo ) {
+				foreach ( $values as $value ) {
+					$combo2         = $combo;
+					$combo2[ $key ] = $value;
+					$next[]         = $combo2;
+					if ( count( $next ) >= $limit && $limit > 0 ) {
+						break 2;
+					}
+				}
+			}
+			$result = $next;
+			if ( empty( $result ) ) {
+				break;
+			}
+		}
+
+		return $limit > 0 ? array_slice( $result, 0, $limit ) : $result;
+	}
+
+	/**
+	 * @return string
+	 */
+	private function default_country() {
+		if ( function_exists( 'kayan_platform' ) ) {
+			return kayan_platform()->countries->get_default();
+		}
+		return 'ae';
 	}
 
 	/**

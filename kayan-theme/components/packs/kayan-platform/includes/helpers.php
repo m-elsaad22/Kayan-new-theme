@@ -148,6 +148,17 @@ if ( ! function_exists( 'kayan_settings' ) ) {
 	}
 }
 
+if ( ! function_exists( 'kayan_migrations' ) ) {
+	/**
+	 * Migration & Version Engine facade.
+	 *
+	 * @return Kayan_Migration_Engine
+	 */
+	function kayan_migrations() {
+		return kayan_platform()->migrations;
+	}
+}
+
 if ( ! function_exists( 'kayan_logger' ) ) {
 	/**
 	 * @return Kayan_Logger

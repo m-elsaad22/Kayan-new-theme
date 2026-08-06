@@ -49,6 +49,12 @@ class Kayan_PSEO_Engine {
 	/** @var Kayan_PSEO_Generator */
 	public $generator;
 
+	/** @var Kayan_PSEO_Renderer */
+	public $renderer;
+
+	/** @var Kayan_PSEO_Scheduler */
+	public $scheduler;
+
 	/** @var Kayan_Country_Engine */
 	private $countries;
 
@@ -83,6 +89,60 @@ class Kayan_PSEO_Engine {
 			$this->blocks,
 			$this->media
 		);
+		$this->jobs->set_dependencies( $this->generator, $this->rules );
+		$this->renderer  = new Kayan_PSEO_Renderer( $this->blueprint, $this->storage, $this->blocks );
+		$this->scheduler = new Kayan_PSEO_Scheduler( $this->jobs );
+	}
+
+	/**
+	 * Expand a rule and enqueue one bulk job (Bulk Generation entry point).
+	 *
+	 * @param string               $rule_id Rule id.
+	 * @param array<string,mixed>  $options post_status, ai_enabled.
+	 * @return array{ok:bool,job?:array,errors?:string[],count?:int,truncated?:bool}
+	 */
+	public function bulk_generate( $rule_id, array $options = array() ) {
+		$expansion = $this->rules->preview_combinations( $rule_id );
+		if ( empty( $expansion['ok'] ) ) {
+			return $expansion;
+		}
+		if ( empty( $expansion['combinations'] ) ) {
+			return array( 'ok' => false, 'errors' => array( 'no_combinations' ) );
+		}
+
+		$enqueue = $this->jobs->enqueue(
+			'bulk',
+			array(
+				'rule_id'      => $rule_id,
+				'combinations' => $expansion['combinations'],
+				'options'      => $options,
+			)
+		);
+
+		if ( ! empty( $enqueue['ok'] ) ) {
+			$enqueue['count']     = $expansion['count'];
+			$enqueue['truncated'] = $expansion['truncated'];
+		}
+
+		return $enqueue;
+	}
+
+	/**
+	 * Enqueue a regenerate/ai_regenerate job for one or many posts.
+	 *
+	 * @param int[]  $post_ids Post ids.
+	 * @param array  $options  Options (ai_enabled toggles job type).
+	 * @return array{ok:bool,job?:array,errors?:string[]}
+	 */
+	public function regenerate_bulk( array $post_ids, array $options = array() ) {
+		$type = ! empty( $options['ai_enabled'] ) ? 'ai_regenerate' : 'regenerate';
+		return $this->jobs->enqueue(
+			$type,
+			array(
+				'post_ids' => $post_ids,
+				'options'  => $options,
+			)
+		);
 	}
 
 	/**
@@ -97,6 +157,8 @@ class Kayan_PSEO_Engine {
 		$this->storage->register();
 		$this->jobs->register();
 		$this->ai->register();
+		$this->renderer->register();
+		$this->scheduler->register();
 
 		add_action( 'init', array( $this, 'register_pattern_rewrites' ), 7 );
 
@@ -206,7 +268,10 @@ class Kayan_PSEO_Engine {
 				'regenerate_block'   => 'kayan_platform()->pseo->generator->regenerate_block()',
 				'entity_get'         => 'kayan_entity()->get( $type, $ref )',
 				'tags_resolve'       => 'kayan_tags()->resolve( $template, $context )',
-				'materialize'        => 'disabled until generation phase',
+				'materialize'        => 'kayan_platform()->pseo->generator->materialize( $preview, $args )',
+				'bulk_generate'      => 'kayan_platform()->pseo->bulk_generate( $rule_id, $options )',
+				'regenerate_bulk'    => 'kayan_platform()->pseo->regenerate_bulk( $post_ids, $options )',
+				'process_queue'      => 'kayan_platform()->pseo->scheduler->process_now()',
 			),
 		);
 	}

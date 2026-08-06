@@ -30,6 +30,7 @@ class Kayan_Logger {
 		'performance',
 		'security',
 		'general',
+		'migration',
 	);
 
 	/** @var bool */

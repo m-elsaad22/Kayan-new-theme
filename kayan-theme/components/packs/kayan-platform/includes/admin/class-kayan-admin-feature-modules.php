@@ -32,6 +32,11 @@ class Kayan_Admin_Feature_Modules {
 			'class-kayan-admin-module-system-health.php'  => 'Kayan_Admin_Module_System_Health',
 			'class-kayan-admin-module-import-export.php'  => 'Kayan_Admin_Module_Import_Export',
 			'class-kayan-admin-module-rankmath.php'       => 'Kayan_Admin_Module_Rankmath',
+			'class-kayan-admin-module-templates.php'      => 'Kayan_Admin_Module_Templates',
+			'class-kayan-admin-module-blocks.php'         => 'Kayan_Admin_Module_Blocks',
+			'class-kayan-admin-module-blueprints.php'     => 'Kayan_Admin_Module_Blueprints',
+			'class-kayan-admin-module-pseo.php'           => 'Kayan_Admin_Module_Pseo',
+			'class-kayan-admin-module-queue.php'          => 'Kayan_Admin_Module_Queue',
 		);
 
 		foreach ( $classes as $file => $class ) {

@@ -33,4 +33,6 @@ kayan_tags()->resolve( 'Book {{service_name}} in {{city_name}} — {{phone}}', a
 ) );
 ```
 
-Templates and future AI must consume tags instead of hardcoded values.
+		Templates and future AI must consume tags instead of hardcoded values.
+The Renderer resolves any `{{tag}}` found in block data at render time, so
+values like phone/WhatsApp always stay fresh without regenerating content.

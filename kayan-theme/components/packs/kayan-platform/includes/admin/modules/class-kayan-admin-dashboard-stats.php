@@ -69,6 +69,51 @@ class Kayan_Admin_Dashboard_Stats {
 				'callback'    => array( $this, 'render_logs' ),
 			)
 		);
+		$dashboard->register_widget(
+			'programmatic_seo',
+			array(
+				'title'       => __( 'Programmatic SEO', 'kayan' ),
+				'module'      => 'pseo',
+				'capability'  => 'kayan_manage_pseo',
+				'position'    => 40,
+				'placeholder' => false,
+				'callback'    => array( $this, 'render_pseo' ),
+			)
+		);
+		$dashboard->register_widget(
+			'queue',
+			array(
+				'title'       => __( 'Queue', 'kayan' ),
+				'module'      => 'queue',
+				'capability'  => 'kayan_manage_queue',
+				'position'    => 50,
+				'placeholder' => false,
+				'callback'    => array( $this, 'render_queue' ),
+			)
+		);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function render_pseo() {
+		if ( ! function_exists( 'kayan_pseo' ) ) {
+			return '<p class="description">' . esc_html__( 'Programmatic SEO not available.', 'kayan' ) . '</p>';
+		}
+		$rules = kayan_pseo()->rules->all();
+		return '<p class="kayan-admin-stat"><strong>' . esc_html( (string) count( $rules ) ) . '</strong> ' . esc_html__( 'generation rules', 'kayan' ) . '</p>';
+	}
+
+	/**
+	 * @return string
+	 */
+	public function render_queue() {
+		if ( ! function_exists( 'kayan_pseo' ) ) {
+			return '<p class="description">' . esc_html__( 'Queue not available.', 'kayan' ) . '</p>';
+		}
+		$running = kayan_pseo()->jobs->all( array( 'status' => 'running', 'limit' => 5 ) );
+		$queued  = kayan_pseo()->jobs->all( array( 'status' => 'queued', 'limit' => 5 ) );
+		return '<p class="kayan-admin-stat"><strong>' . esc_html( (string) count( $running ) ) . '</strong> ' . esc_html__( 'running', 'kayan' ) . ', <strong>' . esc_html( (string) count( $queued ) ) . '</strong> ' . esc_html__( 'queued', 'kayan' ) . '</p>';
 	}
 
 	/**

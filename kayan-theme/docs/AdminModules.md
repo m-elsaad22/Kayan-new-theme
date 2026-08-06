@@ -8,9 +8,13 @@ Registered modules:
 
 `dashboard` · `settings` · `countries` · `languages` · `entities` · `relationships` · `permissions` · `logs` · `system_health` · `import` (Import/Export) · `rankmath`
 
+## Functional (Phase 4)
+
+`templates` · `blueprints` · `blocks` · `pseo` (rules, preview, bulk generate) · `queue` (real DB-backed jobs + scheduler)
+
 ## Architecture shells (later phases)
 
-`templates` · `blueprints` · `blocks` · `pseo` · `ai` · `media` · `queue` · `analytics` · `performance` · `security` · `tools` (bridges to Theme Options) · `export` (merged into `import` screen)
+`ai` · `media` · `analytics` · `performance` · `security` · `tools` (bridges to Theme Options) · `export` (merged into `import` screen)
 
 ## Registration buckets
 

@@ -163,6 +163,31 @@ class Kayan_Admin_Module_System_Health {
 			'detail'       => __( 'Current WordPress core version.', 'kayan' ),
 		);
 
+		if ( isset( $platform->migrations ) ) {
+			$cur   = $platform->migrations->current_version();
+			$tgt   = $platform->migrations->target_version();
+			$up    = $cur >= $tgt;
+			$checks[] = array(
+				'label'        => __( 'Schema migrations', 'kayan' ),
+				'type'         => $up ? 'success' : 'warning',
+				'status_label' => $cur . ' / ' . $tgt,
+				'detail'       => $up
+					? __( 'Up to date. Migrations run automatically — no manual step required.', 'kayan' )
+					: __( 'Pending migrations will run automatically on the next request.', 'kayan' ),
+			);
+		}
+
+		if ( function_exists( 'kayan_pseo' ) ) {
+			$queued = count( kayan_pseo()->jobs->all( array( 'status' => 'queued', 'limit' => 100 ) ) );
+			$failed = count( kayan_pseo()->jobs->all( array( 'status' => 'failed', 'limit' => 100 ) ) );
+			$checks[] = array(
+				'label'        => __( 'PSEO queue', 'kayan' ),
+				'type'         => $failed > 0 ? 'warning' : 'success',
+				'status_label' => sprintf( '%d / %d', $queued, $failed ),
+				'detail'       => __( 'Queued / failed jobs. The Scheduler processes the queue automatically.', 'kayan' ),
+			);
+		}
+
 		return $checks;
 	}
 

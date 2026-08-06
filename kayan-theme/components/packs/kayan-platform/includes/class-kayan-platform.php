@@ -58,6 +58,9 @@ class Kayan_Platform {
 	/** @var Kayan_Query_Engine */
 	public $query;
 
+	/** @var Kayan_Migration_Engine */
+	public $migrations;
+
 	/** @var Kayan_Docs_Generator */
 	public $docs;
 
@@ -101,7 +104,8 @@ class Kayan_Platform {
 		$this->logger          = new Kayan_Logger();
 		$this->settings_engine = new Kayan_Settings_Engine( $this->countries, $this->languages, $this->settings );
 		$this->settings_engine->set_cache( $this->cache );
-		$this->query = new Kayan_Query_Engine( $this->cache, $this->logger, $this->countries );
+		$this->query      = new Kayan_Query_Engine( $this->cache, $this->logger, $this->countries );
+		$this->migrations = new Kayan_Migration_Engine( $this->logger );
 
 		$this->programmatic = new Kayan_Programmatic_SEO();
 		$this->entity       = new Kayan_Entity_Engine(
@@ -153,6 +157,7 @@ class Kayan_Platform {
 		$this->settings_engine->register();
 		$this->logger->register();
 		$this->query->register();
+		$this->migrations->register();
 
 		$this->pseo->register();
 		$this->router->register();

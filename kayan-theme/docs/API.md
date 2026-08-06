@@ -11,6 +11,7 @@ kayan_query();             // Query Engine
 kayan_cache();             // Cache Engine
 kayan_settings();          // Settings Engine
 kayan_logger();            // Logger
+kayan_migrations();        // Migration & Version Engine
 kayan_admin();             // Admin Platform
 kayan_integration();       // Theme Integration (adapters)
 kayan_theme_option();      // Theme option + country profile bridge

@@ -24,6 +24,7 @@ kayan_platform()->docs->generate();
 - [CacheEngine.md](./CacheEngine.md)
 - [SettingsEngine.md](./SettingsEngine.md)
 - [Logger.md](./Logger.md)
+- [MigrationEngine.md](./MigrationEngine.md)
 - [AdminPlatform.md](./AdminPlatform.md)
 - [AdminModules.md](./AdminModules.md)
 - [AdminPermissions.md](./AdminPermissions.md)
@@ -32,4 +33,4 @@ kayan_platform()->docs->generate();
 - [ThemeIntegration.md](./ThemeIntegration.md)
 - [Compatibility.md](./Compatibility.md)
 
-Platform version: `3.2.0`
+Platform version: `4.0.0`

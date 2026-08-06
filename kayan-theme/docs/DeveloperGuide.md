@@ -11,6 +11,8 @@
 - Register admin features via `kayan_admin()->modules->register_module()`
 - Keep Rank Math as the SEO engine
 - Reuse existing packs via adapters — never fork a second implementation
+- Register schema/table/option changes via `kayan_migrations()->register_migration()` — never a manual SQL/upgrade step
+- Use `kayan_pseo()->generator` for any post created/updated by the platform — never a second write path
 
 ## Do not
 

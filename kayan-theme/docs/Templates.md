@@ -9,4 +9,6 @@ kayan_pseo()->templates->get( 'tpl_service_city' );
 kayan_pseo()->templates->build_block_instances( 'tpl_service_city' );
 ```
 
-Patterns reference `template_id`. No frontend template redesign in this phase.
+Patterns reference `template_id`. Templates own block order/defaults; the
+Renderer turns them into front-end HTML at request time. No admin builder UI
+for authoring new templates — extend via `kayan_pseo_register_templates`.
