@@ -57,6 +57,7 @@ class Kayan_Admin_Module_Registry {
 			'parent'        => 'kayan-platform', // central shell — not isolated pages
 			'nav'           => true, // show in admin nav
 			'screen'        => null, // callable( $module, $context )
+			'save'          => null, // callable( $module, $context ) — handles POST before render (admin_init)
 			'widgets'       => array(), // dashboard widget ids/defs
 			'settings'      => array(), // settings page sections
 			'tables'        => array(),

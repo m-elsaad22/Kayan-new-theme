@@ -32,4 +32,4 @@ kayan_platform()->docs->generate();
 - [ThemeIntegration.md](./ThemeIntegration.md)
 - [Compatibility.md](./Compatibility.md)
 
-Platform version: `3.1.0`
+Platform version: `3.2.0`

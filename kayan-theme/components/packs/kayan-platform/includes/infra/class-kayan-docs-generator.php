@@ -354,6 +354,12 @@ kayan_platform_setting( 'whatsapp', 'ae' ); // BC helper
 ```
 
 Country profiles live in Country Settings repository; Settings Engine is the preferred API.
+
+## Admin UI (Phase 3)
+
+The `countries` Admin Platform module edits the business profile
+(phone/WhatsApp/currency/SEO/GTM) per existing country — it does not add
+or remove countries (those come from kayan-i18n).
 MD;
 	}
 
@@ -369,6 +375,17 @@ kayan_settings()->set_language( \$key, \$value, 'ar' );
 ```
 
 Canonical URLs are language-first: `/`, `/sa/`, `/en/`, `/en/sa/`.
+
+## Admin UI (Phase 3)
+
+The `languages` Admin Platform module can register additional languages
+(stored in `kayan_platform_custom_languages`, merged via the existing
+`kayan_platform_languages` filter) and toggle languages on/off
+(`kayan_platform_disabled_languages`). Arabic cannot be disabled.
+
+```php
+Kayan_Admin_Module_Languages::enabled_languages();
+```
 MD;
 	}
 
@@ -505,12 +522,18 @@ MD;
 
 	private function doc_admin_platform( $platform ) {
 		$version = isset( $platform->admin ) && method_exists( $platform->admin, 'describe' )
-			? (string) ( $platform->admin->describe()['version'] ?? '3.0.0' )
-			: '3.0.0';
+			? (string) ( $platform->admin->describe()['version'] ?? '3.2.0' )
+			: '3.2.0';
 		return <<<MD
 # Admin Platform
 
-**Phase:** 3.0 · **Admin version contract:** {$version}
+**Phase:** 3 (complete) · **Admin version contract:** {$version}
+
+Functional modules: Dashboard, Settings, Countries, Languages, Entities,
+Relationships, Permissions, Logs, System Health, Import/Export, Rank Math
+Integration. Templates, Blueprints, Blocks, Programmatic SEO, AI, Media,
+Queue, Analytics, Performance, Security remain architecture shells for
+Phases 4–5.
 
 Centralized administration shell. Future modules register through one API — no isolated admin pages.
 
@@ -546,13 +569,24 @@ MD;
 		return <<<MD
 # Admin Modules
 
-Core registered modules:
+Registered modules:
 
 {$list}
 
+## Functional (Phase 3)
+
+`dashboard` · `settings` · `countries` · `languages` · `entities` · `relationships` · `permissions` · `logs` · `system_health` · `import` (Import/Export) · `rankmath`
+
+## Architecture shells (later phases)
+
+`templates` · `blueprints` · `blocks` · `pseo` · `ai` · `media` · `queue` · `analytics` · `performance` · `security` · `tools` (bridges to Theme Options) · `export` (merged into `import` screen)
+
 ## Registration buckets
 
-Each module may declare: `nav`, `widgets`, `settings`, `tables`, `forms`, `cards`, `actions`, `notifications`, `permissions`, `screen`.
+Each module may declare: `nav`, `widgets`, `settings`, `tables`, `forms`, `cards`, `actions`, `notifications`, `permissions`, `screen`, `save`.
+
+The `save` callable handles POST for that module on `admin_init` (before
+headers are sent) — see `Kayan_Admin_Platform::maybe_handle_module_post()`.
 
 ```php
 kayan_admin()->modules->register_item( 'pseo', 'actions', 'preview', array(
@@ -589,6 +623,11 @@ kayan_admin()->permissions->register_role( 'kayan_custom_role', array(
   'capabilities' => array( 'kayan_access_admin', 'kayan_custom' ),
 ) );
 ```
+
+The `permissions` Admin Platform module (Phase 3) lists roles/capabilities
+and lets users with `promote_users` assign a KAYAN role to a WordPress
+user via the standard `WP_User::set_role()` / `add_role()` API — no second
+RBAC store.
 MD;
 	}
 
@@ -626,19 +665,25 @@ MD;
 		return <<<MD
 # Admin Dashboard
 
-Foundation only — **no statistics** in Phase 3.0.
-
 Widget slots: {$list}
+
+## Live data (Phase 3)
+
+`countries`, `languages`, `rankmath`, and `logs` widgets render real
+counts/status from the Country/Language engines, `Kayan_Theme_Integration`,
+and `Kayan_Logger` (see `Kayan_Admin_Dashboard_Stats`).
+
+`pseo`, `queue`, `ai`, `performance`, `analytics` remain placeholders —
+those systems are architecture-only until Phases 4–5.
 
 ```php
 kayan_admin()->dashboard->register_widget( 'custom', array(
   'title' => 'Custom',
   'capability' => 'kayan_access_admin',
   'position' => 110,
+  'callback' => function( \$widget ) { return '<p>Live content</p>'; },
 ) );
 ```
-
-Widgets render as placeholders until a later phase supplies data callbacks.
 MD;
 	}
 

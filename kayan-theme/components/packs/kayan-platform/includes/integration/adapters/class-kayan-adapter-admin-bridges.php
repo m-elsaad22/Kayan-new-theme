@@ -2,7 +2,10 @@
 /**
  * Adapter: Admin Platform modules → existing theme admin screens.
  *
- * No new settings UIs. Placeholder modules link to Theme Options / Booking / Track / Rank Math.
+ * Phase 3 built real screens for Countries / Languages / Rank Math inside
+ * the Admin Platform, so those are no longer bridged here. Analytics and
+ * Tools remain thin links to KAYAN Track / Theme Options (out of Phase 3
+ * scope), avoiding a second tracking/settings UI.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -28,16 +31,6 @@ class Kayan_Adapter_Admin_Bridges {
 		}
 
 		$bridges = array(
-			'countries'  => array(
-				'label' => __( 'Theme Options (existing)', 'kayan' ),
-				'url'   => admin_url( 'admin.php?page=YTS' ),
-				'note'  => __( 'Country profiles are managed via Theme Options + platform settings. No new Countries UI in Phase 3.1.', 'kayan' ),
-			),
-			'languages'  => array(
-				'label' => __( 'Theme Options / i18n (existing)', 'kayan' ),
-				'url'   => admin_url( 'admin.php?page=YTS' ),
-				'note'  => __( 'Languages continue to use kayan-i18n + Theme Options. No new Languages UI in Phase 3.1.', 'kayan' ),
-			),
 			'analytics'  => array(
 				'label' => __( 'KAYAN Track (existing)', 'kayan' ),
 				'url'   => admin_url( 'admin.php?page=kayan-track-pro' ),
@@ -47,11 +40,6 @@ class Kayan_Adapter_Admin_Bridges {
 				'label' => __( 'Theme Options (existing)', 'kayan' ),
 				'url'   => admin_url( 'admin.php?page=YTS' ),
 				'note'  => __( 'Use existing Theme Options (YTS) for theme settings.', 'kayan' ),
-			),
-			'rankmath'   => array(
-				'label' => __( 'Rank Math (existing)', 'kayan' ),
-				'url'   => admin_url( 'admin.php?page=rank-math' ),
-				'note'  => __( 'Rank Math remains the only SEO engine. Open Rank Math admin for SEO controls.', 'kayan' ),
 			),
 		);
 
@@ -104,7 +92,7 @@ class Kayan_Adapter_Admin_Bridges {
 				echo '<p><a class="button" href="' . esc_url( $url ) . '">' . esc_html( $label ) . '</a></p>';
 			}
 		}
-		echo '<p class="description">' . esc_html__( 'Phase 3.1 does not add new admin feature UIs.', 'kayan' ) . '</p>';
+		echo '<p class="description">' . esc_html__( 'This module bridges to an existing screen rather than duplicating it.', 'kayan' ) . '</p>';
 		echo '</div>';
 	}
 
@@ -115,8 +103,8 @@ class Kayan_Adapter_Admin_Bridges {
 		return array(
 			'id'      => 'admin_bridges',
 			'state'   => 'adapter',
-			'bridges' => array( 'countries', 'languages', 'analytics', 'tools', 'rankmath' ),
-			'notes'   => 'Links Admin Platform shells to existing YTS / Track / Rank Math / Bookings screens.',
+			'bridges' => array( 'analytics', 'tools' ),
+			'notes'   => 'Links remaining placeholder modules (analytics, tools) to existing Track / Theme Options screens. Countries, Languages, and Rank Math are now real Admin Platform modules (Phase 3).',
 		);
 	}
 }

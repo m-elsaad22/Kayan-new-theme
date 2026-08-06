@@ -1,9 +1,9 @@
 # KAYAN Theme ↔ Platform Compatibility Report
 
 **Phase:** 3.1 — Existing Theme Integration
-**Theme version:** `2.0.1`
-**Platform version:** `3.1.0`
-**Generated:** `2026-08-06T18:10:05+00:00`
+**Theme version:** `2.1.0`
+**Platform version:** `3.2.0`
+**Generated:** `2026-08-06T18:30:07+00:00`
 
 This report maps every major existing KAYAN Theme system to the platform.
 Adapters wrap/extend existing packs — they do not replace them.
@@ -234,12 +234,12 @@ Extends `rukn_cs_post_types` with kayan-cpt types. Global numbers via Theme Opti
 |-------|-------|
 | Status | Already compatible |
 | Risk | Low |
-| Adapter | `admin_bridges` |
+| Adapter | — |
 | Path | `components/packs/kayan-platform/ + kayan-i18n/` |
 
-Platform Country/Language engines + kayan-i18n routing ownership already integrated. Admin shells bridge to existing YTS — no new locale UIs.
+Platform Country/Language engines + kayan-i18n routing ownership already integrated. Phase 3 added real Countries/Languages Admin Platform modules editing the platform profile layer (not the i18n registry itself).
 
-**Migration strategy:** Continue configuring via Theme Options / i18n options until a later approved UI phase.
+**Migration strategy:** Manage per-country business profile and custom languages via the Admin Platform. Theme Options (YTS) remains the source for raw contact fields when a profile is empty.
 
 ### Theme Settings / Country Profiles
 
@@ -276,9 +276,9 @@ When `kayan_platform_owns_routing()` is true, i18n skips duplicate rewrites. CPT
 | Adapter | `admin_bridges` |
 | Path | `YTS, kayan-bookings, kayan-track-pro, Rank Math` |
 
-Existing menus remain. Admin Platform module shells link to those screens instead of inventing replacements.
+Existing menus remain. Analytics/Tools modules still link to KAYAN Track / Theme Options. Countries, Languages, and Rank Math Integration are now real Admin Platform screens (Phase 3) that edit platform-owned data alongside the existing menus.
 
-**Migration strategy:** Operators keep using existing menus. Platform admin is additive shell only.
+**Migration strategy:** Operators keep using existing menus for booking/tracking/theme-wide options; use the Admin Platform for country profiles, languages, and platform settings.
 
 ### Menus (WP + header switcher)
 
@@ -356,7 +356,7 @@ No AI / Templates UI in 3.1.
 | Adapter | `admin_bridges` |
 | Path | `includes/admin/` |
 
-Phase 3.0 shells retained. Bridges prevent empty modules from looking like missing features.
+Phase 3 completed Dashboard, Navigation, Settings, Countries, Languages, Entities, Relationships, Permissions, Logs, System Health, Import/Export, and Rank Math Integration. Templates/Blueprints/Blocks/PSEO/AI/Queue/Analytics/Performance/Security remain placeholder shells for later phases.
 
 **Migration strategy:** Register future UIs only through `kayan_admin()` when approved.
 
@@ -370,7 +370,7 @@ Phase 3.0 shells retained. Bridges prevent empty modules from looking like missi
 - `i18n_switcher` — **idle** — No new switcher UI — connects existing header action to existing i18n renderer.
 - `legacy_city` — **compatible** — Canonical cities taxonomy from kayan-cpt. Empty legacy city unregistered; non-empty kept for BC.
 - `theme_options` — **adapter** — Frontend dual-read from country profiles; Theme Options remains write source.
-- `admin_bridges` — **adapter** — Links Admin Platform shells to existing YTS / Track / Rank Math / Bookings screens.
+- `admin_bridges` — **adapter** — Links remaining placeholder modules (analytics, tools) to existing Track / Theme Options screens. Countries, Languages, and Rank Math are now real Admin Platform modules (Phase 3).
 - `cpt` — **extension** — Reuses kayan-cpt; extends locale post types + rewrite map only.
 - `query` — **extension** — Ensures Query Engine resources for kayan-cpt; legacy_city resource when taxonomy remains.
 

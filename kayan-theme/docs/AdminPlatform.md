@@ -1,6 +1,12 @@
 # Admin Platform
 
-**Phase:** 3.0 · **Admin version contract:** 3.0.0
+**Phase:** 3 (complete) · **Admin version contract:** 3.2.0
+
+Functional modules: Dashboard, Settings, Countries, Languages, Entities,
+Relationships, Permissions, Logs, System Health, Import/Export, Rank Math
+Integration. Templates, Blueprints, Blocks, Programmatic SEO, AI, Media,
+Queue, Analytics, Performance, Security remain architecture shells for
+Phases 4–5.
 
 Centralized administration shell. Future modules register through one API — no isolated admin pages.
 

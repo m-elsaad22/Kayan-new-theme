@@ -6,7 +6,22 @@ Syntax: `{{tag_name}}`
 
 - `{{service_name}}`
 - `{{city_name}}`
+- `{{country_name}}`
+- `{{category_name}}`
+- `{{language}}`
+- `{{faq}}`
+- `{{gallery}}`
+- `{{featured_image}}`
+- `{{price_from}}`
 - `{{phone}}`
+- `{{whatsapp}}`
+- `{{average_rating}}`
+- `{{review_count}}`
+- `{{related_services}}`
+- `{{related_articles}}`
+- `{{cta_title}}`
+- `{{hero_title}}`
+- `{{meta_title}}`
 
 ## Resolve
 

@@ -22,3 +22,8 @@ kayan_admin()->permissions->register_role( 'kayan_custom_role', array(
   'capabilities' => array( 'kayan_access_admin', 'kayan_custom' ),
 ) );
 ```
+
+The `permissions` Admin Platform module (Phase 3) lists roles/capabilities
+and lets users with `promote_users` assign a KAYAN role to a WordPress
+user via the standard `WP_User::set_role()` / `add_role()` API — no second
+RBAC store.

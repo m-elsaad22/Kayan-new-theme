@@ -41,6 +41,14 @@ class Kayan_Query_Engine {
 	}
 
 	/**
+	 * @param int $ttl Seconds.
+	 * @return void
+	 */
+	public function set_default_ttl( $ttl ) {
+		$this->default_ttl = max( 0, (int) $ttl );
+	}
+
+	/**
 	 * @param Kayan_Cache_Engine $cache Cache.
 	 * @return void
 	 */

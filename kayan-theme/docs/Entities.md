@@ -2,7 +2,7 @@
 
 Canonical entity types:
 
-`country`, `city`, `service`, `faq`, `article`
+`country`, `city`, `area`, `district`, `neighborhood`, `brand`, `building`, `service`, `category`, `faq`, `landmark`, `pricing`, `review`, `portfolio`, `before_after`, `gallery`, `video`, `article`
 
 ## API
 
