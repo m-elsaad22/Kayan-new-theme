@@ -1,6 +1,6 @@
 <?php
 /**
- * Kayan_Platform — service container / facade (Phases 1–2.5).
+ * Kayan_Platform — service container / facade (Phases 1–2.5.1).
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

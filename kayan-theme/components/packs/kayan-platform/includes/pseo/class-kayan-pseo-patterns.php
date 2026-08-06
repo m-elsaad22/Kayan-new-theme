@@ -39,24 +39,18 @@ class Kayan_PSEO_Patterns {
 		}
 
 		$defaults = array(
-			'label'           => $id,
-			'description'     => '',
-			'entities'        => array(), // ordered entity type ids, e.g. array( 'service', 'city' )
-			'required'        => array(), // subset that must be present
-			'optional'        => array(),
-			'url_template'    => '{primary}/{secondary}', // path after country/lang prefixes
-			'primary_entity'  => '',
-			'enabled'         => true,
-			'blueprint_slots' => array(
-				'hero',
-				'cta',
-				'faq',
-				'reviews',
-				'images',
-				'internal_links',
-				'breadcrumb',
-				'schema',
-			),
+			'label'               => $id,
+			'description'         => '',
+			'entities'            => array(),
+			'required'            => array(),
+			'optional'            => array(),
+			'url_template'        => '{primary}/{secondary}',
+			'primary_entity'      => '',
+			'template_id'         => '', // assignable Template Engine id
+			'preferred_post_type' => 'kayan_pseo', // override with existing CPT when appropriate
+			'fallback_post_type'  => 'kayan_pseo',
+			'enabled'             => true,
+			'blueprint_slots'     => array(), // legacy; templates own blocks now
 		);
 
 		$args['entities'] = array_values( array_filter( array_map( 'sanitize_key', (array) ( $args['entities'] ?? array() ) ) ) );
@@ -127,110 +121,137 @@ class Kayan_PSEO_Patterns {
 		$this->register_pattern(
 			'service_city',
 			array(
-				'label'          => 'Service × City',
-				'entities'       => array( 'service', 'city' ),
-				'primary_entity' => 'service',
-				'url_template'   => 'services/{service_slug}/{city_slug}',
+				'label'               => 'Service × City',
+				'entities'            => array( 'service', 'city' ),
+				'primary_entity'      => 'service',
+				'url_template'        => 'services/{service_slug}/{city_slug}',
+				'template_id'         => 'tpl_service_city',
+				'preferred_post_type' => 'kayan_pseo', // multi-entity landing — no existing CPT fits
 			)
 		);
 
 		$this->register_pattern(
 			'service_area',
 			array(
-				'label'          => 'Service × Area',
-				'entities'       => array( 'service', 'area' ),
-				'primary_entity' => 'service',
-				'url_template'   => 'services/{service_slug}/{area_slug}',
+				'label'               => 'Service × Area',
+				'entities'            => array( 'service', 'area' ),
+				'primary_entity'      => 'service',
+				'url_template'        => 'services/{service_slug}/{area_slug}',
+				'template_id'         => 'tpl_service_area',
+				'preferred_post_type' => 'kayan_pseo',
 			)
 		);
 
 		$this->register_pattern(
 			'service_country',
 			array(
-				'label'          => 'Service × Country',
-				'entities'       => array( 'service', 'country' ),
-				'primary_entity' => 'service',
-				'url_template'   => 'services/{service_slug}',
+				'label'               => 'Service × Country',
+				'entities'            => array( 'service', 'country' ),
+				'primary_entity'      => 'service',
+				'url_template'        => 'services/{service_slug}',
+				'template_id'         => 'tpl_service_country',
+				// Prefer existing services CPT (country/lang variant of a service).
+				'preferred_post_type' => 'services',
+				'fallback_post_type'  => 'kayan_pseo',
 			)
 		);
 
 		$this->register_pattern(
 			'category_city',
 			array(
-				'label'          => 'Category × City',
-				'entities'       => array( 'category', 'city' ),
-				'primary_entity' => 'category',
-				'url_template'   => 'service-category/{category_slug}/{city_slug}',
+				'label'               => 'Category × City',
+				'entities'            => array( 'category', 'city' ),
+				'primary_entity'      => 'category',
+				'url_template'        => 'service-category/{category_slug}/{city_slug}',
+				'template_id'         => 'tpl_category_city',
+				'preferred_post_type' => 'kayan_pseo',
 			)
 		);
 
 		$this->register_pattern(
 			'faq_service',
 			array(
-				'label'          => 'FAQ × Service',
-				'entities'       => array( 'faq', 'service' ),
-				'primary_entity' => 'faq',
-				'url_template'   => 'faqs/{faq_slug}/{service_slug}',
+				'label'               => 'FAQ × Service',
+				'entities'            => array( 'faq', 'service' ),
+				'primary_entity'      => 'faq',
+				'url_template'        => 'faqs/{faq_slug}/{service_slug}',
+				'template_id'         => 'tpl_faq_service',
+				// Prefer faqs when a single FAQ host fits; combination landings fall back.
+				'preferred_post_type' => 'faqs',
+				'fallback_post_type'  => 'kayan_pseo',
 			)
 		);
 
 		$this->register_pattern(
 			'pricing_service',
 			array(
-				'label'          => 'Pricing × Service',
-				'entities'       => array( 'pricing', 'service' ),
-				'primary_entity' => 'pricing',
-				'url_template'   => 'pricing/{pricing_slug}/{service_slug}',
+				'label'               => 'Pricing × Service',
+				'entities'            => array( 'pricing', 'service' ),
+				'primary_entity'      => 'pricing',
+				'url_template'        => 'pricing/{pricing_slug}/{service_slug}',
+				'template_id'         => 'tpl_pricing_service',
+				'preferred_post_type' => 'pricing',
+				'fallback_post_type'  => 'kayan_pseo',
 			)
 		);
 
 		$this->register_pattern(
 			'landmark_service',
 			array(
-				'label'          => 'Landmark × Service',
-				'entities'       => array( 'landmark', 'service' ),
-				'primary_entity' => 'service',
-				'url_template'   => 'services/{service_slug}/{landmark_slug}',
+				'label'               => 'Landmark × Service',
+				'entities'            => array( 'landmark', 'service' ),
+				'primary_entity'      => 'service',
+				'url_template'        => 'services/{service_slug}/{landmark_slug}',
+				'template_id'         => 'tpl_landmark_service',
+				'preferred_post_type' => 'kayan_pseo',
 			)
 		);
 
 		$this->register_pattern(
 			'country_service_city',
 			array(
-				'label'          => 'Country × Service × City',
-				'entities'       => array( 'country', 'service', 'city' ),
-				'primary_entity' => 'service',
-				'url_template'   => 'services/{service_slug}/{city_slug}',
+				'label'               => 'Country × Service × City',
+				'entities'            => array( 'country', 'service', 'city' ),
+				'primary_entity'      => 'service',
+				'url_template'        => 'services/{service_slug}/{city_slug}',
+				'template_id'         => 'tpl_country_service_city',
+				'preferred_post_type' => 'kayan_pseo',
 			)
 		);
 
 		$this->register_pattern(
 			'service_neighborhood',
 			array(
-				'label'          => 'Service × Neighborhood',
-				'entities'       => array( 'service', 'neighborhood' ),
-				'primary_entity' => 'service',
-				'url_template'   => 'services/{service_slug}/{neighborhood_slug}',
+				'label'               => 'Service × Neighborhood',
+				'entities'            => array( 'service', 'neighborhood' ),
+				'primary_entity'      => 'service',
+				'url_template'        => 'services/{service_slug}/{neighborhood_slug}',
+				'template_id'         => 'tpl_service_area',
+				'preferred_post_type' => 'kayan_pseo',
 			)
 		);
 
 		$this->register_pattern(
 			'service_building',
 			array(
-				'label'          => 'Service × Building',
-				'entities'       => array( 'service', 'building' ),
-				'primary_entity' => 'service',
-				'url_template'   => 'services/{service_slug}/{building_slug}',
+				'label'               => 'Service × Building',
+				'entities'            => array( 'service', 'building' ),
+				'primary_entity'      => 'service',
+				'url_template'        => 'services/{service_slug}/{building_slug}',
+				'template_id'         => 'tpl_brand_service_city',
+				'preferred_post_type' => 'kayan_pseo',
 			)
 		);
 
 		$this->register_pattern(
 			'brand_service_city',
 			array(
-				'label'          => 'Brand × Service × City',
-				'entities'       => array( 'brand', 'service', 'city' ),
-				'primary_entity' => 'service',
-				'url_template'   => 'services/{service_slug}/{brand_slug}/{city_slug}',
+				'label'               => 'Brand × Service × City',
+				'entities'            => array( 'brand', 'service', 'city' ),
+				'primary_entity'      => 'service',
+				'url_template'        => 'services/{service_slug}/{brand_slug}/{city_slug}',
+				'template_id'         => 'tpl_brand_service_city',
+				'preferred_post_type' => 'kayan_pseo',
 			)
 		);
 	}

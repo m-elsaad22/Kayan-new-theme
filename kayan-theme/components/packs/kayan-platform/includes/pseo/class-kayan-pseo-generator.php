@@ -3,6 +3,7 @@
  * PSEO Generator API — dry-run / preview only in Phase 2.5.
  *
  * materialize() / regenerate() intentionally refuse to write posts.
+ * Block-level AI regenerate is contract-only (null provider).
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,6 +33,15 @@ class Kayan_PSEO_Generator {
 	/** @var Kayan_PSEO_AI */
 	private $ai;
 
+	/** @var Kayan_PSEO_Templates */
+	private $templates;
+
+	/** @var Kayan_PSEO_Blocks */
+	private $blocks;
+
+	/** @var Kayan_PSEO_Media */
+	private $media;
+
 	public function __construct(
 		Kayan_Programmatic_SEO $entities,
 		Kayan_PSEO_Patterns $patterns,
@@ -39,7 +49,10 @@ class Kayan_PSEO_Generator {
 		Kayan_PSEO_Identity $identity,
 		Kayan_PSEO_Blueprint $blueprint,
 		Kayan_PSEO_Storage $storage,
-		Kayan_PSEO_AI $ai
+		Kayan_PSEO_AI $ai,
+		Kayan_PSEO_Templates $templates,
+		Kayan_PSEO_Blocks $blocks,
+		Kayan_PSEO_Media $media
 	) {
 		$this->entities  = $entities;
 		$this->patterns  = $patterns;
@@ -48,6 +61,9 @@ class Kayan_PSEO_Generator {
 		$this->blueprint = $blueprint;
 		$this->storage   = $storage;
 		$this->ai        = $ai;
+		$this->templates = $templates;
+		$this->blocks    = $blocks;
+		$this->media     = $media;
 	}
 
 	/**
@@ -72,12 +88,17 @@ class Kayan_PSEO_Generator {
 		$fingerprint = $this->identity->fingerprint( $pattern_id, $entity_refs, $country, $language );
 		$slug        = $this->identity->suggest_public_slug( $pattern_id, $tokens );
 		$url         = $this->identity->build_canonical_url( $pattern_id, $tokens, $country, $language );
-		$existing_id = $this->identity->find_post_id_by_fingerprint( $fingerprint, $this->storage->post_type() );
+		$post_type   = $this->storage->resolve_post_type( $pattern_id );
+		$existing_id = $this->identity->find_post_id_by_fingerprint( $fingerprint, $this->storage->host_post_types() );
 		$blueprint   = $this->blueprint->build_skeleton( $pattern, $entity_refs, $country, $language );
+		$template_id = isset( $pattern['template_id'] ) ? (string) $pattern['template_id'] : '';
+		$template    = $template_id ? $this->templates->get( $template_id ) : null;
 
 		return array(
 			'ok'            => true,
 			'pattern_id'    => $pattern_id,
+			'template_id'   => $template_id,
+			'template'      => $template,
 			'entities'      => $entity_refs,
 			'country'       => sanitize_key( $country ),
 			'language'      => sanitize_key( $language ),
@@ -87,9 +108,14 @@ class Kayan_PSEO_Generator {
 			'existing_post' => $existing_id,
 			'would_update'  => $existing_id > 0,
 			'blueprint'     => $blueprint,
+			'blocks'        => array_keys( isset( $blueprint['blocks'] ) ? (array) $blueprint['blocks'] : array() ),
+			'media'         => $this->media->schema(),
 			'storage'       => array(
-				'post_type'   => $this->storage->post_type(),
-				'post_status' => 'draft',
+				'post_type'          => $post_type,
+				'preferred_post_type'=> isset( $pattern['preferred_post_type'] ) ? $pattern['preferred_post_type'] : '',
+				'fallback_post_type' => isset( $pattern['fallback_post_type'] ) ? $pattern['fallback_post_type'] : Kayan_PSEO_Storage::POST_TYPE,
+				'host_post_types'    => $this->storage->host_post_types(),
+				'post_status'        => 'draft',
 			),
 			'note'          => 'Dry-run only. Call materialize() in a future generation phase.',
 		);
@@ -135,7 +161,7 @@ class Kayan_PSEO_Generator {
 	}
 
 	/**
-	 * AI regenerate stub.
+	 * AI regenerate full page (provider contract).
 	 *
 	 * @param int                 $post_id Post ID.
 	 * @param array<string,mixed> $args    Args.
@@ -147,19 +173,67 @@ class Kayan_PSEO_Generator {
 	}
 
 	/**
+	 * Regenerate a single block without modifying the rest of the page.
+	 * Architecture contract only — providers are stubs in this phase.
+	 *
+	 * @param int                 $post_id  Post ID.
+	 * @param string              $block_id Block id.
+	 * @param array<string,mixed> $args     Args (tokens, provider, prompt override).
+	 * @return array{ok:bool,errors?:string[],blueprint?:array}
+	 */
+	public function regenerate_block( $post_id, $block_id, array $args = array() ) {
+		$block_id = sanitize_key( $block_id );
+		if ( ! $this->blocks->get( $block_id ) ) {
+			return array(
+				'ok'     => false,
+				'errors' => array( 'block_not_registered' ),
+			);
+		}
+
+		return $this->ai->regenerate_block( (int) $post_id, $block_id, $args );
+	}
+
+	/**
+	 * Dry-run template upgrade preserving locked/manual blocks.
+	 *
+	 * @param int    $post_id     Post ID.
+	 * @param string $template_id Template id (optional; uses blueprint template).
+	 * @return array{ok:bool,errors?:string[],blueprint?:array,changed?:string[],preserved?:string[]}
+	 */
+	public function preview_template_upgrade( $post_id, $template_id = '' ) {
+		$blueprint = $this->blueprint->get_for_post( (int) $post_id );
+		if ( ! $template_id ) {
+			$template_id = isset( $blueprint['template_id'] ) ? (string) $blueprint['template_id'] : '';
+		}
+		if ( ! $template_id ) {
+			return array(
+				'ok'     => false,
+				'errors' => array( 'template_id_required' ),
+			);
+		}
+		return $this->blueprint->upgrade_template( $blueprint, $template_id );
+	}
+
+	/**
 	 * Engine readiness report.
 	 *
 	 * @return array<string,mixed>
 	 */
 	public function status() {
 		return array(
-			'phase'              => '2.5',
-			'generation_enabled' => false,
-			'entity_types'       => count( $this->entities->get_entity_types() ),
-			'patterns'           => count( $this->patterns->all() ),
-			'rules'              => count( $this->rules->all() ),
-			'storage'            => $this->storage->capabilities(),
-			'ai_providers'       => $this->ai->list_providers(),
+			'phase'                => '2.5.1',
+			'generation_enabled'   => false,
+			'entity_types'         => count( $this->entities->get_entity_types() ),
+			'patterns'             => count( $this->patterns->all() ),
+			'templates'            => count( $this->templates->all() ),
+			'blocks'               => count( $this->blocks->all() ),
+			'rules'                => count( $this->rules->all() ),
+			'storage'              => $this->storage->capabilities(),
+			'ai_providers'         => $this->ai->list_providers(),
+			'blueprint_schema'     => Kayan_PSEO_Blueprint::SCHEMA_VERSION,
+			'media_schema'         => true,
+			'block_ai'             => true,
+			'blueprint_versioning' => true,
 		);
 	}
 }

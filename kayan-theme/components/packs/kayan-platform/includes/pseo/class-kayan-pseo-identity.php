@@ -84,9 +84,10 @@ class Kayan_PSEO_Identity {
 
 	/**
 	 * Find an existing generated post by fingerprint (0 if none).
+	 * Accepts one post type or a list (searches all PSEO host CPTs).
 	 *
-	 * @param string $fingerprint Fingerprint.
-	 * @param string $post_type   Storage post type.
+	 * @param string          $fingerprint Fingerprint.
+	 * @param string|string[] $post_type   Storage post type(s).
 	 * @return int
 	 */
 	public function find_post_id_by_fingerprint( $fingerprint, $post_type = 'kayan_pseo' ) {
@@ -95,9 +96,24 @@ class Kayan_PSEO_Identity {
 			return 0;
 		}
 
+		$types = is_array( $post_type ) ? $post_type : array( $post_type );
+		$types = array_values(
+			array_filter(
+				array_map(
+					static function ( $type ) {
+						return sanitize_key( (string) $type );
+					},
+					$types
+				)
+			)
+		);
+		if ( ! $types ) {
+			$types = array( 'kayan_pseo' );
+		}
+
 		$posts = get_posts(
 			array(
-				'post_type'              => sanitize_key( $post_type ),
+				'post_type'              => $types,
 				'post_status'            => array( 'publish', 'draft', 'future', 'pending', 'private' ),
 				'posts_per_page'         => 1,
 				'fields'                 => 'ids',

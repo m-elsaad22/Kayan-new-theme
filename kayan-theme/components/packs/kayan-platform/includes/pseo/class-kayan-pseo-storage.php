@@ -27,9 +27,25 @@ class Kayan_PSEO_Storage {
 	/** @var Kayan_Content_Locale */
 	private $locale;
 
+	/** @var Kayan_PSEO_Patterns|null */
+	private $patterns;
+
+	/** @var Kayan_PSEO_Media|null */
+	private $media;
+
 	public function __construct( Kayan_PSEO_Blueprint $blueprint, Kayan_Content_Locale $locale ) {
 		$this->blueprint = $blueprint;
 		$this->locale    = $locale;
+	}
+
+	/**
+	 * @param Kayan_PSEO_Patterns $patterns Patterns.
+	 * @param Kayan_PSEO_Media    $media    Media.
+	 * @return void
+	 */
+	public function set_engines( Kayan_PSEO_Patterns $patterns, Kayan_PSEO_Media $media ) {
+		$this->patterns = $patterns;
+		$this->media    = $media;
 	}
 
 	/**
@@ -40,6 +56,65 @@ class Kayan_PSEO_Storage {
 		add_action( 'init', array( $this, 'register_meta' ), 21 );
 		add_filter( 'kayan_platform_content_post_types', array( $this, 'add_to_locale_types' ) );
 		add_filter( 'kayan_platform_post_type_rewrite_map', array( $this, 'add_to_rewrite_map' ) );
+	}
+
+	/**
+	 * Resolve which post type should store a generated page for a pattern.
+	 * Prefer existing CPTs; fall back to kayan_pseo only when needed.
+	 *
+	 * @param string $pattern_id Pattern id.
+	 * @return string
+	 */
+	public function resolve_post_type( $pattern_id ) {
+		$fallback = self::POST_TYPE;
+		$pattern  = ( $this->patterns ) ? $this->patterns->get( $pattern_id ) : null;
+
+		$preferred = $pattern && ! empty( $pattern['preferred_post_type'] )
+			? sanitize_key( $pattern['preferred_post_type'] )
+			: $fallback;
+		$fallback  = $pattern && ! empty( $pattern['fallback_post_type'] )
+			? sanitize_key( $pattern['fallback_post_type'] )
+			: $fallback;
+
+		if ( $preferred && self::POST_TYPE !== $preferred && post_type_exists( $preferred ) ) {
+			$resolved = $preferred;
+		} elseif ( $preferred === self::POST_TYPE || post_type_exists( $preferred ) ) {
+			$resolved = $preferred ? $preferred : $fallback;
+		} else {
+			$resolved = $fallback;
+		}
+
+		/**
+		 * @param string $resolved   Post type.
+		 * @param string $pattern_id Pattern.
+		 */
+		return apply_filters( 'kayan_pseo_resolve_post_type', $resolved, $pattern_id );
+	}
+
+	/**
+	 * Post types that may host PSEO meta (existing + kayan_pseo).
+	 *
+	 * @return string[]
+	 */
+	public function host_post_types() {
+		$types = array( self::POST_TYPE, 'services', 'faqs', 'pricing', 'reviews', 'portfolio', 'before_after', 'post', 'page' );
+
+		if ( $this->patterns ) {
+			foreach ( $this->patterns->all() as $pattern ) {
+				foreach ( array( 'preferred_post_type', 'fallback_post_type' ) as $key ) {
+					if ( ! empty( $pattern[ $key ] ) ) {
+						$types[] = sanitize_key( (string) $pattern[ $key ] );
+					}
+				}
+			}
+		}
+
+		$types = array_values( array_unique( array_filter( $types ) ) );
+
+		/**
+		 * @param string[] $types Types.
+		 */
+		return apply_filters( 'kayan_pseo_host_post_types', $types );
 	}
 
 	/**
@@ -113,8 +188,13 @@ class Kayan_PSEO_Storage {
 			),
 			Kayan_PSEO_Blueprint::META_BLUEPRINT  => array(
 				'type'              => 'object',
-				'description'       => 'Content blueprint slots.',
+				'description'       => 'Versioned block-based blueprint.',
 				'sanitize_callback' => array( $this->blueprint, 'sanitize' ),
+			),
+			'kayan_pseo_template_id'              => array(
+				'type'              => 'string',
+				'description'       => 'Assigned template id.',
+				'sanitize_callback' => 'sanitize_key',
 			),
 			'kayan_pseo_source'                   => array(
 				'type'              => 'string',
@@ -128,21 +208,36 @@ class Kayan_PSEO_Storage {
 			),
 		);
 
-		foreach ( $keys as $key => $args ) {
-			register_post_meta(
-				self::POST_TYPE,
-				$key,
-				array_merge(
-					array(
-						'single'        => true,
-						'show_in_rest'  => true,
-						'auth_callback' => static function () {
-							return current_user_can( 'edit_pages' );
-						},
-					),
-					$args
-				)
+		if ( $this->media ) {
+			$keys[ Kayan_PSEO_Media::META_MEDIA ] = array(
+				'type'              => 'object',
+				'description'       => 'PSEO media contract.',
+				'sanitize_callback' => array( $this->media, 'sanitize' ),
 			);
+		}
+
+		foreach ( $this->host_post_types() as $post_type ) {
+			$post_type = sanitize_key( $post_type );
+			if ( ! $post_type ) {
+				continue;
+			}
+			// Register even if CPT loads later — WP allows meta registration by name.
+			foreach ( $keys as $key => $args ) {
+				register_post_meta(
+					$post_type,
+					$key,
+					array_merge(
+						array(
+							'single'        => true,
+							'show_in_rest'  => true,
+							'auth_callback' => static function () {
+								return current_user_can( 'edit_posts' );
+							},
+						),
+						$args
+					)
+				);
+			}
 		}
 	}
 
@@ -186,15 +281,21 @@ class Kayan_PSEO_Storage {
 	 */
 	public function capabilities() {
 		return array(
-			'post_type'          => self::POST_TYPE,
-			'behaves_like'       => 'page',
+			'fallback_post_type' => self::POST_TYPE,
+			'prefer_existing'    => true,
+			'host_post_types'    => $this->host_post_types(),
+			'behaves_like'       => 'page_or_existing_cpt',
 			'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'revisions', 'custom-fields', 'page-attributes' ),
 			'searchable'         => true,
 			'rank_math'          => true,
-			'translations'       => true, // via Content Locale translation_group
-			'country_variants'   => true, // via Content Locale countries / variant_group
+			'translations'       => true,
+			'country_variants'   => true,
+			'templates'          => true,
+			'blocks'             => true,
+			'media'              => true,
+			'blueprint_versioning' => true,
 			'rewrite_owned_by'   => 'kayan_platform_country_router',
-			'generation'         => false, // Phase 2.5
+			'generation'         => false,
 		);
 	}
 

@@ -2,7 +2,8 @@
 /**
  * Kayan_PSEO_Engine — Phase 2.5 Programmatic SEO Engine facade.
  *
- * Orchestrates entities, patterns, rules, identity, storage, jobs, AI, generator.
+ * Orchestrates entities, patterns, templates, blocks, media, rules, identity,
+ * storage, jobs, AI, generator.
  * Does not create content. Does not redesign admin UI.
  */
 
@@ -17,6 +18,15 @@ class Kayan_PSEO_Engine {
 
 	/** @var Kayan_PSEO_Patterns */
 	public $patterns;
+
+	/** @var Kayan_PSEO_Blocks */
+	public $blocks;
+
+	/** @var Kayan_PSEO_Templates */
+	public $templates;
+
+	/** @var Kayan_PSEO_Media */
+	public $media;
 
 	/** @var Kayan_PSEO_Rules */
 	public $rules;
@@ -49,13 +59,18 @@ class Kayan_PSEO_Engine {
 	) {
 		$this->entities  = $entities;
 		$this->countries = $countries;
+		$this->blocks    = new Kayan_PSEO_Blocks();
+		$this->templates = new Kayan_PSEO_Templates( $this->blocks );
+		$this->media     = new Kayan_PSEO_Media();
 		$this->patterns  = new Kayan_PSEO_Patterns();
 		$this->rules     = new Kayan_PSEO_Rules( $this->patterns );
 		$this->identity  = new Kayan_PSEO_Identity( $this->patterns );
 		$this->blueprint = new Kayan_PSEO_Blueprint();
+		$this->blueprint->set_engines( $this->blocks, $this->templates, $this->media );
 		$this->storage   = new Kayan_PSEO_Storage( $this->blueprint, $locale );
+		$this->storage->set_engines( $this->patterns, $this->media );
 		$this->jobs      = new Kayan_PSEO_Jobs();
-		$this->ai        = new Kayan_PSEO_AI();
+		$this->ai        = new Kayan_PSEO_AI( $this->blocks, $this->blueprint );
 		$this->generator = new Kayan_PSEO_Generator(
 			$this->entities,
 			$this->patterns,
@@ -63,7 +78,10 @@ class Kayan_PSEO_Engine {
 			$this->identity,
 			$this->blueprint,
 			$this->storage,
-			$this->ai
+			$this->ai,
+			$this->templates,
+			$this->blocks,
+			$this->media
 		);
 	}
 
@@ -71,6 +89,9 @@ class Kayan_PSEO_Engine {
 	 * @return void
 	 */
 	public function register() {
+		$this->blocks->register();
+		$this->templates->register();
+		$this->media->register();
 		$this->patterns->register();
 		$this->rules->register();
 		$this->storage->register();
@@ -165,10 +186,12 @@ class Kayan_PSEO_Engine {
 	 */
 	public function describe() {
 		return array(
-			'version'   => '2.5.0',
+			'version'   => defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '2.5.1',
 			'status'    => $this->generator->status(),
 			'entities'  => array_keys( $this->entities->get_entity_types() ),
 			'patterns'  => array_keys( $this->patterns->all() ),
+			'templates' => array_keys( $this->templates->all() ),
+			'blocks'    => array_keys( $this->blocks->all() ),
 			'storage'   => $this->storage->capabilities(),
 			'apis'      => array(
 				'preview'            => 'kayan_platform()->pseo->generator->preview()',
@@ -176,6 +199,9 @@ class Kayan_PSEO_Engine {
 				'save_rule'          => 'kayan_platform()->pseo->rules->save()',
 				'enqueue_job'        => 'kayan_platform()->pseo->jobs->enqueue()',
 				'fingerprint'        => 'kayan_platform()->pseo->identity->fingerprint()',
+				'upgrade_template'   => 'kayan_platform()->pseo->blueprint->upgrade_template()',
+				'replace_block'      => 'kayan_platform()->pseo->blueprint->replace_block()',
+				'regenerate_block'   => 'kayan_platform()->pseo->generator->regenerate_block()',
 				'materialize'        => 'disabled until generation phase',
 			),
 		);

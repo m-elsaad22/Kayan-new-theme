@@ -3,7 +3,7 @@ Contributors: melsaad
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.7.0
+Stable tag: 1.7.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Tags: rtl-language-support, custom-menu, featured-images, translation-ready
@@ -19,6 +19,9 @@ Tags: rtl-language-support, custom-menu, featured-images, translation-ready
 * Font Awesome 6 Free مستضاف محلياً داخل القالب — بلا اعتماد على CDN خارجي وبلا أي أيقونات مدفوعة.
 
 == Changelog ==
+
+= 1.7.1 =
+* Phase 2.5.1 architecture extensions: Template Engine, Block Engine (per-block AI prompts), Media Engine, Blueprint versioning with lock-safe upgrades, prefer existing CPTs over kayan_pseo when appropriate. Still no generation / no admin UI.
 
 = 1.7.0 =
 * Phase 2.5: Native Programmatic SEO Engine architecture (entities, patterns, rules, identity, blueprint, storage CPT, jobs, AI interface). No page/content generation yet. No admin UI redesign.
