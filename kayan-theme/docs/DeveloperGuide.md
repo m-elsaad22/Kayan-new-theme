@@ -7,14 +7,16 @@
 - Use `kayan_settings()` for options
 - Use `kayan_logger()` for logs
 - Use `kayan_entity()` + `kayan_tags()` for entities and tokens
+- Register admin features via `kayan_admin()->modules->register_module()`
 - Keep Rank Math as the SEO engine
 
 ## Do not
 
 - Call `WP_Query` / `get_posts` / `get_post_meta` / `get_terms` / `get_users` from modules
 - Call `get_option()` / scatter `set_transient()` in modules
+- Create isolated `add_menu_page()` admin screens outside the Admin Platform
 - Emit SEO head tags outside Rank Math
-- Implement generation/AI/admin UI until those phases are approved
+- Implement generation/AI/statistics until those phases are approved
 
 ## Regenerate docs
 

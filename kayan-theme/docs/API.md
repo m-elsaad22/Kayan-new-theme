@@ -11,6 +11,7 @@ kayan_query();             // Query Engine
 kayan_cache();             // Cache Engine
 kayan_settings();          // Settings Engine
 kayan_logger();            // Logger
+kayan_admin();             // Admin Platform
 kayan_platform_url();      // language-first URLs
 kayan_platform_setting();  // country setting helper (BC)
 ```
@@ -24,5 +25,6 @@ kayan_platform()->query->describe();
 kayan_platform()->cache->describe();
 kayan_platform()->settings_engine->describe();
 kayan_platform()->logger->describe();
+kayan_admin()->describe();
 kayan_tags()->describe();
 ```

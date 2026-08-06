@@ -1,6 +1,6 @@
 # Query Engine
 
-Centralized data access. Resources: `service`, `article`, `city`, `country`, `area`, `district`, `faq`, `review`, `portfolio`, `pricing`, `programmatic_page`, `category`, `user`, `page`, `before_after`
+Centralized data access. Resources: `service`, `city`
 
 ```php
 kayan_query()->services( array( 'number' => 10 ) );

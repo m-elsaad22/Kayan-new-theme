@@ -77,6 +77,11 @@ class Kayan_Docs_Generator {
 			'CacheEngine.md'      => $this->doc_cache( $platform ),
 			'SettingsEngine.md'   => $this->doc_settings( $platform ),
 			'Logger.md'           => $this->doc_logger( $platform ),
+			'AdminPlatform.md'    => $this->doc_admin_platform( $platform ),
+			'AdminModules.md'     => $this->doc_admin_modules( $platform ),
+			'AdminPermissions.md' => $this->doc_admin_permissions( $platform ),
+			'AdminUI.md'          => $this->doc_admin_ui( $platform ),
+			'AdminDashboard.md'   => $this->doc_admin_dashboard( $platform ),
 		);
 
 		$written = array();
@@ -141,18 +146,20 @@ KAYAN is a single-install WordPress SEO platform (no Multisite, no WPML/Polylang
 4. **Dynamic Data Tags** — `{{tag}}` tokens for templates/AI
 5. **Programmatic SEO** — patterns, templates, blocks, blueprints (no generation yet)
 6. **Core Infrastructure** — Query, Cache, Settings, Logger
-7. **SEO Bridge** — Rank Math only (filters, never competing head tags)
+7. **Admin Platform** — Module Registry, Permissions, UI Framework, Dashboard foundation
+8. **SEO Bridge** — Rank Math only (filters, never competing head tags)
 
 ## Design rules
 
 - Prefer existing WP content types; `kayan_pseo` is fallback only
 - Modules must use Query / Cache / Settings / Logger / Entity APIs
+- Admin features register through `kayan_admin()` — no isolated admin pages
 - Do not call `WP_Query`, `get_posts`, `get_option`, or scatter transients in app code
 - Rank Math remains the only SEO engine
 
 ## Boot order
 
-Content Locale → Programmatic entities → Entity Engine → Data Tags → Cache → Settings Engine → Logger → Query → PSEO → Router → Resolver → SEO Bridge
+Content Locale → Programmatic entities → Entity Engine → Data Tags → Cache → Settings Engine → Logger → Query → PSEO → Router → Resolver → SEO Bridge → Admin Platform
 MD;
 	}
 
@@ -171,6 +178,7 @@ kayan_query();             // Query Engine
 kayan_cache();             // Cache Engine
 kayan_settings();          // Settings Engine
 kayan_logger();            // Logger
+kayan_admin();             // Admin Platform
 kayan_platform_url();      // language-first URLs
 kayan_platform_setting();  // country setting helper (BC)
 ```
@@ -184,6 +192,7 @@ kayan_platform()->query->describe();
 kayan_platform()->cache->describe();
 kayan_platform()->settings_engine->describe();
 kayan_platform()->logger->describe();
+kayan_admin()->describe();
 kayan_tags()->describe();
 ```
 MD;
@@ -383,14 +392,16 @@ MD;
 - Use `kayan_settings()` for options
 - Use `kayan_logger()` for logs
 - Use `kayan_entity()` + `kayan_tags()` for entities and tokens
+- Register admin features via `kayan_admin()->modules->register_module()`
 - Keep Rank Math as the SEO engine
 
 ## Do not
 
 - Call `WP_Query` / `get_posts` / `get_post_meta` / `get_terms` / `get_users` from modules
 - Call `get_option()` / scatter `set_transient()` in modules
+- Create isolated `add_menu_page()` admin screens outside the Admin Platform
 - Emit SEO head tags outside Rank Math
-- Implement generation/AI/admin UI until those phases are approved
+- Implement generation/AI/statistics until those phases are approved
 
 ## Regenerate docs
 
@@ -474,6 +485,145 @@ kayan_logger()->performance( 'query slow', array( 'duration_ms' => 120 ) );
 kayan_logger()->security( 'capability denied' );
 kayan_logger()->time( 'heavy', function() { /* … */ } );
 ```
+MD;
+	}
+
+	private function doc_admin_platform( $platform ) {
+		$version = isset( $platform->admin ) && method_exists( $platform->admin, 'describe' )
+			? (string) ( $platform->admin->describe()['version'] ?? '3.0.0' )
+			: '3.0.0';
+		return <<<MD
+# Admin Platform
+
+**Phase:** 3.0 · **Admin version contract:** {$version}
+
+Centralized administration shell. Future modules register through one API — no isolated admin pages.
+
+```php
+kayan_admin()->describe();
+kayan_admin()->modules->register_module( 'my_module', array(
+  'label' => 'My Module',
+  'capability' => 'kayan_manage_tools',
+  'position' => 120,
+  'screen' => function( \$module, \$context ) {
+    echo kayan_admin()->ui->empty_state( array(
+      'title' => \$module['label'],
+      'description' => 'Hello',
+    ) );
+  },
+) );
+```
+
+Hook: `kayan_admin_register_modules`
+
+Menu slug: `kayan-platform` (+ per-module `kayan-platform-{id}`).
+MD;
+	}
+
+	private function doc_admin_modules( $platform ) {
+		$modules = array();
+		if ( isset( $platform->admin->modules ) ) {
+			$modules = array_keys( $platform->admin->modules->all() );
+		}
+		$list = $modules ? implode( ', ', array_map( static function ( $m ) {
+			return '`' . $m . '`';
+		}, $modules ) ) : '_(register at runtime)_';
+		return <<<MD
+# Admin Modules
+
+Core registered modules:
+
+{$list}
+
+## Registration buckets
+
+Each module may declare: `nav`, `widgets`, `settings`, `tables`, `forms`, `cards`, `actions`, `notifications`, `permissions`, `screen`.
+
+```php
+kayan_admin()->modules->register_item( 'pseo', 'actions', 'preview', array(
+  'label' => 'Preview',
+  'callback' => \$fn,
+) );
+```
+MD;
+	}
+
+	private function doc_admin_permissions( $platform ) {
+		return <<<MD
+# Admin Permissions
+
+Access capability: `kayan_access_admin`
+
+## Roles
+
+- Administrator
+- SEO Manager (`kayan_seo_manager`)
+- Content Manager (`kayan_content_manager`)
+- Editor (caps granted to WP `editor`)
+- Translator (`kayan_translator`)
+- Marketing (`kayan_marketing`)
+- Developer (`kayan_developer`)
+- Custom roles via `register_role()`
+
+```php
+kayan_admin()->permissions->can( 'kayan_manage_pseo' );
+kayan_admin()->permissions->register_capability( 'kayan_custom', array( 'label' => 'Custom' ) );
+kayan_admin()->permissions->register_role( 'kayan_custom_role', array(
+  'label' => 'Custom Role',
+  'create_wp_role' => true,
+  'capabilities' => array( 'kayan_access_admin', 'kayan_custom' ),
+) );
+```
+MD;
+	}
+
+	private function doc_admin_ui( $platform ) {
+		return <<<MD
+# Admin UI Framework
+
+Reusable components (no duplicated markup):
+
+`card` · `table` · `form` · `field` · `tabs` · `panel` · `dialog` · `drawer` · `notice` · `progress` · `status` · `filters` · `bulk_actions` · `search` · `pagination` · `empty_state`
+
+```php
+echo kayan_admin()->ui->card( array(
+  'title' => 'Hello',
+  'content' => '<p>Body</p>',
+  'status' => 'ready',
+) );
+
+echo kayan_admin()->ui->table( array(
+  'columns' => array( 'name' => 'Name' ),
+  'rows' => array(),
+) );
+```
+MD;
+	}
+
+	private function doc_admin_dashboard( $platform ) {
+		$widgets = array();
+		if ( isset( $platform->admin->dashboard ) ) {
+			$widgets = array_keys( $platform->admin->dashboard->widgets() );
+		}
+		$list = $widgets ? implode( ', ', array_map( static function ( $w ) {
+			return '`' . $w . '`';
+		}, $widgets ) ) : '';
+		return <<<MD
+# Admin Dashboard
+
+Foundation only — **no statistics** in Phase 3.0.
+
+Widget slots: {$list}
+
+```php
+kayan_admin()->dashboard->register_widget( 'custom', array(
+  'title' => 'Custom',
+  'capability' => 'kayan_access_admin',
+  'position' => 110,
+) );
+```
+
+Widgets render as placeholders until a later phase supplies data callbacks.
 MD;
 	}
 }

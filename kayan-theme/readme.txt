@@ -3,7 +3,7 @@ Contributors: melsaad
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.9.0
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Tags: rtl-language-support, custom-menu, featured-images, translation-ready
@@ -19,6 +19,9 @@ Tags: rtl-language-support, custom-menu, featured-images, translation-ready
 * Font Awesome 6 Free مستضاف محلياً داخل القالب — بلا اعتماد على CDN خارجي وبلا أي أيقونات مدفوعة.
 
 == Changelog ==
+
+= 2.0.0 =
+* Phase 3.0: KAYAN Admin Platform Core — module registry, permissions/roles, reusable admin UI framework, dashboard foundation (widget slots only). No statistics, generation, or AI.
 
 = 1.9.0 =
 * Phase 2.7: Query Engine, Cache Engine, Settings Engine, Logger + developer docs under /docs. Core infrastructure only — no Admin Platform, generation, or UI redesign.

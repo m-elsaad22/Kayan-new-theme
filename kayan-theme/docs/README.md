@@ -24,5 +24,10 @@ kayan_platform()->docs->generate();
 - [CacheEngine.md](./CacheEngine.md)
 - [SettingsEngine.md](./SettingsEngine.md)
 - [Logger.md](./Logger.md)
+- [AdminPlatform.md](./AdminPlatform.md)
+- [AdminModules.md](./AdminModules.md)
+- [AdminPermissions.md](./AdminPermissions.md)
+- [AdminUI.md](./AdminUI.md)
+- [AdminDashboard.md](./AdminDashboard.md)
 
-Platform version: `2.7.0`
+Platform version: `3.0.0`

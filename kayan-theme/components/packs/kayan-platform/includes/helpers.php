@@ -156,3 +156,14 @@ if ( ! function_exists( 'kayan_logger' ) ) {
 		return kayan_platform()->logger;
 	}
 }
+
+if ( ! function_exists( 'kayan_admin' ) ) {
+	/**
+	 * KAYAN Admin Platform facade.
+	 *
+	 * @return Kayan_Admin_Platform
+	 */
+	function kayan_admin() {
+		return kayan_platform()->admin;
+	}
+}
