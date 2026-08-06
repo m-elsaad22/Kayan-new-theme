@@ -51,6 +51,8 @@ if ( ! function_exists( 'kayan_platform_language' ) ) {
 
 if ( ! function_exists( 'kayan_platform_setting' ) ) {
 	/**
+	 * Country setting helper (BC). Prefer kayan_settings() for new code.
+	 *
 	 * @param string      $key     Setting key / dot path.
 	 * @param string|null $country Country code.
 	 * @param mixed       $default Default.
@@ -59,6 +61,9 @@ if ( ! function_exists( 'kayan_platform_setting' ) ) {
 	function kayan_platform_setting( $key, $country = null, $default = '' ) {
 		if ( null === $country ) {
 			$country = kayan_platform_country();
+		}
+		if ( isset( kayan_platform()->settings_engine ) ) {
+			return kayan_platform()->settings_engine->get_country( $key, $country, $default );
 		}
 		return kayan_platform()->settings->get( $key, $country, $default );
 	}
@@ -111,5 +116,43 @@ if ( ! function_exists( 'kayan_tags' ) ) {
 	 */
 	function kayan_tags() {
 		return kayan_platform()->tags;
+	}
+}
+
+if ( ! function_exists( 'kayan_query' ) ) {
+	/**
+	 * @return Kayan_Query_Engine
+	 */
+	function kayan_query() {
+		return kayan_platform()->query;
+	}
+}
+
+if ( ! function_exists( 'kayan_cache' ) ) {
+	/**
+	 * @return Kayan_Cache_Engine
+	 */
+	function kayan_cache() {
+		return kayan_platform()->cache;
+	}
+}
+
+if ( ! function_exists( 'kayan_settings' ) ) {
+	/**
+	 * Unified Settings Engine (global / country / language / module).
+	 *
+	 * @return Kayan_Settings_Engine
+	 */
+	function kayan_settings() {
+		return kayan_platform()->settings_engine;
+	}
+}
+
+if ( ! function_exists( 'kayan_logger' ) ) {
+	/**
+	 * @return Kayan_Logger
+	 */
+	function kayan_logger() {
+		return kayan_platform()->logger;
 	}
 }

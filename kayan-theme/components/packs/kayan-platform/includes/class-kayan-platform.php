@@ -1,6 +1,6 @@
 <?php
 /**
- * Kayan_Platform — service container / facade (Phases 1–2.6).
+ * Kayan_Platform — service container / facade (Phases 1–2.7).
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,8 +21,15 @@ class Kayan_Platform {
 	/** @var Kayan_Context */
 	public $context;
 
-	/** @var Kayan_Country_Settings */
+	/**
+	 * Country settings repository (BC). Prefer settings_engine for new code.
+	 *
+	 * @var Kayan_Country_Settings
+	 */
 	public $settings;
+
+	/** @var Kayan_Settings_Engine */
+	public $settings_engine;
 
 	/** @var Kayan_Content_Locale */
 	public $content;
@@ -41,6 +48,18 @@ class Kayan_Platform {
 
 	/** @var Kayan_Dynamic_Data_Tags */
 	public $tags;
+
+	/** @var Kayan_Cache_Engine */
+	public $cache;
+
+	/** @var Kayan_Logger */
+	public $logger;
+
+	/** @var Kayan_Query_Engine */
+	public $query;
+
+	/** @var Kayan_Docs_Generator */
+	public $docs;
 
 	/** @var Kayan_PSEO_Engine */
 	public $pseo;
@@ -71,6 +90,13 @@ class Kayan_Platform {
 		$this->settings     = new Kayan_Country_Settings( $this->countries );
 		$this->content      = new Kayan_Content_Locale();
 		$this->urls         = new Kayan_URL( $this->countries, $this->languages );
+
+		$this->cache           = new Kayan_Cache_Engine();
+		$this->logger          = new Kayan_Logger();
+		$this->settings_engine = new Kayan_Settings_Engine( $this->countries, $this->languages, $this->settings );
+		$this->settings_engine->set_cache( $this->cache );
+		$this->query = new Kayan_Query_Engine( $this->cache, $this->logger, $this->countries );
+
 		$this->programmatic = new Kayan_Programmatic_SEO();
 		$this->entity       = new Kayan_Entity_Engine(
 			$this->programmatic,
@@ -98,6 +124,7 @@ class Kayan_Platform {
 			$this->countries,
 			$this->languages
 		);
+		$this->docs         = new Kayan_Docs_Generator();
 	}
 
 	/**
@@ -113,11 +140,25 @@ class Kayan_Platform {
 		$this->programmatic->register();
 		$this->entity->register();
 		$this->tags->register();
+
+		$this->cache->register();
+		$this->settings_engine->register();
+		$this->logger->register();
+		$this->query->register();
+
 		$this->pseo->register();
 		$this->router->register();
 		$this->resolver->register();
 		$this->seo->set_routing_services( $this->router, $this->content );
 		$this->seo->register();
+
+		$this->logger->info(
+			'general',
+			'platform.booted',
+			array(
+				'version' => defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '',
+			)
+		);
 
 		/**
 		 * @param Kayan_Platform $platform Platform instance.
