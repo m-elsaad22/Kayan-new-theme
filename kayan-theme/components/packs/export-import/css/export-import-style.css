@@ -1,0 +1,41 @@
+.--pageIS--Export-And-Import {
+    display: flex;
+    margin: 0 auto;
+    overflow: visible;
+    max-width: 100%;
+    min-width: 100%;
+    align-content: flex-start;
+    align-items: flex-start;
+    padding: 40px 40px 40px;
+    background: #ffff;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.-customfields-menuFields.--Export-And-Import {
+    margin-bottom: 30px;
+    padding: 30px;
+    border: var(--border-defult);
+    box-shadow: var(--box-shadow-defult);
+    border-radius: var(--miniradius);
+}
+
+.-customfields-menuFields.--Export-And-Import .-fix-forms-field-title {
+    margin-bottom: 20px;
+}
+
+.----expor--title {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 40px;
+}
+
+.----expor--title > h2 {
+    font-size: 25px;
+    line-height: 1.7;
+    margin-bottom: 10px;
+}
+
+.----expor--title > p {
+    color: var(--secondarytext);
+}

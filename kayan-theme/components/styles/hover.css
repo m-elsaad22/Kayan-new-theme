@@ -1,0 +1,35 @@
+.unline:hover {
+    text-decoration: underline
+}
+
+.activable:active {
+    transform: scale(.96);
+    opacity: .85
+}
+
+.hoverable.hoverableselect:hover::after {
+    background: var(--media-hover)
+}
+
+.hoverable.hoverableselect::after {
+    transition: none
+}
+
+.hoverable {
+    position: relative
+}
+
+
+.activable {
+    user-select: none;
+    cursor: pointer
+}
+
+.disabled {
+    cursor: not-allowed;
+    user-select: none
+}
+
+.activableopac:active {
+    opacity: .7
+}
