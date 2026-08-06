@@ -1,6 +1,6 @@
 <?php
 /**
- * Kayan_Platform — service container / facade (Phase 1 + Phase 2).
+ * Kayan_Platform — service container / facade (Phases 1–2.5).
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,6 +36,9 @@ class Kayan_Platform {
 	/** @var Kayan_Programmatic_SEO */
 	public $programmatic;
 
+	/** @var Kayan_PSEO_Engine */
+	public $pseo;
+
 	/** @var Kayan_Country_Router */
 	public $router;
 
@@ -63,6 +66,7 @@ class Kayan_Platform {
 		$this->content      = new Kayan_Content_Locale();
 		$this->urls         = new Kayan_URL( $this->countries, $this->languages );
 		$this->programmatic = new Kayan_Programmatic_SEO();
+		$this->pseo         = new Kayan_PSEO_Engine( $this->programmatic, $this->content, $this->countries );
 		$this->router       = new Kayan_Country_Router(
 			$this->countries,
 			$this->languages,
@@ -90,6 +94,7 @@ class Kayan_Platform {
 
 		$this->content->register();
 		$this->programmatic->register();
+		$this->pseo->register();
 		$this->router->register();
 		$this->resolver->register();
 		$this->seo->set_routing_services( $this->router, $this->content );

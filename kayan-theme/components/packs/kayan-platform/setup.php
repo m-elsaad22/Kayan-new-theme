@@ -1,17 +1,16 @@
 <?php
 /**
- * kayan-platform — SEO Platform Core (Phase 1 + Phase 2)
+ * kayan-platform — SEO Platform Core (Phases 1 → 2.5)
  * ════════════════════════════════════════════════════════════════
  * Phase 1: Country/Language engines, context, settings, locale meta, SEO bridge
  * Phase 2: Country Routing Engine + Content Resolution Engine
- *          + Programmatic SEO entity registry (architecture only)
+ * Phase 2.5: Native Programmatic SEO Engine architecture (no generation yet)
  *
  * Constraints:
  * - Single WP install (no Multisite / WPML / Polylang)
  * - Canonical URLs: language-first (/en/sa/…)
- * - Legacy /{country}/en/… → 301
  * - Rank Math = only SEO engine (KAYAN extends via filters)
- * - No frontend/admin redesign, no data migration in Phase 2
+ * - Phase 2.5: APIs + storage contracts only — no page/content generation, no admin UI
  * ════════════════════════════════════════════════════════════════
  */
 
@@ -23,7 +22,7 @@ if ( defined( 'KAYAN_PLATFORM_LOADED' ) ) {
 	return;
 }
 define( 'KAYAN_PLATFORM_LOADED', true );
-define( 'KAYAN_PLATFORM_VERSION', '2.0.0' );
+define( 'KAYAN_PLATFORM_VERSION', '2.5.0' );
 define( 'KAYAN_PLATFORM_DIR', __DIR__ );
 define( 'KAYAN_PLATFORM_URL_MODE_LEGACY', 'legacy' );
 define( 'KAYAN_PLATFORM_URL_MODE_LANG_FIRST', 'language_first' );
@@ -35,6 +34,15 @@ require_once KAYAN_PLATFORM_DIR . '/includes/class-kayan-country-settings.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/class-kayan-content-locale.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/class-kayan-url.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/class-kayan-programmatic-seo.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-patterns.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-rules.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-identity.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-blueprint.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-storage.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-jobs.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-ai.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-generator.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-engine.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/class-kayan-country-router.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/class-kayan-content-resolver.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/class-kayan-seo-bridge.php';

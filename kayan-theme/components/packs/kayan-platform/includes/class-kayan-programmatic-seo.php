@@ -195,6 +195,39 @@ class Kayan_Programmatic_SEO {
 		);
 
 		$this->register_entity_type(
+			'neighborhood',
+			array(
+				'label'       => 'Neighborhood',
+				'segment'     => 'neighborhood',
+				'enabled'     => false,
+				'combinators' => array( 'country', 'city', 'neighborhood' ),
+				'source'      => 'generated',
+			)
+		);
+
+		$this->register_entity_type(
+			'brand',
+			array(
+				'label'       => 'Brand',
+				'segment'     => 'brand',
+				'enabled'     => false,
+				'combinators' => array( 'brand', 'service', 'city' ),
+				'source'      => 'generated',
+			)
+		);
+
+		$this->register_entity_type(
+			'building',
+			array(
+				'label'       => 'Building',
+				'segment'     => 'building',
+				'enabled'     => false,
+				'combinators' => array( 'country', 'city', 'building' ),
+				'source'      => 'generated',
+			)
+		);
+
+		$this->register_entity_type(
 			'service',
 			array(
 				'label'       => 'Service',

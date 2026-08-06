@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Kayan_Country_Router {
 
-	const REWRITE_VERSION = '2.0.0';
+	const REWRITE_VERSION = '2.5.0';
 
 	/** @var Kayan_Country_Engine */
 	private $countries;

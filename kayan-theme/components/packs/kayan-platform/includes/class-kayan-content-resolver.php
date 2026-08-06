@@ -113,7 +113,7 @@ class Kayan_Content_Resolver {
 		if ( '' === $slug ) {
 			$slug = (string) get_query_var( 'name' );
 		}
-		$slug = sanitize_title( $slug );
+		$slug = $this->sanitize_public_slug( $slug );
 		if ( '' === $slug ) {
 			return;
 		}
@@ -127,6 +127,14 @@ class Kayan_Content_Resolver {
 		$types = $post_type
 			? array( $post_type )
 			: array( 'post', 'page' );
+
+		// PSEO pages can share public path shapes (e.g. services/a/b) — include storage CPT.
+		if ( class_exists( 'Kayan_PSEO_Storage' ) ) {
+			$pseo = Kayan_PSEO_Storage::POST_TYPE;
+			if ( ! in_array( $pseo, $types, true ) && post_type_exists( $pseo ) ) {
+				$types[] = $pseo;
+			}
+		}
 
 		$resolved = $this->resolve_singular( $slug, $types, $country, $lang );
 		if ( ! $resolved ) {
@@ -171,7 +179,7 @@ class Kayan_Content_Resolver {
 	 * @return WP_Post|null
 	 */
 	public function resolve_singular( $slug, array $types, $country, $lang ) {
-		$slug    = sanitize_title( $slug );
+		$slug    = $this->sanitize_public_slug( $slug );
 		$country = sanitize_key( $country );
 		$lang    = sanitize_key( $lang );
 		$types   = array_values( array_filter( array_map( 'sanitize_key', $types ) ) );
@@ -255,11 +263,23 @@ class Kayan_Content_Resolver {
 	 * @return WP_Post[]
 	 */
 	private function collect_candidates( $slug, array $types ) {
+		// Include drafts/future for fingerprint previews; front-end main query still publish-only via WP.
+		$statuses = array( 'publish' );
+		if ( is_user_logged_in() && current_user_can( 'edit_pages' ) ) {
+			$statuses = array( 'publish', 'draft', 'future', 'pending' );
+		}
+
+		$name_slug = $slug;
+		if ( false !== strpos( $slug, '/' ) ) {
+			// Multi-segment public slugs use synthetic post_name; match via public_slug meta primarily.
+			$name_slug = sanitize_title( str_replace( '/', '-', $slug ) );
+		}
+
 		$by_name = get_posts(
 			array(
-				'name'           => $slug,
+				'name'           => $name_slug,
 				'post_type'      => $types,
-				'post_status'    => 'publish',
+				'post_status'    => $statuses,
 				'posts_per_page' => 20,
 				'no_found_rows'  => true,
 			)
@@ -268,7 +288,7 @@ class Kayan_Content_Resolver {
 		$by_public = get_posts(
 			array(
 				'post_type'      => $types,
-				'post_status'    => 'publish',
+				'post_status'    => $statuses,
 				'posts_per_page' => 20,
 				'no_found_rows'  => true,
 				'meta_key'       => Kayan_Content_Locale::META_PUBLIC_SLUG,
@@ -350,6 +370,24 @@ class Kayan_Content_Resolver {
 		);
 
 		$query->set( 'meta_query', $meta_query );
+	}
+
+	/**
+	 * Sanitize single- or multi-segment public slugs without destroying `/`.
+	 *
+	 * @param string $slug Slug.
+	 * @return string
+	 */
+	private function sanitize_public_slug( $slug ) {
+		$slug = trim( (string) $slug, '/' );
+		if ( '' === $slug ) {
+			return '';
+		}
+		if ( false === strpos( $slug, '/' ) ) {
+			return sanitize_title( $slug );
+		}
+		$parts = array_filter( array_map( 'sanitize_title', explode( '/', $slug ) ) );
+		return implode( '/', $parts );
 	}
 
 	/**

@@ -82,3 +82,12 @@ if ( ! function_exists( 'kayan_platform_url' ) ) {
 		return $platform->urls->build( $country, $lang, $slug );
 	}
 }
+
+if ( ! function_exists( 'kayan_pseo' ) ) {
+	/**
+	 * @return Kayan_PSEO_Engine
+	 */
+	function kayan_pseo() {
+		return kayan_platform()->pseo;
+	}
+}
