@@ -91,3 +91,25 @@ if ( ! function_exists( 'kayan_pseo' ) ) {
 		return kayan_platform()->pseo;
 	}
 }
+
+if ( ! function_exists( 'kayan_entity' ) ) {
+	/**
+	 * Entity Relationship Engine facade.
+	 *
+	 * @return Kayan_Entity_Engine
+	 */
+	function kayan_entity() {
+		return kayan_platform()->entity;
+	}
+}
+
+if ( ! function_exists( 'kayan_tags' ) ) {
+	/**
+	 * Dynamic Data Tags registry / resolver.
+	 *
+	 * @return Kayan_Dynamic_Data_Tags
+	 */
+	function kayan_tags() {
+		return kayan_platform()->tags;
+	}
+}

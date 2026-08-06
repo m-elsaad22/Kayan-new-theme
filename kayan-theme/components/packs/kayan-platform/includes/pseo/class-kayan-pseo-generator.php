@@ -94,6 +94,20 @@ class Kayan_PSEO_Generator {
 		$template_id = isset( $pattern['template_id'] ) ? (string) $pattern['template_id'] : '';
 		$template    = $template_id ? $this->templates->get( $template_id ) : null;
 
+		$tag_context = array(
+			'country'   => sanitize_key( $country ),
+			'language'  => sanitize_key( $language ),
+			'entities'  => $entity_refs,
+			'blueprint' => $blueprint,
+			'tokens'    => $tokens,
+		);
+		$sample_tags = array();
+		if ( function_exists( 'kayan_tags' ) ) {
+			foreach ( array( 'service_name', 'city_name', 'country_name', 'phone', 'whatsapp', 'hero_title', 'meta_title' ) as $tag ) {
+				$sample_tags[ $tag ] = kayan_tags()->resolve_tag( $tag, $tag_context );
+			}
+		}
+
 		return array(
 			'ok'            => true,
 			'pattern_id'    => $pattern_id,
@@ -110,6 +124,10 @@ class Kayan_PSEO_Generator {
 			'blueprint'     => $blueprint,
 			'blocks'        => array_keys( isset( $blueprint['blocks'] ) ? (array) $blueprint['blocks'] : array() ),
 			'media'         => $this->media->schema(),
+			'data_tags'     => array(
+				'context' => $tag_context,
+				'sample'  => $sample_tags,
+			),
 			'storage'       => array(
 				'post_type'          => $post_type,
 				'preferred_post_type'=> isset( $pattern['preferred_post_type'] ) ? $pattern['preferred_post_type'] : '',

@@ -186,13 +186,15 @@ class Kayan_PSEO_Engine {
 	 */
 	public function describe() {
 		return array(
-			'version'   => defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '2.5.1',
+			'version'   => defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '2.6.0',
 			'status'    => $this->generator->status(),
 			'entities'  => array_keys( $this->entities->get_entity_types() ),
 			'patterns'  => array_keys( $this->patterns->all() ),
 			'templates' => array_keys( $this->templates->all() ),
 			'blocks'    => array_keys( $this->blocks->all() ),
 			'storage'   => $this->storage->capabilities(),
+			'entity_engine' => function_exists( 'kayan_entity' ) ? kayan_entity()->describe() : null,
+			'data_tags'     => function_exists( 'kayan_tags' ) ? kayan_tags()->describe() : null,
 			'apis'      => array(
 				'preview'            => 'kayan_platform()->pseo->generator->preview()',
 				'preview_rule'       => 'kayan_platform()->pseo->generator->preview_rule()',
@@ -202,6 +204,8 @@ class Kayan_PSEO_Engine {
 				'upgrade_template'   => 'kayan_platform()->pseo->blueprint->upgrade_template()',
 				'replace_block'      => 'kayan_platform()->pseo->blueprint->replace_block()',
 				'regenerate_block'   => 'kayan_platform()->pseo->generator->regenerate_block()',
+				'entity_get'         => 'kayan_entity()->get( $type, $ref )',
+				'tags_resolve'       => 'kayan_tags()->resolve( $template, $context )',
 				'materialize'        => 'disabled until generation phase',
 			),
 		);

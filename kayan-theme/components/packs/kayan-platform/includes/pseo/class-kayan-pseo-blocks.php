@@ -118,6 +118,24 @@ class Kayan_PSEO_Blocks {
 			$prompt = str_replace( '{' . $key . '}', (string) $value, $prompt );
 		}
 
+		// Dynamic Data Tags — templates/AI consume {{tags}} instead of hardcoded values.
+		if ( function_exists( 'kayan_tags' ) ) {
+			$context = array(
+				'country'  => isset( $tokens['country'] ) ? (string) $tokens['country'] : '',
+				'language' => isset( $tokens['language'] ) ? (string) $tokens['language'] : 'ar',
+				'entities' => array(),
+				'tokens'   => $tokens,
+			);
+			foreach ( array( 'service', 'city', 'country', 'faq', 'category', 'pricing', 'area', 'landmark' ) as $type ) {
+				if ( ! empty( $tokens[ $type ] ) ) {
+					$context['entities'][ $type ] = (string) $tokens[ $type ];
+				} elseif ( ! empty( $tokens[ $type . '_slug' ] ) ) {
+					$context['entities'][ $type ] = (string) $tokens[ $type . '_slug' ];
+				}
+			}
+			$prompt = kayan_tags()->resolve_mixed( $prompt, $context );
+		}
+
 		/**
 		 * @param string $prompt   Prompt.
 		 * @param string $block_id Block.

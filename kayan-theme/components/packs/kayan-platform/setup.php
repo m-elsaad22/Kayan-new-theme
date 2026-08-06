@@ -1,17 +1,18 @@
 <?php
 /**
- * kayan-platform — SEO Platform Core (Phases 1 → 2.5)
+ * kayan-platform — SEO Platform Core (Phases 1 → 2.6)
  * ════════════════════════════════════════════════════════════════
  * Phase 1: Country/Language engines, context, settings, locale meta, SEO bridge
  * Phase 2: Country Routing Engine + Content Resolution Engine
  * Phase 2.5: Native Programmatic SEO Engine architecture (no generation yet)
  * Phase 2.5.1: Templates, Blocks, Media, Blueprint versioning, prefer existing CPTs
+ * Phase 2.6: Entity Relationship Engine + Dynamic Data Tags
  *
  * Constraints:
  * - Single WP install (no Multisite / WPML / Polylang)
  * - Canonical URLs: language-first (/en/sa/…)
  * - Rank Math = only SEO engine (KAYAN extends via filters)
- * - Phase 2.5.x: APIs + storage contracts only — no page/content generation, no admin UI
+ * - Architecture/APIs only until Phase 3 — no page/content generation, no admin UI
  * ════════════════════════════════════════════════════════════════
  */
 
@@ -23,7 +24,7 @@ if ( defined( 'KAYAN_PLATFORM_LOADED' ) ) {
 	return;
 }
 define( 'KAYAN_PLATFORM_LOADED', true );
-define( 'KAYAN_PLATFORM_VERSION', '2.5.1' );
+define( 'KAYAN_PLATFORM_VERSION', '2.6.0' );
 define( 'KAYAN_PLATFORM_DIR', __DIR__ );
 define( 'KAYAN_PLATFORM_URL_MODE_LEGACY', 'legacy' );
 define( 'KAYAN_PLATFORM_URL_MODE_LANG_FIRST', 'language_first' );
@@ -35,6 +36,10 @@ require_once KAYAN_PLATFORM_DIR . '/includes/class-kayan-country-settings.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/class-kayan-content-locale.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/class-kayan-url.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/class-kayan-programmatic-seo.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/entities/class-kayan-entity-api.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/entities/class-kayan-entity-relationships.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/entities/class-kayan-entity-engine.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/entities/class-kayan-dynamic-data-tags.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-blocks.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-templates.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-media.php';
