@@ -167,3 +167,27 @@ if ( ! function_exists( 'kayan_admin' ) ) {
 		return kayan_platform()->admin;
 	}
 }
+
+if ( ! function_exists( 'kayan_integration' ) ) {
+	/**
+	 * Theme ↔ Platform integration facade (Phase 3.1 adapters).
+	 *
+	 * @return Kayan_Theme_Integration
+	 */
+	function kayan_integration() {
+		return kayan_platform()->integration;
+	}
+}
+
+if ( ! function_exists( 'kayan_theme_option' ) ) {
+	/**
+	 * Theme option reader with country-profile preference for mapped keys.
+	 *
+	 * @param string $key     Option key.
+	 * @param mixed  $default Default.
+	 * @return mixed
+	 */
+	function kayan_theme_option( $key, $default = '' ) {
+		return Kayan_Theme_Integration::theme_option( $key, $default );
+	}
+}

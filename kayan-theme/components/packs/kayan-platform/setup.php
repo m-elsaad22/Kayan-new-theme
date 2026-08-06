@@ -1,17 +1,19 @@
 <?php
 /**
- * kayan-platform — SEO Platform Core (Phases 1 → 3.0)
+ * kayan-platform — SEO Platform Core (Phases 1 → 3.1)
  * ════════════════════════════════════════════════════════════════
  * Phase 1: Country/Language engines, context, settings, locale meta, SEO bridge
  * Phase 2: Country Routing Engine + Content Resolution Engine
  * Phase 2.5–2.7: PSEO architecture, Entities, Tags, Query/Cache/Settings/Logger
  * Phase 3.0: Admin Platform Core (module registry, permissions, UI framework, dashboard foundation)
+ * Phase 3.1: Existing Theme Integration (adapters — no new feature UIs)
  *
  * Constraints:
  * - Single WP install (no Multisite / WPML / Polylang)
  * - Canonical URLs: language-first (/en/sa/…)
  * - Rank Math = only SEO engine (KAYAN extends via filters)
- * - Phase 3.0: admin architecture only — no generation, AI, statistics, or reports
+ * - Reuse / extend / wrap existing theme packs — never duplicate
+ * - Phase 3.1: zero breaking changes; no new Countries/Languages/Templates/AI UIs
  * ════════════════════════════════════════════════════════════════
  */
 
@@ -23,7 +25,7 @@ if ( defined( 'KAYAN_PLATFORM_LOADED' ) ) {
 	return;
 }
 define( 'KAYAN_PLATFORM_LOADED', true );
-define( 'KAYAN_PLATFORM_VERSION', '3.0.0' );
+define( 'KAYAN_PLATFORM_VERSION', '3.1.0' );
 define( 'KAYAN_PLATFORM_DIR', __DIR__ );
 define( 'KAYAN_PLATFORM_URL_MODE_LEGACY', 'legacy' );
 define( 'KAYAN_PLATFORM_URL_MODE_LANG_FIRST', 'language_first' );
@@ -62,6 +64,8 @@ require_once KAYAN_PLATFORM_DIR . '/includes/admin/class-kayan-admin-ui.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/admin/class-kayan-admin-dashboard.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/admin/class-kayan-admin-core-modules.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/admin/class-kayan-admin-platform.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/integration/class-kayan-theme-integration.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/integration/class-kayan-compatibility-report.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/class-kayan-country-router.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/class-kayan-content-resolver.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/class-kayan-seo-bridge.php';

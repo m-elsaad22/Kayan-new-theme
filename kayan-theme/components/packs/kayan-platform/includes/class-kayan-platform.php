@@ -1,6 +1,6 @@
 <?php
 /**
- * Kayan_Platform — service container / facade (Phases 1–3.0).
+ * Kayan_Platform — service container / facade (Phases 1–3.1).
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -63,6 +63,9 @@ class Kayan_Platform {
 
 	/** @var Kayan_Admin_Platform */
 	public $admin;
+
+	/** @var Kayan_Theme_Integration */
+	public $integration;
 
 	/** @var Kayan_PSEO_Engine */
 	public $pseo;
@@ -128,6 +131,7 @@ class Kayan_Platform {
 			$this->languages
 		);
 		$this->admin        = new Kayan_Admin_Platform( $this->logger );
+		$this->integration  = new Kayan_Theme_Integration( $this->logger );
 		$this->docs         = new Kayan_Docs_Generator();
 	}
 
@@ -157,6 +161,7 @@ class Kayan_Platform {
 		$this->seo->register();
 
 		$this->admin->register();
+		$this->integration->register();
 
 		$this->logger->info(
 			'general',

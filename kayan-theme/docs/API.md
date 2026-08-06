@@ -12,6 +12,8 @@ kayan_cache();             // Cache Engine
 kayan_settings();          // Settings Engine
 kayan_logger();            // Logger
 kayan_admin();             // Admin Platform
+kayan_integration();       // Theme Integration (adapters)
+kayan_theme_option();      // Theme option + country profile bridge
 kayan_platform_url();      // language-first URLs
 kayan_platform_setting();  // country setting helper (BC)
 ```
@@ -26,5 +28,6 @@ kayan_platform()->cache->describe();
 kayan_platform()->settings_engine->describe();
 kayan_platform()->logger->describe();
 kayan_admin()->describe();
+kayan_integration()->describe();
 kayan_tags()->describe();
 ```

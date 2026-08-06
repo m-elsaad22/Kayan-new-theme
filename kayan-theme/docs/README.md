@@ -29,5 +29,7 @@ kayan_platform()->docs->generate();
 - [AdminPermissions.md](./AdminPermissions.md)
 - [AdminUI.md](./AdminUI.md)
 - [AdminDashboard.md](./AdminDashboard.md)
+- [ThemeIntegration.md](./ThemeIntegration.md)
+- [Compatibility.md](./Compatibility.md)
 
-Platform version: `3.0.0`
+Platform version: `3.1.0`

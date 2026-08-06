@@ -7,8 +7,10 @@
 - Use `kayan_settings()` for options
 - Use `kayan_logger()` for logs
 - Use `kayan_entity()` + `kayan_tags()` for entities and tokens
+- Use `kayan_theme_option()` / `kayan_integration()` when bridging Theme Options
 - Register admin features via `kayan_admin()->modules->register_module()`
 - Keep Rank Math as the SEO engine
+- Reuse existing packs via adapters — never fork a second implementation
 
 ## Do not
 
@@ -17,6 +19,11 @@
 - Create isolated `add_menu_page()` admin screens outside the Admin Platform
 - Emit SEO head tags outside Rank Math
 - Implement generation/AI/statistics until those phases are approved
+- Create Countries / Languages / Templates / AI UIs until those phases are approved
+
+## Theme integration
+
+See [ThemeIntegration.md](./ThemeIntegration.md) and [Compatibility.md](./Compatibility.md).
 
 ## Regenerate docs
 

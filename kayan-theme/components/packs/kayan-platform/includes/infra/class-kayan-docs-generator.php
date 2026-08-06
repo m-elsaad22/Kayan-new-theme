@@ -82,6 +82,8 @@ class Kayan_Docs_Generator {
 			'AdminPermissions.md' => $this->doc_admin_permissions( $platform ),
 			'AdminUI.md'          => $this->doc_admin_ui( $platform ),
 			'AdminDashboard.md'   => $this->doc_admin_dashboard( $platform ),
+			'ThemeIntegration.md' => $this->doc_theme_integration( $platform ),
+			'Compatibility.md'    => $this->doc_compatibility( $platform ),
 		);
 
 		$written = array();
@@ -147,7 +149,8 @@ KAYAN is a single-install WordPress SEO platform (no Multisite, no WPML/Polylang
 5. **Programmatic SEO** — patterns, templates, blocks, blueprints (no generation yet)
 6. **Core Infrastructure** — Query, Cache, Settings, Logger
 7. **Admin Platform** — Module Registry, Permissions, UI Framework, Dashboard foundation
-8. **SEO Bridge** — Rank Math only (filters, never competing head tags)
+8. **Theme Integration** — Adapters connecting existing KAYAN Theme packs (Phase 3.1)
+9. **SEO Bridge** — Rank Math only (filters, never competing head tags)
 
 ## Design rules
 
@@ -156,10 +159,11 @@ KAYAN is a single-install WordPress SEO platform (no Multisite, no WPML/Polylang
 - Admin features register through `kayan_admin()` — no isolated admin pages
 - Do not call `WP_Query`, `get_posts`, `get_option`, or scatter transients in app code
 - Rank Math remains the only SEO engine
+- Reuse / extend / wrap existing theme packs — never duplicate implementations
 
 ## Boot order
 
-Content Locale → Programmatic entities → Entity Engine → Data Tags → Cache → Settings Engine → Logger → Query → PSEO → Router → Resolver → SEO Bridge → Admin Platform
+Content Locale → Programmatic entities → Entity Engine → Data Tags → Cache → Settings Engine → Logger → Query → PSEO → Router → Resolver → SEO Bridge → Admin Platform → Theme Integration
 MD;
 	}
 
@@ -179,6 +183,8 @@ kayan_cache();             // Cache Engine
 kayan_settings();          // Settings Engine
 kayan_logger();            // Logger
 kayan_admin();             // Admin Platform
+kayan_integration();       // Theme Integration (adapters)
+kayan_theme_option();      // Theme option + country profile bridge
 kayan_platform_url();      // language-first URLs
 kayan_platform_setting();  // country setting helper (BC)
 ```
@@ -193,6 +199,7 @@ kayan_platform()->cache->describe();
 kayan_platform()->settings_engine->describe();
 kayan_platform()->logger->describe();
 kayan_admin()->describe();
+kayan_integration()->describe();
 kayan_tags()->describe();
 ```
 MD;
@@ -382,6 +389,7 @@ MD;
 	}
 
 	private function doc_developer_guide( $platform ) {
+		unset( $platform );
 		return <<<MD
 # Developer Guide
 
@@ -392,8 +400,10 @@ MD;
 - Use `kayan_settings()` for options
 - Use `kayan_logger()` for logs
 - Use `kayan_entity()` + `kayan_tags()` for entities and tokens
+- Use `kayan_theme_option()` / `kayan_integration()` when bridging Theme Options
 - Register admin features via `kayan_admin()->modules->register_module()`
 - Keep Rank Math as the SEO engine
+- Reuse existing packs via adapters — never fork a second implementation
 
 ## Do not
 
@@ -402,6 +412,11 @@ MD;
 - Create isolated `add_menu_page()` admin screens outside the Admin Platform
 - Emit SEO head tags outside Rank Math
 - Implement generation/AI/statistics until those phases are approved
+- Create Countries / Languages / Templates / AI UIs until those phases are approved
+
+## Theme integration
+
+See [ThemeIntegration.md](./ThemeIntegration.md) and [Compatibility.md](./Compatibility.md).
 
 ## Regenerate docs
 
@@ -624,6 +639,82 @@ kayan_admin()->dashboard->register_widget( 'custom', array(
 ```
 
 Widgets render as placeholders until a later phase supplies data callbacks.
+MD;
+	}
+
+	private function doc_theme_integration( $platform ) {
+		$adapters = '';
+		if ( isset( $platform->integration ) && method_exists( $platform->integration, 'describe' ) ) {
+			$desc = $platform->integration->describe();
+			if ( ! empty( $desc['adapters'] ) && is_array( $desc['adapters'] ) ) {
+				$adapters = implode( ', ', array_map( static function ( $id ) {
+					return '`' . $id . '`';
+				}, array_keys( $desc['adapters'] ) ) );
+			}
+		}
+		if ( ! $adapters ) {
+			$adapters = '`schema`, `rukn_contact`, `booking`, `payment`, `track`, `i18n_switcher`, `legacy_city`, `theme_options`, `admin_bridges`, `cpt`, `query`';
+		}
+		return <<<MD
+# Theme Integration (Phase 3.1)
+
+Enterprise evolution of the **existing** KAYAN Theme — not a new theme.
+
+Adapters connect packs built before the platform without replacing them.
+
+## Facade
+
+```php
+kayan_integration();
+kayan_integration()->describe();
+kayan_theme_option( 'phonenumber' );
+Kayan_Theme_Integration::profile_field( 'phone' );
+Kayan_Theme_Integration::rank_math_active();
+```
+
+## Adapters
+
+{$adapters}
+
+## Rules
+
+- Zero breaking changes for existing sites
+- Prefer wrap / extend / filter over rewrite
+- Admin option bridges skip `is_admin()` (non-AJAX) so Theme Options editors see stored values
+- Country profile reads inside option filters use `profile_field()` (raw option) to avoid recursion with Country Settings dual-read
+
+## Compatibility report
+
+```php
+kayan_integration()->report->generate();
+kayan_integration()->report->to_markdown();
+kayan_integration()->report->write_files();
+```
+
+See [Compatibility.md](./Compatibility.md).
+MD;
+	}
+
+	private function doc_compatibility( $platform ) {
+		if ( isset( $platform->integration->report ) && method_exists( $platform->integration->report, 'to_markdown' ) ) {
+			return $platform->integration->report->to_markdown();
+		}
+		return <<<MD
+# Compatibility
+
+Generate at runtime:
+
+```php
+echo kayan_integration()->report->to_markdown();
+```
+
+Or write files:
+
+```php
+kayan_integration()->report->write_files();
+```
+
+Static copy also ships as `PHASE3.1-COMPATIBILITY-REPORT.md` in the platform pack.
 MD;
 	}
 }

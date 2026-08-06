@@ -1,6 +1,6 @@
 # Architecture
 
-**Platform version:** 3.0.0
+**Platform version:** 3.1.0
 
 KAYAN is a single-install WordPress SEO platform (no Multisite, no WPML/Polylang).
 
@@ -13,7 +13,8 @@ KAYAN is a single-install WordPress SEO platform (no Multisite, no WPML/Polylang
 5. **Programmatic SEO** — patterns, templates, blocks, blueprints (no generation yet)
 6. **Core Infrastructure** — Query, Cache, Settings, Logger
 7. **Admin Platform** — Module Registry, Permissions, UI Framework, Dashboard foundation
-8. **SEO Bridge** — Rank Math only (filters, never competing head tags)
+8. **Theme Integration** — Adapters connecting existing KAYAN Theme packs (Phase 3.1)
+9. **SEO Bridge** — Rank Math only (filters, never competing head tags)
 
 ## Design rules
 
@@ -22,7 +23,8 @@ KAYAN is a single-install WordPress SEO platform (no Multisite, no WPML/Polylang
 - Admin features register through `kayan_admin()` — no isolated admin pages
 - Do not call `WP_Query`, `get_posts`, `get_option`, or scatter transients in app code
 - Rank Math remains the only SEO engine
+- Reuse / extend / wrap existing theme packs — never duplicate implementations
 
 ## Boot order
 
-Content Locale → Programmatic entities → Entity Engine → Data Tags → Cache → Settings Engine → Logger → Query → PSEO → Router → Resolver → SEO Bridge → Admin Platform
+Content Locale → Programmatic entities → Entity Engine → Data Tags → Cache → Settings Engine → Logger → Query → PSEO → Router → Resolver → SEO Bridge → Admin Platform → Theme Integration
