@@ -14,25 +14,15 @@ if( !isset($_GET['ajax']) ) {
 		echo '<meta name="viewport" content="width=device-width, initial-scale=1">';
 		echo '<meta charset="utf-8">';
 		echo '<meta name="theme-color" content="#0A1F4E">';
-// ═══ KAYAN v1.4.2+ — meta description يُخرجه Rank Math عبر wp_head() ═══
-// Rank Math يطبع meta description صحيحة لكل صفحة — لا نتدخل يدوياً
-$hide__description_show = get_option('hide__description_show');
-if ( empty( $hide__description_show ) && ! ( function_exists( 'kayan_is_rank_math_active' ) ? kayan_is_rank_math_active() : ( class_exists( 'RankMath' ) || class_exists( 'RankMath\\RankMath' ) || defined( 'RANK_MATH_VERSION' ) ) ) ) {
-    $yc__desc = is_singular() ? wp_strip_all_tags( get_the_excerpt() ) : get_bloginfo('description');
-    if ( ! empty( $yc__desc ) ) {
-        echo '<meta name="description" content="' . esc_attr( $yc__desc ) . '">';
-    }
-}
-
-// ═══ KAYAN v1.4.2+ — Title Management ═══
-// Rank Math موجود → wp_head() يُخرج <title> تلقائياً (add_theme_support active في theme-seo)
-// Rank Math غائب → ThemeSeo()->Title() تُخرجه مباشرةً (fallback)
+// ═══ KAYAN v1.4.8+ — SEO عبر KAYAN (بيانات من Rank Math للتخزين) ═══
+// meta description يطبعها kayan-seo عبر wp_head (الجسر يقرأ rank_math_description)
+// العنوان عبر title-tag + pre_get_document_title من الجسر (rank_math_title)
+// واجهة Rank Math نفسها معطّلة في kayan-seo/compatibility.php لتفادي التكرار
 $hide__theme_seo = get_option('hide__theme_seo');
-$yc__rankmath_active = function_exists( 'kayan_is_rank_math_active' ) ? kayan_is_rank_math_active() : ( class_exists( 'RankMath' ) || class_exists( 'RankMath\\RankMath' ) || defined( 'RANK_MATH_VERSION' ) );
-if ( empty( $hide__theme_seo ) && ! $yc__rankmath_active ) {
-    (new ThemeSeo)->Title();
+if ( empty( $hide__theme_seo ) && class_exists( 'ThemeSeo' ) ) {
+	# لا يطبع شيئاً عند تفعيل title-tag — يبقي التوافق إن أُوقف
+	(new ThemeSeo)->Title();
 }
-// Rank Math موجود → wp_head() أدناه سيُخرج <title> بشكل تلقائي
 
 		do_action('BeforeWPHead');
 
@@ -49,7 +39,7 @@ if ( empty( $hide__theme_seo ) && ! $yc__rankmath_active ) {
 		echo '<link rel="preload" as="style" href="'.esc_url( $yc__fa_url ).'" />';
 		echo '<link rel="stylesheet" href="'.esc_url( $yc__fa_url ).'" media="print" onload="this.media=\'all\';this.onload=null;" />';
 		echo '<noscript><link rel="stylesheet" href="'.esc_url( $yc__fa_url ).'" /></noscript>';
-		echo '<link rel="stylesheet" href="'.esc_url( get_template_directory_uri().'/components/styles/fa-free-fixes.css?v=1.4.6' ).'" />';
+		echo '<link rel="stylesheet" href="'.esc_url( get_template_directory_uri().'/components/styles/fa-free-fixes.css?v=1.4.11' ).'" />';
 		echo '<style id="kayan-logo-critical">a.logo,a.flogo{display:inline-flex!important;align-items:center;gap:8px;visibility:visible!important;opacity:1!important;z-index:5;position:relative}a.logo.has-logo-image .mark,a.flogo.has-logo-image .mark{display:none!important}a.logo img,a.flogo img,.kayan-logo-img{display:block!important;max-height:56px!important;max-width:min(55vw,240px)!important;width:auto!important;height:auto!important;visibility:visible!important;opacity:1!important;object-fit:contain!important}</style>';
 
 		echo ( ( IsSpeed() == false && ( is_single() || is_page() || ( isset( $Widgets__list ) && in_array( 'works_v1',$Widgets__list ) ) ) ) ) ? '<link rel="stylesheet" data-loader-href="https://unpkg.com/photoswipe@5.2.2/dist/photoswipe.css">' : '';

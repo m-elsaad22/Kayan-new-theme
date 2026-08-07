@@ -155,23 +155,72 @@ assert_true( strlen( $admin_m ) > 1000, 'admin-mobile.css non-empty' );
 
 # 9) Version
 $style = file_get_contents( "$theme/style.css" );
-assert_true( false !== strpos( $style, 'Version: 1.4.6' ), 'style.css version 1.4.6' );
+assert_true( false !== strpos( $style, 'Version: 1.4.11' ), 'style.css version 1.4.11' );
+
+# Interactive price booking + floating CTA
+assert_true( file_exists( "$theme/components/packs/kayan-price-pay/setup.php" ), 'kayan-price-pay pack exists' );
+assert_true( file_exists( "$theme/components/packs/kayan-price-pay/assets/js/kayan-price-pay.js" ), 'kayan-price-pay.js exists' );
+$price_list = file_get_contents( "$theme/components/packs/shortcodes/codes/price_list.php" );
+assert_true( false !== strpos( $price_list, 'kayan-price-booking' ), 'price_list interactive booking' );
+assert_true( false !== strpos( $price_list, 'kpp-package' ), 'price_list package cards' );
+$footer = file_get_contents( "$theme/components/packs/#footer/part.php" );
+assert_true( false !== strpos( $footer, 'KAYAN_BOOK_CTA_SLOT' ) || false !== strpos( $footer, 'kayanBookCta' ) || false !== strpos( $footer, 'احجز الآن' ), 'footer book CTA slot or markup' );
+assert_true( false !== strpos( $footer, 'fab-stack show' ) || false !== strpos( $footer, "ruknFab.classList.add('show')" ) || false !== strpos( $footer, 'ruknFab.classList.add("show")' ), 'FAB visible immediately (no scroll gate)' );
+assert_true( false === strpos( $footer, "ruknFab.classList.toggle('show',y>500)" ), 'FAB no longer gated behind y>500' );
+$pay_js = file_get_contents( "$theme/components/packs/kayan-price-pay/assets/js/kayan-price-pay.js" );
+assert_true( false !== strpos( $pay_js, 'rukn-eltatawer-pay.tanceq.com' ), 'pay URL in JS' );
+
+# Rank Math = storage only via kayan-seo (unless kayan_seo_disable)
+assert_true( file_exists( "$theme/components/packs/kayan-seo/helpers.php" ), 'kayan-seo helpers exists' );
+assert_true( file_exists( "$theme/components/packs/kayan-seo/compatibility.php" ), 'kayan-seo compatibility exists' );
+assert_true( file_exists( "$theme/components/packs/kayan-seo/rank-math-bridge.php" ), 'kayan-seo bridge exists' );
+assert_true( ! file_exists( "$theme/components/packs/kayan-rankmath/setup.php" ), 'legacy kayan-rankmath force-enable removed' );
+$helpers = file_get_contents( "$theme/components/packs/kayan-seo/helpers.php" );
+assert_true( false !== strpos( $helpers, 'kayan_seo_disable' ), 'helpers reads kayan_seo_disable' );
+assert_true( false !== strpos( $helpers, 'kayan_seo_is_disabled' ), 'helpers exposes kayan_seo_is_disabled' );
+$compat = file_get_contents( "$theme/components/packs/kayan-seo/compatibility.php" );
+assert_true( false !== strpos( $compat, "rank_math/frontend/disable" ), 'RM frontend disable filter' );
+assert_true( false !== strpos( $compat, 'kayan_seo_is_disabled' ), 'compatibility respects kayan_seo_disable' );
+$bridge = file_get_contents( "$theme/components/packs/kayan-seo/rank-math-bridge.php" );
+assert_true( false !== strpos( $bridge, 'rank_math_title' ), 'bridge reads rank_math_title' );
+assert_true( false !== strpos( $bridge, 'rank_math_description' ), 'bridge reads rank_math_description' );
+$theme_seo_opts = file_get_contents( "$theme/components/packs/FieldsMachine/SetupFields/ThemeOptions/theme__seo.php" );
+assert_true( false !== strpos( $theme_seo_opts, "'kayan_seo_disable'" ), 'theme option kayan_seo_disable present' );
+
+# Unit: helpers behavior without WP option API stubs beyond get_option
+if ( ! function_exists( 'get_option' ) ) {
+	function get_option( $k, $d = false ) {
+		global $__kayan_test_opts;
+		return isset( $__kayan_test_opts[ $k ] ) ? $__kayan_test_opts[ $k ] : $d;
+	}
+}
+$GLOBALS['__kayan_test_opts'] = array();
+require_once "$theme/components/packs/kayan-seo/helpers.php";
+assert_true( kayan_seo_is_enabled() === true, 'KAYAN SEO enabled when option empty' );
+$GLOBALS['__kayan_test_opts']['kayan_seo_disable'] = '1';
+assert_true( kayan_seo_is_disabled() === true, 'KAYAN SEO disabled when option=1' );
+$GLOBALS['__kayan_test_opts']['kayan_seo_disable'] = '';
+assert_true( kayan_seo_is_enabled() === true, 'KAYAN SEO re-enabled when option cleared' );
 
 # Rank Math / logo / sortable / wrap fixes
 $enq = file_get_contents( "$theme/components/packs/Enqueues/setup.php" );
 assert_true( false !== strpos( $enq, 'kayan_is_rank_math_active' ), 'rank math helper present' );
-assert_true( false !== strpos( $enq, 'kayan_force_rank_math_assets' ), 'rank math force enqueue present' );
+assert_true( false === strpos( $enq, 'function kayan_force_rank_math_assets' ), 'no force RM frontend enqueue' );
 assert_true( false === strpos( $enq, 'wp_deregister_script( $handle )' ), 'no deregister of front scripts' );
 $header = file_get_contents( "$theme/components/packs/#header/part.php" );
 assert_true( false !== strpos( $header, 'has-logo-image' ), 'logo has-logo-image class' );
 assert_true( false !== strpos( $header, 'data-no-lazy' ), 'logo skips LiteSpeed lazy' );
-assert_true( false !== strpos( $header, 'fa-free-fixes.css?v=1.4.6' ), 'header asset version 1.4.6' );
+assert_true( false !== strpos( $header, 'fa-free-fixes.css?v=1.4.11' ), 'header asset version 1.4.11' );
 $schema = file_get_contents( "$theme/components/packs/schema/setup.php" );
-assert_true( false !== strpos( $schema, 'kayan_is_rank_math_active' ) || false !== strpos( $schema, 'RANK_MATH' ), 'schema skips when Rank Math active' );
+assert_true( false !== strpos( $schema, "add_action('wp_head', array( \$this,'insert__schema')" ), 'schema always registered for KAYAN SEO' );
+# Setup يجب ألا يخرج مبكراً بسبب وجود Rank Math (واجهة RM معطّلة)
+assert_true( false === strpos( $schema, 'kayan_is_rank_math_active' ), 'schema Setup ignores Rank Math plugin presence' );
 assert_true( file_exists( "$theme/components/packs/FieldsMachine/UI/css/admin-ui-fixes.css" ), 'admin-ui-fixes.css exists' );
 $fm = file_get_contents( "$theme/components/packs/FieldsMachine/Enqueues.php" );
 assert_true( false !== strpos( $fm, 'kayanInitSortables' ), 'admin sortable bootstrap present' );
 assert_true( false === strpos( $fm, '. -widget-open' ), 'sortable cancel selectors not broken' );
+assert_true( false !== strpos( $fm, 'should_load_admin_assets' ), 'FieldsMachine admin assets are page-scoped' );
+assert_true( false !== strpos( $fm, "stripos( \$page, 'yts-'" ) || false !== strpos( $fm, "stripos( $page, 'yts-'" ) || false !== strpos( $fm, "yts-" ), 'FieldsMachine scopes to yts pages' );
 $js = file_get_contents( "$theme/components/packs/FieldsMachine/UI/Custom-Setup.js" );
 assert_true( false !== strpos( $js, 'kayanInitSortables' ), 'Custom-Setup calls kayanInitSortables' );
 $cssfix = file_get_contents( "$theme/components/packs/FieldsMachine/UI/Custom-Style.css" );

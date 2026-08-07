@@ -408,10 +408,13 @@ class YourColor__Schema{
 	}
 
 	public function Setup(){
-		# عند وجود Rank Math: لا نخرج schema مكرر من القالب
-		if ( function_exists( 'kayan_is_rank_math_active' ) ? kayan_is_rank_math_active() : ( class_exists( 'RankMath' ) || class_exists( 'RankMath\\RankMath' ) || defined( 'RANK_MATH_VERSION' ) ) ) {
-			return;
+		# عند تعطيل KAYAN SEO (kayan_seo_disable): Rank Math يملك JSON-LD — لا نكرر Schema القالب.
+		if ( function_exists( 'kayan_seo_is_disabled' ) && kayan_seo_is_disabled() ) {
+			if ( function_exists( 'kayan_seo_rank_math_plugin_active' ) && kayan_seo_rank_math_plugin_active() ) {
+				return;
+			}
 		}
+		# الوضع الافتراضي: KAYAN SEO يعمل وواجهة Rank Math معطّلة → Schema القالب يُطبع.
 		add_action('wp_head', array( $this,'insert__schema') );
 	}
 }

@@ -6,6 +6,12 @@ $metaboxes = array(
 	'number'=>15,
 	'fields'  => array(
 		array(
+			'id'=> 'kayan_seo_disable',
+			'type'=>'SwitchBox',
+			'title'=> 'تعطيل KAYAN SEO (استعادة واجهة Rank Math)',
+			'disc'=>'عند التفعيل: يتوقف KAYAN SEO عن طباعة العنوان/الميتا/السكيما، وتعود واجهة Rank Math للطباعة في head. لا تشغّل الاثنين معاً على الواجهة لتفادي التكرار. الإضافة Rank Math تبقى Active في كل الأحوال.'
+		),
+		array(
 			'id'=> 'hide__theme_seo',
 			'type'=>'SwitchBox',
 			'title'=> 'إخفاء عنوان القالب',

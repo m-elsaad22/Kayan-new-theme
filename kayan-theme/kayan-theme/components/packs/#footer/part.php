@@ -192,12 +192,16 @@
 		$whatsapp_number = get_option('whatsapp_number');
 	}
 
-	echo '<div class="fab-stack" id="ruknFab">';
+	# اتصال + واتساب يظهران فوراً (class show من السيرفر — بدون انتظار سكرول)
+	echo '<div class="fab-stack show" id="ruknFab">';
 		if( !empty( $phonenumber ) )
 			echo '<a href="tel:'.$phonenumber.'" class="fab-btn fab-call" aria-label="اتصال" data-call="Phone"><i class="fas fa-phone"></i></a>';
 		if( !empty( $whatsapp_number ) )
 			echo '<a href="https://wa.me/'.$whatsapp_number.'" target="_blank" rel="noopener" class="fab-btn fab-wa" aria-label="واتساب" data-call="whatsapp"><i class="fab fa-whatsapp"></i></a>';
 	echo '</div>';
+
+	# زر الحجز يُحقَن لاحقاً فقط إذا وُجد بلوك الأسعار/الحجز في الصفحة
+	echo '<!--KAYAN_BOOK_CTA_SLOT-->';
 
 echo '</root>';
 
@@ -212,6 +216,25 @@ if( strpos( $HTML_otput , 'data-svg-loaders="') !== FALSE ){
 		}
 	}
 }
+
+# احجز الآن فقط في المقال/الصفحة عند وجود بلوك الحجز ([post_prices] أو قسم kayan-price-booking مع نموذج)
+$kayan_book_cta_html = '';
+$has_price_booking_block = (
+	false !== strpos( $HTML_otput, 'yc-shortcode--price_list' )
+	|| false !== strpos( $HTML_otput, 'kayan-price-booking' )
+) && (
+	false !== strpos( $HTML_otput, 'kpp-form' )
+	|| false !== strpos( $HTML_otput, 'kpp-packages' )
+	|| false !== strpos( $HTML_otput, 'id="kayan-price-booking"' )
+);
+if ( is_singular() && $has_price_booking_block ) {
+	$kayan_book_cta_html =
+		'<a href="#kayan-price-booking" id="kayanBookCta" class="kayan-book-cta is-visible" aria-label="احجز الآن">' .
+		'<i class="fas fa-calendar-check" aria-hidden="true"></i>' .
+		'<span>احجز الآن</span>' .
+		'</a>';
+}
+$HTML_otput = str_replace( '<!--KAYAN_BOOK_CTA_SLOT-->', $kayan_book_cta_html, $HTML_otput );
 
 echo $HTML_otput;
 
@@ -276,7 +299,8 @@ if( isset($_GET['ajax']) ) {
 		echo "window.addEventListener('load',function(){var l=document.getElementById('loader');if(l)setTimeout(function(){l.classList.add('out')},700)});";
 		echo "setTimeout(function(){var l=document.getElementById('loader');if(l)l.classList.add('out')},4000);";
 		echo "var ruknHdr=document.getElementById('hdr'),ruknFab=document.getElementById('ruknFab');";
-		echo "function ruknOnScroll(){var y=window.scrollY;if(ruknHdr)ruknHdr.classList.toggle('scrolled',y>40);if(ruknFab)ruknFab.classList.toggle('show',y>500);}";
+		echo "if(ruknFab)ruknFab.classList.add('show');";
+		echo "function ruknOnScroll(){var y=window.scrollY;if(ruknHdr)ruknHdr.classList.toggle('scrolled',y>40);}";
 		echo "window.addEventListener('scroll',ruknOnScroll,{passive:true});ruknOnScroll();";
 		echo "function ruknToggleMob(open){var m=document.getElementById('ruknMob');if(m)m.classList.toggle('open',open)}";
 		echo "var ruknRv=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('on');ruknRv.unobserve(e.target)}})},{threshold:.12});";
