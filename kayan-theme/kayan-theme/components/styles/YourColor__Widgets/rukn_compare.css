@@ -1,0 +1,36 @@
+/* ==== RUKN v3 COMPARE - rukn_compare.css (ودجت جديدة) ====
+   جدول المقارنة برأس لاصق وعمود متدرج */
+/* Service comparison */
+.cmp{max-width:980px;margin:0 auto;background:#fff;border:1px solid var(--border);border-radius:var(--r-l);box-shadow:var(--sh-m);overflow:hidden}
+.cmp-row{display:grid;grid-template-columns:1.6fr 1fr 1fr;align-items:center;border-bottom:1px solid var(--border)}
+.cmp-row:last-child{border-bottom:none}
+.cmp-head{position:sticky;top:70px;z-index:5;background:var(--navy);color:#fff}
+.cmp-head .ch{padding:18px 20px;font-family:'Cairo';font-weight:800;font-size:16px;text-align:center}
+.cmp-head .ch:first-child{text-align:start}
+.cmp-head .ch.rk{background:var(--grad-cta)}
+.cmp-row .cc{padding:16px 20px;font-size:15px}
+.cmp-row .cc.lbl{font-family:'Cairo';font-weight:700;color:var(--navy)}
+.cmp-row .cc.val{text-align:center;font-size:18px}
+.cmp-row .cc.rk{background:rgba(46,157,247,.06);color:var(--success)}
+.cmp-row .cc.ot{color:#c0392b}
+.cmp-row:hover .cc{background:rgba(41,128,212,.04)}
+.cmp-row:hover .cc.rk{background:rgba(46,157,247,.12)}
+
+/* ==== WordPress adjustments ==== */
+.-YC-WidgetType-rukn_compare{padding:var(--pad) 0}
+.-YC-WidgetType-rukn_compare .-YC-Widgets-Inner-Row{padding:0}
+.-YC-WidgetType-rukn_compare{background:#fff}
+.-YC-WidgetType-rukn_compare.-Top-separator-shows__in{background:var(--bg)}
+
+/* الرأس اللاصق يحسب ارتفاع الهيدر الثابت */
+.cmp-head{top:78px}
+
+/* لو المنافس عنده الميزة */
+.cmp-row .cc.ot-yes{color:var(--success)}
+
+/* الريسبونسف */
+@media (max-width:640px){
+  .cmp-row{grid-template-columns:1.3fr 1fr 1fr}
+  .cmp-head .ch{padding:13px 10px;font-size:13.5px}
+  .cmp-row .cc{padding:12px 10px;font-size:13.5px}
+}

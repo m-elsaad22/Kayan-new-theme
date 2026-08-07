@@ -1,0 +1,178 @@
+/**
+ * KAYAN Admin UI Fixes v1.4.6
+ * - التفاف النصوص بدل القص خارج الحدود
+ * - إصلاح مظهر عناصر السحب للرئيسية
+ * - ظهور شعار الهيدر/الفوتر
+ */
+
+/* عناوين الأقسام والمجموعات */
+.Title-MoreForms,
+.Title-MoreForms-Dublicate,
+.Title-MoreForms-Dublicate-Master,
+.-widget-item-title-,
+sortbyme.-widget-item-title- {
+	flex-wrap: wrap !important;
+	align-items: flex-start !important;
+	min-width: 0 !important;
+	max-width: 100% !important;
+	overflow: visible !important;
+}
+
+.Title-MoreForms > h2,
+.Title-MoreForms-Dublicate > h2,
+.Title-MoreForms-Dublicate-Master > h2,
+.-widget-item-title- > h2,
+sortbyme.-widget-item-title- > h2,
+.YourColorEdits-Class-Style #poststuff .-Fields-Insert-Area .Title-MoreForms > h2,
+.YourColorEdits-Class-Style #poststuff .RightWidgets-Select > ul > li .WidgetInfo > h2,
+.InputsAppender--Fields-BoxArea .Title-MoreForms > h2 {
+	flex: 1 1 auto !important;
+	min-width: 0 !important;
+	max-width: 100% !important;
+	white-space: normal !important;
+	overflow: visible !important;
+	text-overflow: unset !important;
+	word-break: break-word !important;
+	overflow-wrap: anywhere !important;
+	line-height: 1.45 !important;
+	display: block !important;
+}
+
+.Title-MoreForms > h2 > p,
+.-widget-item-title- > h2 > p {
+	display: block !important;
+	width: 100% !important;
+	margin: 6px 0 0 !important;
+	font-size: 13px !important;
+	line-height: 1.4 !important;
+	white-space: normal !important;
+	overflow: visible !important;
+	word-break: break-word !important;
+}
+
+/* خيارات Radio / CheckBox الطويلة */
+.-Radio-Box-Item,
+.-CheckBox-Box-Item {
+	align-items: flex-start !important;
+	min-height: auto !important;
+	height: auto !important;
+	overflow: visible !important;
+}
+
+.-Radio-Box-Item em,
+.-CheckBox-Box-Item em {
+	white-space: normal !important;
+	overflow: visible !important;
+	text-overflow: unset !important;
+	word-break: break-word !important;
+	overflow-wrap: anywhere !important;
+	line-height: 1.45 !important;
+	padding-left: 8px;
+}
+
+/* عناصر القوائم الجانبية */
+navpannel > ul > li,
+navpannel > ul > li > a,
+.TopHeaders navpannel > ul > li > a {
+	min-width: 0 !important;
+	max-width: 100% !important;
+	white-space: normal !important;
+	overflow: visible !important;
+	word-break: break-word !important;
+	line-height: 1.4 !important;
+}
+
+/* منطقة ودجات الرئيسية */
+.-Selcted-widget-items,
+.-widget-item,
+.RightWidgets-Select > ul > li .WidgetInfo {
+	min-width: 0 !important;
+	overflow: visible !important;
+}
+
+.RightWidgets-Select > ul > li .WidgetInfo > h2,
+.RightWidgets-Select > ul > li .WidgetInfo > p {
+	white-space: normal !important;
+	overflow: visible !important;
+	word-break: break-word !important;
+}
+
+/* عناوين Title field (الشريحة الأولى/الثانية...) */
+.-Text-forms-title-fields {
+	align-items: flex-start !important;
+	overflow: visible !important;
+}
+.-Text-form-InnerTitle {
+	display: flex !important;
+	flex-direction: column !important;
+	align-items: flex-start !important;
+	flex: 1 1 auto !important;
+	min-width: 0 !important;
+	max-width: 100% !important;
+}
+.-Text-form-InnerTitle > h3 {
+	min-width: 0 !important;
+	max-width: 100% !important;
+	white-space: normal !important;
+	overflow: visible !important;
+	word-break: break-word !important;
+}
+.-Text-form-InnerTitle > descor {
+	display: block !important;
+	width: 100% !important;
+	margin-top: 8px !important;
+	margin-inline-start: 0 !important;
+	white-space: normal !important;
+	overflow: visible !important;
+	word-break: break-word !important;
+	overflow-wrap: anywhere !important;
+	line-height: 1.5 !important;
+}
+.-Text-form-InnerTitle > descor:before {
+	content: none !important;
+	display: none !important;
+}
+
+/* مقبض السحب أوضح ويعمل */
+.apbsortable > .ui-sortable-handle,
+.apbsortable > .-widget-item {
+	cursor: grab;
+}
+.apbsortable > .ui-sortable-helper,
+.apbsortable > .-widget-item.ui-sortable-helper {
+	cursor: grabbing;
+	box-shadow: 0 8px 24px rgba(15, 23, 42, .12);
+}
+.apbsortable > *:before {
+	font-weight: 900 !important;
+	opacity: .55 !important;
+	pointer-events: none;
+	z-index: 2;
+}
+sortbyme.-widget-item-title- {
+	cursor: grab;
+	user-select: none;
+}
+
+/* شعار الأدمن/الواجهة */
+a.logo img,
+a.flogo img,
+.kayan-logo-img,
+.YourColor--Theme--image.kayan-logo-img {
+	display: inline-block !important;
+	max-height: 56px;
+	width: auto;
+	height: auto;
+	visibility: visible !important;
+	opacity: 1 !important;
+}
+a.logo,
+a.flogo {
+	display: inline-flex !important;
+	align-items: center;
+	gap: 8px;
+	visibility: visible !important;
+	opacity: 1 !important;
+}
+
+.kayan-sort-placeholder{background:#e8f0fe;border:2px dashed #2563eb;border-radius:12px;min-height:64px;margin-bottom:15px;visibility:visible!important;}

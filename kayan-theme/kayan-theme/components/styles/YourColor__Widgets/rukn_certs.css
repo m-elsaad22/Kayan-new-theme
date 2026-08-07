@@ -1,0 +1,25 @@
+/* ==== RUKN v3 - rukn_certs.css (ودجت جديدة) ====
+   كروت الشهادات والتراخيص */
+/* Certifications */
+.cert-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.cert{background:#fff;border:1px solid var(--border);border-radius:var(--r-m);padding:26px;transition:transform .3s ease,box-shadow .3s ease,border-color .3s;position:relative}
+.cert:hover{transform:translateY(-8px);box-shadow:var(--sh-m);border-color:var(--turq)}
+.cert-ic{width:58px;height:58px;border-radius:15px;background:rgba(41,128,212,.10);color:var(--blue);display:grid;place-items:center;font-size:24px;margin-bottom:16px}
+.cert h3{font-size:19px;margin-bottom:6px}
+.cert p{color:var(--text2);font-size:14px;margin-bottom:16px}
+.cert .vbadge{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:800;color:var(--success);background:rgba(24,201,106,.10);padding:6px 12px;border-radius:999px;margin-bottom:14px}
+.cert .doc{display:flex;align-items:center;justify-content:center;gap:9px;height:84px;border:2px dashed var(--border);border-radius:14px;color:var(--muted);font-size:13.5px;font-weight:600;background:var(--bg);transition:.25s}
+.cert:hover .doc{border-color:var(--turq);color:var(--turq)}
+
+/* ==== WordPress adjustments ==== */
+.-YC-WidgetType-rukn_certs{padding:var(--pad) 0}
+.-YC-WidgetType-rukn_certs .-YC-Widgets-Inner-Row{padding:0}
+.-YC-WidgetType-rukn_certs{background:#fff}
+.-YC-WidgetType-rukn_certs.-Top-separator-shows__in{background:var(--bg)}
+
+/* منطقة المستند كرابط */
+a.doc{text-decoration:none}
+
+/* الريسبونسف */
+@media (max-width:1024px){.cert-grid{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.cert-grid{grid-template-columns:1fr}}

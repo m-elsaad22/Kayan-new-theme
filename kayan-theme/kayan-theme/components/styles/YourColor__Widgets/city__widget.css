@@ -1,0 +1,72 @@
+/* ==== RUKN v3 SERVICE AREAS - city__widget.css ====
+   خريطة الإمارات الكحلية + كروت المدن القابلة للفتح
+   (ستايلات .shead/.tag المشتركة في rukn-v3.css) */
+/* ═══════════════ Service areas ═══════════════ */
+.areas{display:grid;grid-template-columns:1fr 1.1fr;gap:46px;align-items:center}
+.area-map{background:var(--grad);border-radius:var(--r-l);padding:34px;color:#fff;min-height:420px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;position:relative}
+.area-map::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:38px 38px;mask-image:radial-gradient(circle at 50% 50%,#000,transparent 78%)}
+.area-map .mp{position:relative;z-index:2;flex:1;display:grid;place-items:center}
+.uae-svg{width:100%;max-width:340px}
+.uae-svg path{fill:rgba(255,255,255,.10);stroke:var(--aqua);stroke-width:2.5}
+.pin{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--aqua);box-shadow:0 0 0 0 rgba(79,168,255,.6);animation:pulse 2s infinite}
+.area-map h3{color:#fff;position:relative;z-index:2}
+.area-map p{color:rgba(255,255,255,.8);position:relative;z-index:2;font-size:14.5px}
+.area-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.acard{background:#fff;border:1px solid var(--border);border-radius:var(--r-s);padding:22px;cursor:pointer;transition:.3s}
+.acard:hover{transform:translateY(-6px);box-shadow:var(--sh-m);border-color:var(--turq)}
+.acard .ah{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.acard .ah i{width:44px;height:44px;border-radius:12px;background:rgba(46,157,247,.12);color:var(--turq);display:grid;place-items:center;font-size:19px}
+.acard b{font-family:'Cairo';font-weight:800;font-size:18px;display:block}
+.acard small{color:var(--muted);font-size:13px}
+.acard .svcs{max-height:0;overflow:hidden;transition:max-height .4s ease,margin .4s ease;display:flex;flex-wrap:wrap;gap:6px}
+.acard.open .svcs{max-height:140px;margin-top:12px}
+.acard .svcs span{font-size:12px;background:var(--bg);border:1px solid var(--border);color:var(--text2);padding:4px 10px;border-radius:999px}
+
+/* ==== WordPress adjustments ==== */
+/* حشوة القسم */
+.-YC-WidgetType-city__widget{padding:var(--pad) 0}
+.-YC-WidgetType-city__widget .-YC-Widgets-Inner-Row{padding:0}
+
+/* الخلفية البيضاء عند تفعيل السويتش */
+.-YC-WidgetType-city__widget.-Top-separator-shows__in{background:#fff}
+
+/* شارات أسفل الخريطة (احتياطي لو الهيرو مش متحمل في نفس الصفحة) */
+.area-map .dash-trust{display:flex;flex-wrap:wrap;gap:8px;position:relative;z-index:2}
+.area-map .dt{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:rgba(255,255,255,.85);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:7px 12px;border-radius:999px}
+
+/* نبض دبابيس الخريطة (احتياطي لو الهيرو مش في الصفحة) */
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(79,168,255,.55)}70%{box-shadow:0 0 0 14px rgba(79,168,255,0)}100%{box-shadow:0 0 0 0 rgba(79,168,255,0)}}
+
+/* اسم المدينة كرابط */
+.acard .acard-link{color:inherit}
+.acard .acard-link:hover b{color:var(--turq)}
+.acard b{transition:color .25s}
+
+/* كارت "لم تجد مدينتك؟" — الستايل المدمج في التصميم اتحول لكلاس */
+.acard-cta{display:grid;place-items:center;text-align:center;background:var(--grad);color:#fff;border:none}
+
+/* الريسبونسف الخاص بالقسم */
+@media (max-width:1024px){
+  .areas{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .area-cards{grid-template-columns:1fr}
+}
+
+/* ═══ توافق قالب صفحة "جميع المدن" (@models/cities.php) ═══ */
+.--cites-single-box-{
+  background:#fff;border:1px solid var(--border);border-radius:var(--r-m);
+  padding:26px;box-shadow:var(--sh-s);transition:transform .3s,box-shadow .3s,border-color .3s;
+}
+.--cites-single-box-:hover{transform:translateY(-8px);box-shadow:var(--sh-m);border-color:rgba(46,157,247,.35)}
+.--citeyes-icon-in,.--city--logoIcon{
+  width:56px;height:56px;display:grid;place-items:center;border-radius:16px;
+  background:var(--grad-cta);color:#fff;font-size:23px;box-shadow:0 8px 20px rgba(46,157,247,.3);margin-bottom:14px;
+}
+.--city-name--,.--city-name-- a{
+  font-family:'Cairo',sans-serif!important;font-weight:800;color:var(--navy)!important;
+  font-size:18px;transition:color .25s;
+}
+.--cites-single-box-:hover .--city-name-- a{color:var(--turq)!important}
+.--city-content--{font-family:'Tajawal',sans-serif;color:var(--text2);font-size:14.5px;line-height:1.8}
+.--city--info-boxitem{display:flex;flex-direction:column;gap:6px}

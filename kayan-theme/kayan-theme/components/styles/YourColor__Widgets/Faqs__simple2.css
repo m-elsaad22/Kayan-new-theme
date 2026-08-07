@@ -1,0 +1,48 @@
+/* ==== RUKN v3 FAQ - Faqs__simple2.css ====
+   أكورديون الأسئلة الشائعة بالفلاتر
+   (نسخة احتياطية كاملة — القواعد الأساسية موجودة أيضاً في rukn-v3.css) */
+/* ═══════════════ FAQ ═══════════════ */
+.faq-wrap{max-width:880px;margin:0 auto}
+.faq-cats{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:30px}
+.faq-cats button{font-family:'Cairo';font-weight:700;font-size:14px;padding:9px 18px;border-radius:999px;border:1.5px solid var(--border);background:#fff;color:var(--text2);cursor:pointer;transition:.25s}
+.faq-cats button.active{background:var(--grad-cta);color:#fff;border-color:transparent}
+.faq-item{background:#fff;border:1px solid var(--border);border-radius:var(--r-s);margin-bottom:14px;overflow:hidden;transition:.3s}
+.faq-item.hide{display:none}
+.faq-item.faq-open{border-color:var(--turq);box-shadow:var(--sh-s)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 24px;cursor:pointer;font-family:'Cairo';font-weight:700;font-size:17px;color:var(--navy)}
+.faq-q i{color:var(--turq);transition:transform .3s;flex:none}
+.faq-item.faq-open .faq-q i{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.faq-a p{padding:0 24px 22px;color:var(--text2);font-size:15.5px}
+
+/* ==== WordPress adjustments ==== */
+/* حشوة القسم */
+.-YC-WidgetType-Faqs__simple2{padding:var(--pad) 0}
+.-YC-WidgetType-Faqs__simple2 .-YC-Widgets-Inner-Row{padding:0}
+
+/* الخلفية البيضاء عند تفعيل السويتش */
+.-YC-WidgetType-Faqs__simple2.-Top-separator-shows__in{background:#fff}
+
+/* فقرات الإجابة من محرر ووردبريس */
+.faq-a p+p{margin-top:0;padding-top:0}
+
+/* ═══ توافق قالب صفحة الأسئلة (@models/faqs.php) ═══ */
+.-YC-FaqsSimple-Center-v1{max-width:880px;margin:0 auto;padding:50px 0}
+.-YC-FaqsSimple-ItemsCenter-v1{display:grid;gap:14px}
+.-YC-FaqsSimple-Item-v1{
+  background:#fff;border:1px solid var(--border);border-radius:var(--r-s);
+  overflow:hidden;box-shadow:var(--sh-s);transition:border-color .3s;
+}
+.-YC-FaqsSimple-Item-v1.active,.-YC-FaqsSimple-Item-v1:hover{border-color:rgba(46,157,247,.4)}
+.-YC-FaqsSimple-Title{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:18px 24px;cursor:pointer;
+  font-family:'Cairo',sans-serif!important;font-weight:800;color:var(--navy);font-size:16.5px;
+}
+.--YC-icon-faq-{color:var(--turq);transition:transform .3s;flex:none}
+.-YC-FaqsSimple-Item-v1.active .--YC-icon-faq-,
+.--YC-faq-classes-in--.active .--YC-icon-faq-{transform:rotate(180deg)}
+.-FaqsSimple-Content-Row-v1{padding:0 24px}
+.-p-FaqsSimple-ContentValue-v1{
+  font-family:'Tajawal',sans-serif;color:var(--text2);font-size:15.5px;line-height:1.9;padding-bottom:22px;
+}

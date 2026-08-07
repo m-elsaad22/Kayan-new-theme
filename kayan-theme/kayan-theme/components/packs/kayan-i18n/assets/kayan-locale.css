@@ -1,0 +1,24 @@
+/* KAYAN locale switcher — header + homepage v3 */
+.kayan-switcher-wrap{position:relative;display:inline-flex;align-items:center;margin-inline-start:3px;z-index:100}
+.kayan-switcher-btn{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-width:auto;padding:0 11px;border:0;background:transparent;cursor:pointer;font-family:inherit;letter-spacing:.3px;color:inherit}
+.kayan-switcher-btn .ksw-flag{font-size:17px;line-height:1;display:flex}
+.kayan-switcher-btn .ksw-lang-label{font-size:11px;font-weight:800;line-height:1}
+.ksw-dropdown{position:fixed;top:auto;right:auto;left:auto;min-width:210px;background:#fff;border-radius:12px;box-shadow:0 4px 6px -1px rgba(0,0,0,.07),0 10px 30px -5px rgba(0,0,0,.14),0 0 0 1px rgba(0,0,0,.05);padding:10px 0;z-index:999999;opacity:0;transform:translateY(-8px) scale(.97);transform-origin:top center;pointer-events:none;transition:opacity .2s ease,transform .2s ease}
+.ksw-dropdown.is-open{opacity:1;transform:translateY(0) scale(1);pointer-events:all}
+.ksw-arrow{position:absolute;top:-6px;inset-inline-end:18px;width:12px;height:12px;background:#fff;transform:rotate(45deg);box-shadow:-1px -1px 0 rgba(0,0,0,.05)}
+.ksw-section{padding:0 10px}
+.ksw-section-label{display:flex;align-items:center;gap:6px;margin:0 0 6px;font-size:11px;font-weight:700;color:#64748b}
+.ksw-countries,.ksw-langs{display:grid;gap:2px}
+.ksw-country-btn,.ksw-lang-btn{display:flex;align-items:center;gap:9px;width:100%;padding:7px 9px;border:none;border-radius:10px;background:transparent;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:#1e293b;text-align:start;transition:background .14s,color .14s}
+.ksw-country-btn:hover,.ksw-lang-btn:hover{background:#f1f5f9}
+.ksw-country-btn.is-active,.ksw-lang-btn.is-active{background:rgba(10,31,78,.08);color:#0A1F4E}
+.ksw-btn-flag,.ksw-lang-badge{font-size:16px;min-width:22px;text-align:center}
+.ksw-check{margin-inline-start:auto;opacity:0;transform:scale(.8);transition:opacity .15s,transform .15s}
+.ksw-country-btn.is-active .ksw-check,.ksw-lang-btn.is-active .ksw-check{opacity:1;transform:scale(1)}
+.ksw-divider{height:1px;background:#e2e8f0;margin:8px 10px}
+.kayan-homepage-v3 .nav-cta .kayan-switcher-btn{background:rgba(255,255,255,.12);color:#fff;border-radius:10px;height:40px}
+.kayan-homepage-v3[dir=ltr] .menu,.kayan-homepage-v3[dir=ltr] .hero-copy{text-align:left}
+.kayan-homepage-v3[dir=ltr] .btn i.fa-arrow-left{transform:scaleX(-1)}
+@media(max-width:768px){
+  .kayan-switcher-btn{width:44px;height:44px;padding:0 9px;border-radius:12px}
+}
