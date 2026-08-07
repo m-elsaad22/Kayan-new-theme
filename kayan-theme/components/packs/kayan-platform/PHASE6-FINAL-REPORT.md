@@ -282,17 +282,65 @@ early-exit ordering (empty/disabled blocks are filtered *before* dynamic
 tag resolution, never after); and every index on all three new database
 tables matches its actual query usage (zero missing-index gaps found).
 
-**Dead code / removal:** no dead code, unused methods, or duplicate logic
-requiring removal was found in the kayan-platform code authored across
-Phases 1–6 during this review. The one intentionally-defensive,
-technically-unreachable branch found (`is_wp_error( $translated_blueprint )`
-in `Kayan_PSEO_Generator::translate_blueprint()`'s caller — that method
-never currently returns a `WP_Error`) was left in place as harmless
-future-proofing rather than removed, since removing it saves nothing and
-the mission explicitly favors caution ("only if 100% safe" — removing a
-guard clause has no benefit to offset even a small risk of missing a
-future use case). No legacy pack code was touched, per the "100% safe or
-don't touch it" instruction for pre-existing systems.
+**Dead code / removal:** confirmed by both this agent's own review and a
+dedicated, whole-theme dead-code/duplicate-logic audit subagent. Findings
+and actions, split by scope:
+
+- *Inside kayan-platform (fixed):*
+  - `Kayan_PSEO_Generator::preview_template_upgrade()` had zero call
+    sites anywhere in real code (it only ever appeared as a usage example
+    in a historical Phase 2.5.1 changelog) and was not part of the
+    platform's own self-documented API surface — the documented,
+    actually-used entry point for this operation is
+    `kayan_platform()->pseo->blueprint->upgrade_template()`. Removed.
+  - Four Phase 4/5 engines (`Kayan_Quality_Engine`, `Kayan_Content_Workflow`,
+    `Kayan_Dependency_Graph`, `Kayan_AI_Platform`) each expose a `describe()`
+    method following the platform-wide self-documentation convention, but
+    were missing from the docs generator's "Describe contracts" reference
+    list (`class-kayan-docs-generator.php`) — an oversight from when those
+    engines were added in Phase 5. Added, so `API.md` now lists all engine
+    `describe()` calls consistently.
+  - `Kayan_Compatibility_Report::write_files()` and
+    `Kayan_PSEO_Generator::preview_rule()` are unused by any call site but
+    are intentional, documented API surface (WP-CLI/operator utility and
+    an explicit `describe()`-listed extension point, respectively) —
+    kept as-is.
+  - The one intentionally-defensive, technically-unreachable branch found
+    (`is_wp_error( $translated_blueprint )` in
+    `Kayan_PSEO_Generator::translate_blueprint()`'s caller — that method
+    never currently returns a `WP_Error`) was left in place as harmless
+    future-proofing, since removing a guard clause saves nothing and the
+    mission favors caution ("only if 100% safe").
+- *Pre-existing legacy theme code (found, reported, deliberately not
+  touched — outside kayan-platform's ownership and outside the "100% safe"
+  bar for unrelated systems):* a byte-for-byte duplicate nested copy of
+  the `#button_context` part inside `ALordIcons/`; an orphaned `#PriceBoxes`
+  legacy template pack with zero callers; the theme-root `index.php`
+  calling an undefined `ThemeTree::TemplatePart()` method (in practice
+  unreachable for normal requests, since `ThemeStatic::Locate()` intercepts
+  and `die()`s on `template_redirect` first — only the `is_feed()` path
+  would ever reach it); unguarded `var_dump()`/`print_r()`/`console.log()`
+  debug leftovers in `YC-Scrape`, `export-import`, `@search`, and
+  `FieldsMachine`; and copy-pasted `InsertTerm()`/`InsertPost()` logic
+  (including the same leftover debug block) between `YC-Scrape` and
+  `export-import`. None of these are reachable from, or affect, the new
+  platform, so leaving them untouched carries zero regression risk;
+  removing them would require testing unrelated legacy subsystems this
+  phase was not scoped to touch. Flagged in §11 for a future, dedicated
+  legacy-cleanup pass.
+- *Pre-existing, self-aware duplication left intentionally in place:* the
+  legacy non-hierarchical `city` taxonomy (`taxonomies/setup.php`) still
+  registers alongside the canonical `cities` taxonomy, reconciled at
+  runtime by `Kayan_Adapter_Legacy_City` rather than at registration time —
+  this was already documented as `Deprecated`/`Medium risk` in the
+  Phase 3.1 compatibility report and is a deliberate transitional bridge,
+  not an oversight. Similarly, the three layers that reconcile legacy
+  Theme Options with country-profile values (`Kayan_Country_Settings::legacy_option()`,
+  `Kayan_Theme_Integration::theme_option()`, `Kayan_Adapter_Theme_Options`)
+  overlap by design — each serves a different caller (write-path seeding,
+  new-code helper, zero-touch legacy bridge) — and consolidating them is a
+  larger refactor than dead-code removal, so it is listed as a v3.0
+  recommendation (§12) rather than done here.
 
 ---
 
@@ -423,6 +471,16 @@ urgency):
   confirmed once on a real staging environment before the very first
   production deploy of Phase 6 — this is standard practice for any
   WordPress release, not a gap specific to this project.
+- **A handful of small, pre-existing dead-code/debug-leftover items remain
+  in legacy, non-platform packs** (a duplicate nested `#button_context`
+  copy under `ALordIcons/`, an orphaned `#PriceBoxes` pack, the theme-root
+  `index.php`'s unreachable call to an undefined method, and unguarded
+  `var_dump()`/`print_r()`/`console.log()` debug statements in `YC-Scrape`,
+  `export-import`, `@search`, and `FieldsMachine`). These were identified
+  by this phase's dedicated audit but deliberately left untouched — they
+  predate the platform, are unreachable from or unrelated to it, and
+  cleaning them up is outside this phase's "100% safe, platform-scoped"
+  mandate. See §12 for a proposed dedicated pass.
 
 ---
 
@@ -474,6 +532,25 @@ plans the next major version:
    requirement; this was explicitly out of scope for every phase of this
    project and would be a genuinely new architectural decision, not a
    small addition.
+10. **A small, dedicated legacy dead-code cleanup pass** covering the items
+    listed in §11: remove the orphaned nested `ALordIcons/#button_context/`
+    duplicate and the unused `#PriceBoxes` pack, fix or remove the
+    theme-root `index.php`'s call to the undefined `TemplatePart()` method
+    (verify `is_feed()` behavior first), strip the unguarded debug
+    statements (`var_dump()`/`print_r()`/`console.log()`) from `YC-Scrape`,
+    `export-import`, `@search`, and `FieldsMachine`, and consider
+    consolidating the copy-pasted `InsertTerm()`/`InsertPost()` logic
+    between `YC-Scrape` and `export-import`. All low-risk, but each
+    touches a legacy pack outside this project's platform-only mandate, so
+    none were changed here.
+11. **Consolidate the three-layer legacy Theme Option fallback** (§6) —
+    `Kayan_Country_Settings::legacy_option()`,
+    `Kayan_Theme_Integration::theme_option()`, and
+    `Kayan_Adapter_Theme_Options`'s `option_{$key}` filter bridge — into a
+    single reconciliation path once there is confidence every call site in
+    the theme has migrated to `theme_option()`/the country profile.
+    Functionally harmless today (idempotent double-reads at worst); purely
+    a maintainability improvement.
 
 ---
 

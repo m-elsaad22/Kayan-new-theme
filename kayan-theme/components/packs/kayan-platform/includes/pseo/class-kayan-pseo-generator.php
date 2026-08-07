@@ -615,27 +615,6 @@ class Kayan_PSEO_Generator {
 	}
 
 	/**
-	 * Dry-run template upgrade preserving locked/manual blocks.
-	 *
-	 * @param int    $post_id     Post ID.
-	 * @param string $template_id Template id (optional; uses blueprint template).
-	 * @return array{ok:bool,errors?:string[],blueprint?:array,changed?:string[],preserved?:string[]}
-	 */
-	public function preview_template_upgrade( $post_id, $template_id = '' ) {
-		$blueprint = $this->blueprint->get_for_post( (int) $post_id );
-		if ( ! $template_id ) {
-			$template_id = isset( $blueprint['template_id'] ) ? (string) $blueprint['template_id'] : '';
-		}
-		if ( ! $template_id ) {
-			return array(
-				'ok'     => false,
-				'errors' => array( 'template_id_required' ),
-			);
-		}
-		return $this->blueprint->upgrade_template( $blueprint, $template_id );
-	}
-
-	/**
 	 * @param int                  $post_id    Post ID.
 	 * @param bool                 $created    Newly created.
 	 * @param string               $pattern_id Pattern.

@@ -27,9 +27,19 @@ full findings, scores, technical debt, and recommendations.
   generation and functional admin modules; added two new entries
   (Migration Engine; AI Platform/Workflow/Quality/Dependency Graph) so
   the report covers every system built through Phase 5.
-- (Any additional safe fixes from the parallel security/performance/
-  dead-code audits are listed individually below once applied — each as
-  its own commit per this project's convention.)
+- Removed `Kayan_PSEO_Generator::preview_template_upgrade()` — confirmed
+  by a dedicated dead-code audit to have zero real call sites (it only
+  ever appeared as a usage example in a historical changelog); the
+  documented, actually-used entry point for this operation is
+  `kayan_platform()->pseo->blueprint->upgrade_template()`.
+- Added the four Phase 5 engines (`Kayan_Quality_Engine`,
+  `Kayan_Content_Workflow`, `Kayan_Dependency_Graph`, `Kayan_AI_Platform`)
+  to the docs generator's "Describe contracts" reference list in `API.md`
+  — they already implemented `describe()` but were missing from that list,
+  an oversight from when they were added in Phase 5.
+- (Any additional safe fixes from the parallel security audit are listed
+  individually below once applied — each as its own commit per this
+  project's convention.)
 
 ### Testing
 Added a fourth functional smoke suite (`Phase 6 scenario tests`, kept
