@@ -560,9 +560,17 @@ class Kayan_Admin_UI {
 	}
 
 	/**
-	 * Allow trusted HTML strings already escaped by callers; escape plain strings.
+	 * Pass-through for pre-built HTML fragment slots (`content`/`footer` on
+	 * card()/table()/tabs()/dialog()/drawer()).
 	 *
-	 * @param mixed $content Content.
+	 * IMPORTANT — this does NOT escape strings. It is a contract, not a
+	 * sanitizer: every caller in this codebase composes these slots from
+	 * already-escaped pieces (other `Kayan_Admin_UI` methods, `esc_html()`,
+	 * `esc_attr()`, etc.) before passing them in here. Never pass a raw
+	 * `$_GET`/`$_POST` value or an unescaped DB value as `content`/`footer` —
+	 * escape it with the appropriate `esc_*()` function first.
+	 *
+	 * @param mixed $content Pre-escaped HTML fragment, or an array (JSON-encoded and escaped for debug display).
 	 * @return string
 	 */
 	private function safe_html( $content ) {

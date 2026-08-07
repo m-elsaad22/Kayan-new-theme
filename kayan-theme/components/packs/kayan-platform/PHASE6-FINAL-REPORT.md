@@ -19,11 +19,16 @@ replacing or duplicating any working system. Every phase was built to a
 payments, tracking, and manually-authored content are untouched by
 anything the platform does.
 
-**Overall verdict: production-ready**, with a small number of
-documented, low-risk items to track (see §11 Known Limitations and §10
-Technical Debt) and one category of finding — legacy pack behavior — that
-was deliberately **not** touched in this phase, per the "100% safe or
-don't touch it" instruction for legacy code.
+**Overall verdict: `kayan-platform` itself is production-ready**, with a
+small number of documented, low-risk items to track (see §11 Known
+Limitations and §10 Technical Debt). One important exception: a dedicated
+security audit found **two critical, currently-exploitable
+vulnerabilities in pre-existing legacy code** (unrelated to and unreached
+by anything this project built) that must be flagged with urgency — see
+**§2a** for full detail. Per the "100% safe or don't touch it" instruction
+for legacy code, these were documented rather than patched in this phase,
+since a correct fix requires business-logic decisions outside this
+project's mandate — but they are real and should be escalated separately.
 
 This report was produced through:
 1. Direct, first-hand code review of every file under
@@ -40,6 +45,10 @@ This report was produced through:
    WordPress/MySQL install is available in this execution environment.
 4. Re-review of the Phase 3.1 Theme Integration compatibility report,
    refreshed in this phase to reflect Phases 4–5.
+5. Four dedicated background audit subagents covering, respectively:
+   WPCS/PHP-compatibility/REST/AJAX; performance; dead-code/duplicate-
+   logic; and a full-theme security review (legacy packs included) — see
+   §2a and the fixes listed in §6 and §10.
 
 Where this report references a check that requires a live WordPress +
 Rank Math + MySQL environment to fully confirm (e.g. real dbDelta
@@ -59,13 +68,91 @@ these are not arbitrary numbers.
 |---|---|---|
 | **Architecture** | 9/10 | Clean layering (Country/Language → Routing → Entities → PSEO → AI/Workflow/Quality/Dependency → Admin), one facade per engine (`kayan_platform()`, `kayan_pseo()`, `kayan_ai()`, `kayan_workflow()`, `kayan_quality()`, `kayan_dependencies()`, `kayan_migrations()`, `kayan_admin()`), no circular dependencies, consistent register()/describe() contract across every engine. Docked 1 point because a handful of engines (Generator, Jobs) have grown large (500+ lines) as a natural consequence of owning the full write path — still cohesive, but worth watching if more responsibilities are added post-v2. |
 | **Performance** | 8/10 | Query Engine caching, Cache Engine with object-cache preference, Migration Engine's single-`get_option()` steady-state fast path (independently confirmed correct by a dedicated performance audit), chunked/resumable Queue processing (never a single unbounded run), targeted Dependency Graph invalidation (never a full-site regeneration sweep), correctly-ordered early-exit checks in the Renderer (never resolves `{{tags}}` on data that won't be printed), and every DB index matches its actual query pattern across all three new tables (audit found zero missing-index gaps). Three small, safe fixes applied as a direct result of the audit (see §6): `recent_generated_summary()` now asks MySQL for a real count instead of materializing every ID with `posts_per_page => -1`; `Kayan_Migration_Engine::describe()` no longer computes `current_version()` twice; `translate_post()` now flushes the query cache after its final meta writes (closing the one confirmed, if low-probability, stale-cache window in the whole codebase). Docked 2 points for real, documented, but out-of-scope-to-fix-here findings: (a) `Kayan_Quality_Engine::validate()` is called once per row when rendering the Blueprints admin table, and its duplicate-detection check does an uncached, unindexed `get_posts( title => ... )` scan of the entire `wp_posts` table — the single clearest "could be slow even at modest scale" finding in this audit, scaling with total site content rather than PSEO page count (§10); (b) the Cache Engine's group-index bookkeeping (`track_key()`) costs 3–4 DB round trips per cache write on sites without a persistent object cache, which measurably undermines caching's benefit on typical shared hosting — an architectural characteristic of the group-flush design, not a bug, and out of scope to redesign in this phase (§10). |
-| **Security** | 8/10 | Every custom `$wpdb` query across Migration Engine, Queue, and Dependency Graph was independently re-verified twice (by this agent directly, and by a dedicated audit pass): all `%s`/`%d` placeholders correctly match their arguments, table names are always built from a fixed constant + `$wpdb->prefix` (never user input), and `dbDelta()`-format `CREATE TABLE` statements are correctly formatted (verified byte-for-byte, e.g. the double-space convention after `PRIMARY KEY`). Every admin `save()` handler across all 20 admin modules has `check_admin_referer()` on every distinct state-changing branch. Capability checks are centralized once in `Kayan_Admin_Platform::maybe_handle_module_post()` plus per-module capability in the registry — not duplicated, not missed. AI provider HTTP calls use `wp_remote_post()` (WordPress's vetted HTTP layer), never raw `curl`. `kayan-platform` itself registers **zero** REST routes and **zero** `wp_ajax_*` actions (all admin interactivity goes through the Admin Platform's own nonce-gated `admin_init` dispatch). Docked 2 points, both isolated to **legacy, pre-existing code never touched by this project**: (a) `kayan-track`'s public `/kayan/v1/track` REST endpoint accepts unauthenticated POST writes to custom tables, protected only by IP-based rate limiting (20 req/min) and a blocklist — very likely an intentional design for an anonymous tracking beacon, but worth a documented risk acceptance since IP rate limiting is bypassable via IP rotation; (b) `FieldsMachine`'s AJAX layer uses a generic dispatch-by-filename pattern (one `wp_ajax_*` action auto-registered per file) that, while only matching pre-registered filenames today, is a pattern worth a closer look in a future dedicated legacy-pack security pass (§12). |
+| **Security** | kayan-platform: 9/10. Whole project (incl. legacy): 5/10 | A dedicated, full-theme security audit subagent (not just this agent's own review) confirms **`kayan-platform` (Phases 1–6) itself is clean**: every custom `$wpdb` query across Migration Engine, Queue, and Dependency Graph uses correctly-matched `%s`/`%d` placeholders and fixed-constant + `$wpdb->prefix` table names (never user input); every admin `save()` handler across all 20+ modules has `check_admin_referer()` on every state-changing branch, with capability checks centralized once in `Kayan_Admin_Platform::maybe_handle_module_post()`; AI provider HTTP calls use `wp_remote_post()`; the platform registers **zero** REST routes and **zero** `wp_ajax_*` actions. One real issue the audit found *in the platform itself* was fixed this phase (see below). However, the same audit found **critical, currently-exploitable vulnerabilities in pre-existing legacy code** that this project does not own or modify — see §2a immediately below for full detail. Scoring the whole codebase honestly (as the Phase 6 mission's "complete project audit" requires) rather than only the new work, those legacy findings pull the overall project score down significantly even though they are unrelated to, and unreachable from, anything built in Phases 1–6. |
 | **SEO / Rank Math compatibility** | 9/10 | The platform never prints a competing title/description/canonical/schema/OG/sitemap tag anywhere — verified by reading every `wp_head`/`the_content` hook the platform registers (`Kayan_SEO_Bridge::render_country_gtm` is analytics-only; `Kayan_PSEO_Renderer::render` never touches `<head>`; the schema adapter explicitly disables the legacy theme schema pack when Rank Math is active). The Generator writes only Rank Math's own postmeta keys (`rank_math_title`, `rank_math_description`, `rank_math_focus_keyword`, `rank_math_robots`) and only when a blueprint supplies a value — never blanking an editor's manual Rank Math edit. `kayan_pseo` CPT is registered `public => true`, which is what Rank Math's sitemap module keys off — **verify on staging** that a real Rank Math install includes it as expected. Docked 1 point purely because this last point cannot be confirmed without a live Rank Math install in this environment. |
 | **Scalability** | 8/10 | The Queue table (not a single options row) was specifically built in Phase 4 because bulk generation is meant to scale into the thousands of pages; Rules' cartesian expansion has a configurable, filterable cap (`kayan_pseo_bulk_limit`, default 2000) with an explicit `truncated` flag rather than silently running out of memory; the Dependency Graph flags only affected pages, never a full-site sweep. Docked 2 points: (a) `Kayan_PSEO_Rules::candidates_for()` fetches up to 500 items per entity type per call with no caching between repeated preview calls in the same request — acceptable at current scale, would benefit from a short-lived cache at very large catalogs (thousands of services × cities); (b) the admin Blueprints/Queue list screens have no pagination UI yet (fixed 50-row limit) — fine today, worth adding before a site accumulates thousands of generated pages (§10, §12). |
 | **Maintainability** | 9/10 | Every engine follows the same shape (`register()`, public facade methods, `describe()`), every phase has its own changelog, every new capability has a corresponding doc under `docs/`, and the whole platform is covered by four independent functional test suites rather than relying on manual QA. Docked 1 point because there is no automated CI test runner wired up in this repository (the test harnesses built during this project live outside the repo, in the execution environment, specifically because no PHPUnit/WP test scaffolding exists in the theme) — see §12 for a v3.0 recommendation to add a real PHPUnit + WP test suite. |
 
-**Composite: 8.5/10 — production-ready**, with the specific, itemized
-gaps above tracked rather than hidden.
+**Composite: 8.5/10 for `kayan-platform` itself — production-ready.
+7.5/10 for the site as a whole**, pulled down solely by the pre-existing
+legacy findings in §2a, which are unrelated to this project's own scope
+but must be disclosed for the audit to be honest. The specific, itemized
+gaps above are tracked rather than hidden.
+
+---
+
+## 2a. URGENT — Critical security findings in legacy code (not part of this project, not fixed in this phase)
+
+A dedicated whole-theme security audit subagent identified **two
+currently-exploitable, critical-severity vulnerabilities in pre-existing
+legacy packs** that predate `kayan-platform` and were never touched by
+Phases 1–6. Per this project's explicit, repeated mandate ("no changes to
+legacy packs unless a finding is both critical **and** trivially safe" /
+"100% safe or don't touch it"), these were **documented, not patched** —
+fixing them correctly requires real business-logic decisions (e.g. what
+the actual OTP verification flow should be) that are outside a "trivially
+safe" fix and outside this phase's scope. They are surfaced here with
+maximum visibility because of their severity, not buried in §10/§11 with
+the routine technical-debt items.
+
+1. **Payment OTP verification is not implemented — any 6-digit code
+   confirms a payment.** `AjaxCenter/kayan_payment_verify_otp.php` only
+   checks that the submitted value is 6 characters long; it never
+   compares it against the actual generated/stored OTP. Combined with no
+   nonce check on this specific endpoint (every sibling payment file in
+   the same pack has one), an attacker who obtains or guesses a
+   transaction reference can confirm someone else's payment as "paid"
+   without ever seeing the real OTP. The code is explicitly commented as
+   `# Demo Gateway`, suggesting this was intentionally a mock — **this
+   must not reach production as-is** if real payments are ever routed
+   through this gateway.
+2. **Unauthenticated/under-authorized AJAX handlers in
+   `FieldsMachine/AjaxCallBack/*` allow privilege escalation to full site
+   compromise.** The dispatcher (`AjaxCallBack.php`) auto-registers a
+   `wp_ajax_*` action per file in that directory with no nonce or
+   capability gate at the dispatcher level, and most individual handlers
+   do not self-protect either. Concretely: `remove-post.php` and
+   `remove-user.php` let any logged-in user (even a Subscriber) delete
+   any post or any user account (including administrators); `insert__single_DB.php`
+   / `Update__single_DB.php` / `remove__DB___relation.php` instantiate a
+   class named by raw `$_POST['Arguments']['TableName']` (PHP object
+   injection) and, because the underlying `DBArguments` helper
+   (`CustomGetDB/setup.php`) never forces `$wpdb->prefix`, can write or
+   delete rows in **any** table — including `wp_users`/`wp_usermeta` — a
+   direct path to administrator privilege escalation.
+
+Both findings were independently confirmed by the audit subagent with
+exact file/line citations (see the full report the subagent produced).
+**Recommendation: treat these as a P0 for the site operator to schedule a
+dedicated legacy-pack security remediation, independent of and outside
+this platform project's release cycle.** Everything else the audit found
+in legacy code (LFI via `ThemeStatic::Blade()`'s unsanitized `$fname`
+parameter, an unauthenticated comment-injection endpoint, several IDOR
+and reflected-XSS issues, a CSRF gap in the import form, and a couple of
+lower-severity input-validation gaps) is real but lower severity — full
+detail is preserved in the audit subagent's own report rather than
+duplicated here.
+
+**What *was* fixed this phase** (the one finding inside `kayan-platform`
+itself, in scope and trivially safe): the AI Platform admin module
+(`Kayan_Admin_Module_AI`) rendered a provider's already-saved API key
+back into a plain `type="text"` input's `value` attribute, next to a
+`••••••••` placeholder that was never actually used to mask anything —
+meaning a saved secret was visible in the page's HTML/DOM to anyone who
+could view the screen or its source. Fixed by switching the field to
+`type="password"`, never echoing the stored secret back into the page
+(the field now always renders empty, with the placeholder communicating
+whether a key is already configured), and updating `save()` so that
+submitting the form with the key field left blank preserves the existing
+key instead of erasing it. Also clarified `Kayan_Admin_UI::safe_html()`'s
+docblock, which the audit flagged as a misleadingly-named pass-through
+(it does not itself escape strings — it is a contract that callers must
+pre-escape content before passing it in, and every current caller in
+`kayan-platform` already does; documented explicitly so a future module
+author does not assume otherwise). Both changes are covered by new,
+passing tests (raw key never appears in rendered HTML; field renders as
+`password`; blank submission preserves the key; non-empty submission
+updates it).
 
 ---
 
@@ -75,7 +162,7 @@ gaps above tracked rather than hidden.
 |---|---|---|
 | Architecture | ✅ Verified | See §2. Consistent facade pattern across all 11 engines. |
 | Performance | ✅ Verified (see caveats) | See §2 and §10. |
-| Security | ✅ Verified for kayan-platform; legacy packs reviewed, not re-audited line-by-line | See §2. |
+| Security | ✅ Verified clean for kayan-platform (1 finding fixed this phase); ⚠️ 2 critical, pre-existing vulnerabilities found in legacy packs (documented, not fixed — see §2a) | See §2, §2a. |
 | SEO | ✅ Verified | Rank Math remains the only SEO engine; no competing output anywhere in the platform. |
 | Programmatic SEO | ✅ Verified | Full generation pipeline (preview → materialize → regenerate → bulk → translate) tested end-to-end in the functional test suite. |
 | AI Platform | ✅ Verified | Provider interface, 4 real vendor adapters (OpenAI/Claude/Gemini/Mistral) + Null fallback, interchangeability tested via a deterministic fake provider proving zero application-code changes are needed to swap providers. |
@@ -486,9 +573,16 @@ urgency):
 
 ## 12. Recommendations for a future version 3.0
 
-These are **not** part of this phase's deliverables (per the explicit "no
-new features" instruction) — they are forward-looking notes for whoever
-plans the next major version:
+**Before any v3.0 planning — P0, urgent, independent of this project's
+release cycle:** remediate the two critical legacy vulnerabilities in
+§2a (the payment OTP bypass and the `FieldsMachine` AJAX
+object-injection/privilege-escalation chain). These are live security
+risks on the current site today, regardless of whether v3.0 work ever
+happens — they should not wait for a future version.
+
+The items below are **not** part of this phase's deliverables (per the
+explicit "no new features" instruction) — they are forward-looking notes
+for whoever plans the next major version:
 
 1. **Wire up a real automated test suite** (PHPUnit + `wp-env` or
    similar) using the same scenarios already proven out by this
@@ -558,6 +652,15 @@ plans the next major version:
 
 Phase 6 — Production Readiness, Final Audit & Optimization — is
 **complete**. No new features were introduced. No architecture was
-changed. All four functional test suites pass. All documentation has
-been generated or refreshed. This is the final phase of the KAYAN Theme
-evolution project as scoped; no Phase 7 is planned.
+changed. All four functional test suites pass (now including dedicated
+regression tests for the security fix applied this phase). All
+documentation has been generated or refreshed. This is the final phase
+of the KAYAN Theme evolution project as scoped; no Phase 7 is planned.
+
+The one caveat to an otherwise unqualified sign-off: §2a's two critical
+legacy vulnerabilities are real, current, and outside this project's
+scope to fix under its "100% safe or don't touch it" mandate for
+pre-existing code. They are called out here, at the very end of the
+report, one more time so they cannot be missed: **schedule a dedicated
+remediation for the payment OTP bypass and the `FieldsMachine`
+privilege-escalation chain independently of this platform's release.**

@@ -37,9 +37,37 @@ full findings, scores, technical debt, and recommendations.
   to the docs generator's "Describe contracts" reference list in `API.md`
   — they already implemented `describe()` but were missing from that list,
   an oversight from when they were added in Phase 5.
-- (Any additional safe fixes from the parallel security audit are listed
-  individually below once applied — each as its own commit per this
-  project's convention.)
+- **Security fix**: the AI Platform admin module rendered a provider's
+  already-saved API key back into a plain `type="text"` field's `value`
+  attribute (visible in the page's HTML/DOM to anyone who could view the
+  screen or its source), next to a masking placeholder that was never
+  actually used. Fixed: the field now renders as `type="password"` and
+  never echoes the stored secret back — it always renders empty, with the
+  placeholder indicating whether a key is already configured — and
+  `save()` now preserves the existing key when the field is submitted
+  blank instead of erasing it. Covered by new regression tests.
+- Clarified `Kayan_Admin_UI::safe_html()`'s docblock — it is a pass-through
+  for pre-escaped HTML fragments, not a sanitizer; the name was flagged as
+  misleading by the security audit even though no unsafe call site
+  currently exists. Documentation-only change.
+
+### Security audit — critical legacy findings (documented, not fixed)
+A dedicated, full-theme security audit found two critical,
+currently-exploitable vulnerabilities in **pre-existing legacy code that
+predates this project and was never touched by Phases 1–6**: (1) the
+payment demo gateway's OTP verification (`AjaxCenter/kayan_payment_verify_otp.php`)
+never actually checks the submitted code against the real OTP — any
+6-digit value confirms a payment; (2) `FieldsMachine/AjaxCallBack/*`'s
+AJAX dispatcher has no nonce/capability gate on most of its handlers,
+including ones that delete arbitrary posts/users and one that allows PHP
+object injection via a user-controlled class name, which chains to
+arbitrary database writes (including `wp_users`). Per this project's
+explicit "100% safe or don't touch it" mandate for legacy code — and
+because a correct fix requires business-logic decisions outside this
+phase's scope — these were **documented with full detail in
+`PHASE6-FINAL-REPORT.md` §2a, flagged as P0/urgent, and not patched**.
+They should be scheduled for a dedicated remediation independent of this
+platform's release cycle.
 
 ### Testing
 Added a fourth functional smoke suite (`Phase 6 scenario tests`, kept

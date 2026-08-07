@@ -60,7 +60,12 @@ class Kayan_Admin_Module_AI {
 			if ( 'null' === $id ) {
 				continue;
 			}
-			$settings->set_module( 'ai_' . $id, 'api_key', isset( $_POST[ 'api_key_' . $id ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'api_key_' . $id ] ) ) : '' );
+			// The API key field is never pre-filled with the stored secret (see
+			// render_settings_form()), so an empty submission means "leave the
+			// existing key unchanged", not "clear it".
+			if ( isset( $_POST[ 'api_key_' . $id ] ) && '' !== $_POST[ 'api_key_' . $id ] ) {
+				$settings->set_module( 'ai_' . $id, 'api_key', sanitize_text_field( wp_unslash( $_POST[ 'api_key_' . $id ] ) ) );
+			}
 			$settings->set_module( 'ai_' . $id, 'model', isset( $_POST[ 'model_' . $id ] ) ? sanitize_text_field( wp_unslash( $_POST[ 'model_' . $id ] ) ) : '' );
 		}
 		$settings->set_global( 'ai_default_provider', isset( $_POST['default_provider'] ) ? sanitize_key( wp_unslash( $_POST['default_provider'] ) ) : '' );
@@ -143,7 +148,18 @@ class Kayan_Admin_Module_AI {
 				<?php if ( 'null' === $id ) { continue; } ?>
 				<h3><?php echo esc_html( $provider->label() ); ?></h3>
 				<?php
-				echo $ui->field( array( 'type' => 'text', 'name' => 'api_key_' . $id, 'label' => __( 'API key', 'kayan' ), 'value' => (string) $settings->get_module( 'ai_' . $id, 'api_key', '' ), 'placeholder' => '••••••••' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				$has_key = '' !== (string) $settings->get_module( 'ai_' . $id, 'api_key', '' );
+				echo $ui->field( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					array(
+						'type'        => 'password',
+						'name'        => 'api_key_' . $id,
+						'label'       => __( 'API key', 'kayan' ),
+						// Never echo the stored secret back into the page (it would be
+						// readable in the rendered HTML/DOM). Leave blank to keep it.
+						'value'       => '',
+						'placeholder' => $has_key ? __( '•••••••• (leave blank to keep current key)', 'kayan' ) : __( 'Not set', 'kayan' ),
+					)
+				);
 				echo $ui->field( array( 'type' => 'text', 'name' => 'model_' . $id, 'label' => __( 'Model (optional)', 'kayan' ), 'value' => (string) $settings->get_module( 'ai_' . $id, 'model', '' ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				?>
 			<?php endforeach; ?>
