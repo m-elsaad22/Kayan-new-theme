@@ -1,6 +1,6 @@
 # Architecture
 
-**Platform version:** 5.0.0
+**Platform version:** 6.0.0
 
 KAYAN is a single-install WordPress SEO platform (no Multisite, no WPML/Polylang).
 

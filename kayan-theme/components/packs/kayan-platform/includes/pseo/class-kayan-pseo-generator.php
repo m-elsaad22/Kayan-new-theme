@@ -523,6 +523,11 @@ class Kayan_PSEO_Generator {
 		if ( ! empty( $result['ok'] ) && ! empty( $result['post_id'] ) ) {
 			update_post_meta( (int) $result['post_id'], Kayan_Content_Locale::META_TRANSLATION_GROUP, $group );
 			update_post_meta( (int) $result['post_id'], Kayan_Content_Locale::META_LANG, $target_lang );
+			// materialize() already flushed the query cache before these two writes —
+			// flush again so a translation's group/language meta is never served stale.
+			if ( function_exists( 'kayan_cache' ) ) {
+				kayan_cache()->flush_group( 'query' );
+			}
 			$result['source_post_id'] = $post_id;
 			$result['target_language'] = $target_lang;
 		}
@@ -607,27 +612,6 @@ class Kayan_PSEO_Generator {
 		}
 
 		return $this->ai->regenerate_block( (int) $post_id, $block_id, $args );
-	}
-
-	/**
-	 * Dry-run template upgrade preserving locked/manual blocks.
-	 *
-	 * @param int    $post_id     Post ID.
-	 * @param string $template_id Template id (optional; uses blueprint template).
-	 * @return array{ok:bool,errors?:string[],blueprint?:array,changed?:string[],preserved?:string[]}
-	 */
-	public function preview_template_upgrade( $post_id, $template_id = '' ) {
-		$blueprint = $this->blueprint->get_for_post( (int) $post_id );
-		if ( ! $template_id ) {
-			$template_id = isset( $blueprint['template_id'] ) ? (string) $blueprint['template_id'] : '';
-		}
-		if ( ! $template_id ) {
-			return array(
-				'ok'     => false,
-				'errors' => array( 'template_id_required' ),
-			);
-		}
-		return $this->blueprint->upgrade_template( $blueprint, $template_id );
 	}
 
 	/**
@@ -813,7 +797,7 @@ class Kayan_PSEO_Generator {
 	 */
 	public function status() {
 		return array(
-			'phase'                => defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '4.0.0',
+			'phase'                => defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '6.0.0',
 			'generation_enabled'   => true,
 			'entity_types'         => count( $this->entities->get_entity_types() ),
 			'patterns'             => count( $this->patterns->all() ),

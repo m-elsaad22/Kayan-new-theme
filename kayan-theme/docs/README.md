@@ -37,4 +37,10 @@ kayan_platform()->docs->generate();
 - [ThemeIntegration.md](./ThemeIntegration.md)
 - [Compatibility.md](./Compatibility.md)
 
-Platform version: `5.0.0`
+## Operations guides (Phase 6)
+
+- [UpgradeGuide.md](./UpgradeGuide.md)
+- [DeploymentGuide.md](./DeploymentGuide.md)
+- [ProductionChecklist.md](./ProductionChecklist.md)
+
+Platform version: `6.0.0`

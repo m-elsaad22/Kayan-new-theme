@@ -85,6 +85,10 @@ class Kayan_PSEO_Jobs {
 	public function all( array $args = array() ) {
 		global $wpdb;
 		$table = $this->table();
+		// Each WHERE fragment (and the LIMIT/OFFSET fragment) is independently
+		// $wpdb->prepare()'d before being concatenated below — the assembled
+		// $sql string is safe even though the final get_results() call can't
+		// be statically verified by the PHPCS sniff, hence the ignore comment.
 		$where = array( '1=1' );
 		if ( ! empty( $args['status'] ) ) {
 			$where[] = $wpdb->prepare( 'status = %s', sanitize_key( $args['status'] ) );
@@ -97,7 +101,7 @@ class Kayan_PSEO_Jobs {
 
 		$sql  = "SELECT * FROM {$table} WHERE " . implode( ' AND ', $where ) . ' ORDER BY id DESC';
 		$sql .= $wpdb->prepare( ' LIMIT %d OFFSET %d', $limit, $offset );
-		$rows = $wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+		$rows = $wpdb->get_results( $sql, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- every fragment above is already prepared individually.
 
 		$jobs = array();
 		foreach ( (array) $rows as $row ) {

@@ -208,7 +208,7 @@ class Kayan_Admin_Platform {
 
 		$base = defined( 'KAYAN_PLATFORM_DIR' ) ? KAYAN_PLATFORM_DIR : dirname( __DIR__, 2 );
 		$url  = $this->pack_url();
-		$ver  = defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '3.0.0';
+		$ver  = defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '6.0.0';
 
 		$css = $base . '/assets/admin/kayan-admin.css';
 		$js  = $base . '/assets/admin/kayan-admin.js';
@@ -322,7 +322,7 @@ class Kayan_Admin_Platform {
 	 */
 	public function describe() {
 		return array(
-			'version'     => defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '3.2.0',
+			'version'     => defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '6.0.0',
 			'menu_slug'   => self::MENU_SLUG,
 			'modules'     => $this->modules->describe(),
 			'permissions' => $this->permissions->describe(),

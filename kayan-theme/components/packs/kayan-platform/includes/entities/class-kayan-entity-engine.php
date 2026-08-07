@@ -107,7 +107,7 @@ class Kayan_Entity_Engine {
 	 */
 	public function describe() {
 		return array(
-			'version'       => defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '2.6.0',
+			'version'       => defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '6.0.0',
 			'types'         => array_keys( $this->api->types() ),
 			'relationships' => $this->relationships->capabilities(),
 			'apis'          => array(

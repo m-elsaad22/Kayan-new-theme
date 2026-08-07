@@ -3,7 +3,7 @@
 **Phase:** 3.1 — Existing Theme Integration
 **Theme version:** `2.0.1`
 **Platform version:** `3.1.0`
-**Generated:** `2026-08-06T18:10:05+00:00`
+**Generated:** `2026-08-07T01:32:16+00:00`
 
 This report maps every major existing KAYAN Theme system to the platform.
 Adapters wrap/extend existing packs — they do not replace them.
@@ -234,12 +234,12 @@ Extends `rukn_cs_post_types` with kayan-cpt types. Global numbers via Theme Opti
 |-------|-------|
 | Status | Already compatible |
 | Risk | Low |
-| Adapter | `admin_bridges` |
+| Adapter | — |
 | Path | `components/packs/kayan-platform/ + kayan-i18n/` |
 
-Platform Country/Language engines + kayan-i18n routing ownership already integrated. Admin shells bridge to existing YTS — no new locale UIs.
+Platform Country/Language engines + kayan-i18n routing ownership already integrated. Phase 3 added real Countries/Languages Admin Platform modules editing the platform profile layer (not the i18n registry itself).
 
-**Migration strategy:** Continue configuring via Theme Options / i18n options until a later approved UI phase.
+**Migration strategy:** Manage per-country business profile and custom languages via the Admin Platform. Theme Options (YTS) remains the source for raw contact fields when a profile is empty.
 
 ### Theme Settings / Country Profiles
 
@@ -276,9 +276,9 @@ When `kayan_platform_owns_routing()` is true, i18n skips duplicate rewrites. CPT
 | Adapter | `admin_bridges` |
 | Path | `YTS, kayan-bookings, kayan-track-pro, Rank Math` |
 
-Existing menus remain. Admin Platform module shells link to those screens instead of inventing replacements.
+Existing menus remain. Analytics/Tools modules still link to KAYAN Track / Theme Options. Countries, Languages, and Rank Math Integration are now real Admin Platform screens (Phase 3) that edit platform-owned data alongside the existing menus.
 
-**Migration strategy:** Operators keep using existing menus. Platform admin is additive shell only.
+**Migration strategy:** Operators keep using existing menus for booking/tracking/theme-wide options; use the Admin Platform for country profiles, languages, and platform settings.
 
 ### Menus (WP + header switcher)
 
@@ -332,7 +332,7 @@ Already maps city→country via term meta. No duplicate relationship layer.
 
 **Migration strategy:** Use `kayan_entity()` / `kayan_tags()`.
 
-### PSEO architecture
+### Programmatic SEO Platform (complete)
 
 | Field | Value |
 |-------|-------|
@@ -341,13 +341,13 @@ Already maps city→country via term meta. No duplicate relationship layer.
 | Adapter | — |
 | Path | `includes/pseo/` |
 
-Architecture-only; no generation. Prefer existing CPTs.
+Phase 4 completed generation (Generator/Queue/Scheduler/Renderer). Prefers existing CPTs (services/faqs/pricing); only true multi-entity combinations use the kayan_pseo host type. Every write is fingerprint-keyed — never changes an existing post's URL.
 
-**Migration strategy:** No change until generation phase approved.
+**Migration strategy:** No action required. Bulk-generate only via reviewed Rules; always Preview before Bulk Generate in production.
 
-No AI / Templates UI in 3.1.
+Rank Math remains the only SEO engine — the Generator only writes RM's own postmeta fields.
 
-### Admin Platform Core
+### Admin Platform Core (complete)
 
 | Field | Value |
 |-------|-------|
@@ -356,9 +356,35 @@ No AI / Templates UI in 3.1.
 | Adapter | `admin_bridges` |
 | Path | `includes/admin/` |
 
-Phase 3.0 shells retained. Bridges prevent empty modules from looking like missing features.
+Phases 3–5 completed Dashboard, Navigation, Settings, Countries, Languages, Entities, Relationships, Permissions, Logs, System Health, Import/Export, Rank Math Integration, Templates, Blueprints, Blocks, Programmatic SEO, Queue, and AI. Media/Analytics/Performance/Security remain placeholder shells (out of the approved roadmap).
 
 **Migration strategy:** Register future UIs only through `kayan_admin()` when approved.
+
+### Migration & Version Engine
+
+| Field | Value |
+|-------|-------|
+| Status | Already compatible |
+| Risk | Low |
+| Adapter | — |
+| Path | `includes/migration/` |
+
+New in Phase 4. Additive only — existing booking/payment/track ad-hoc version checks are untouched and continue to work exactly as before.
+
+**Migration strategy:** No action required. Other packs may adopt `kayan_migrations_register` later; nothing is forced.
+
+### AI Platform / Content Workflow / Quality Engine / Dependency Graph
+
+| Field | Value |
+|-------|-------|
+| Status | Already compatible |
+| Risk | Low |
+| Adapter | — |
+| Path | `includes/ai/, includes/workflow/, includes/quality/, includes/dependency/` |
+
+New in Phase 5. Only affect posts carrying a PSEO fingerprint/blueprint (i.e. platform-generated pages). Manually authored content, and every pre-existing pack, is completely unaffected — verified by automated tests confirming a manually created post has no workflow/quality/dependency footprint.
+
+**Migration strategy:** Configure an AI provider (optional) at KAYAN → AI to enable block regeneration/translation. Safe to leave unconfigured.
 
 ## Adapter inventory
 
@@ -370,7 +396,7 @@ Phase 3.0 shells retained. Bridges prevent empty modules from looking like missi
 - `i18n_switcher` — **idle** — No new switcher UI — connects existing header action to existing i18n renderer.
 - `legacy_city` — **compatible** — Canonical cities taxonomy from kayan-cpt. Empty legacy city unregistered; non-empty kept for BC.
 - `theme_options` — **adapter** — Frontend dual-read from country profiles; Theme Options remains write source.
-- `admin_bridges` — **adapter** — Links Admin Platform shells to existing YTS / Track / Rank Math / Bookings screens.
+- `admin_bridges` — **adapter** — Links remaining placeholder modules (analytics, tools) to existing Track / Theme Options screens. Countries, Languages, and Rank Math are now real Admin Platform modules (Phase 3).
 - `cpt` — **extension** — Reuses kayan-cpt; extends locale post types + rewrite map only.
 - `query` — **extension** — Ensures Query Engine resources for kayan-cpt; legacy_city resource when taxonomy remains.
 

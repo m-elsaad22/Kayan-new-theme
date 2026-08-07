@@ -1,6 +1,6 @@
 # Admin Platform
 
-**Phase:** 3 (complete) · **Admin version contract:** 5.0.0
+**Phase:** 3 (complete) · **Admin version contract:** 6.0.0
 
 Functional modules: Dashboard, Settings, Countries, Languages, Entities,
 Relationships, Permissions, Logs, System Health, Import/Export, Rank Math

@@ -244,16 +244,18 @@ class Kayan_Admin_Module_Pseo {
 		if ( ! function_exists( 'kayan_query' ) ) {
 			return 0;
 		}
+		// Ask MySQL for the count directly (found_posts) instead of materializing
+		// every matching ID with posts_per_page => -1 just to count them.
 		$q = kayan_query()->wp_query(
 			array(
 				'post_type'      => kayan_pseo()->storage->host_post_types(),
 				'post_status'    => array( 'publish', 'draft', 'future', 'pending' ),
-				'posts_per_page' => -1,
+				'posts_per_page' => 1,
 				'meta_key'       => Kayan_PSEO_Blueprint::META_BLUEPRINT, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 				'fields'         => 'ids',
-				'no_found_rows'  => true,
+				'no_found_rows'  => false,
 			)
 		);
-		return count( $q->posts );
+		return (int) $q->found_posts;
 	}
 }
