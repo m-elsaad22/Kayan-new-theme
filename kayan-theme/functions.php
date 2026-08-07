@@ -14,7 +14,7 @@ class ThemeTree {
 			'POSTs'=>$_POST,
 		);
 		$this->TempPath = get_template_directory();
-		$this->TempURL = get_template_directory();
+		$this->TempURL = get_template_directory_uri();
 		$this->StylesURL = get_template_directory_uri().'/components/styles/';
 		$this->StylesPath = get_template_directory().'/components/styles/';
 		$this->folderpath = $this->TempPath.'/components/packs/*/';

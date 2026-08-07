@@ -14,6 +14,8 @@
  * ════════════════════════════════════════════════════════════════
  */
 
+require_once get_template_directory() . '/components/packs/SvgCenter/icon-helpers.php';
+
 if ( ! class_exists( 'Kayan_Booking' ) ) {
 
 	class Kayan_Booking {
@@ -78,7 +80,7 @@ if ( ! class_exists( 'Kayan_Booking' ) ) {
 			return array(
 				'id'         => $post->ID,
 				'title'      => get_the_title( $post ),
-				'icon'       => (string) get_post_meta( $post->ID, 'service_icon', true ),
+				'icon'       => kayan_icon_html( (string) get_post_meta( $post->ID, 'service_icon', true ), 'fa-solid fa-screwdriver-wrench' ),
 				'color'      => (string) get_post_meta( $post->ID, 'service_color', true ),
 				'price'      => (string) get_post_meta( $post->ID, 'service_price', true ),
 				'price_from' => (bool) get_post_meta( $post->ID, 'service_price_from', true ),
@@ -181,7 +183,14 @@ if ( ! class_exists( 'Kayan_Booking' ) ) {
 		# ═══════════ الحقن التلقائي داخل محتوى المقال ═══════════
 
 		public function InjectWizard( $content ) {
-			if ( is_admin() || ! is_singular( array( 'post', 'services' ) ) || ! in_the_loop() || ! is_main_query() ) {
+			# ملاحظة: قوالب @single تستدعي the_content() خارج حلقة WP التقليدية
+			# (Locate → Blade بدون the_post)، لذلك لا نستخدم in_the_loop().
+			if ( is_admin() || ! is_singular( array( 'post', 'services' ) ) || ! is_main_query() ) {
+				return $content;
+			}
+			# منع الحقن المكرر عند استدعاءات the_content الثانوية
+			static $injected = false;
+			if ( $injected ) {
 				return $content;
 			}
 
@@ -217,6 +226,7 @@ if ( ! class_exists( 'Kayan_Booking' ) ) {
 				$boot_id   = $cats[0];
 			}
 
+			$injected = true;
 			ob_start();
 			$this->RenderWizard( $services, $boot_mode, $boot_id, $post_id );
 			$wizard = ob_get_clean();

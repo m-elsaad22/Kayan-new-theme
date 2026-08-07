@@ -34,6 +34,9 @@ if ( ! function_exists( 'kayan_version_get' ) ) {
 		}
 		$checks['خطوط Font Awesome (webfonts)'] = $fonts_ok;
 
+		$checks['إصلاحات FA Free (fa-free-fixes.css)'] = file_exists( $dir . '/components/styles/fa-free-fixes.css' );
+		$checks['مساعد الأيقونات (icon-helpers)'] = file_exists( $dir . '/components/packs/SvgCenter/icon-helpers.php' );
+
 		# الحزم الحرجة لإصدار 1.4.x
 		$checks['حزمة الأقسام المخصصة (kayan-cpt)']   = is_dir( $dir . '/components/packs/kayan-cpt' );
 		$checks['حزمة تلقيم المحتوى (kayan-seed)']     = is_dir( $dir . '/components/packs/kayan-seed' );

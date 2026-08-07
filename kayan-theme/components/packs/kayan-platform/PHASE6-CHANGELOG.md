@@ -137,4 +137,5 @@ this environment) — not just `php -l` syntax checks.
 | 3 (complete) | 2.1.0 | 3.2.0 | Functional Admin Platform |
 | 4 | 2.2.0 | 4.0.0 | Migration Engine + complete Programmatic SEO Platform |
 | 5 | 2.3.0 | 5.0.0 | AI, Workflow & Quality Platform |
-| **6 (final)** | **2.4.0** | **6.0.0** | **Production readiness, audit, optimization, final documentation** |
+| 6 (final) | 2.4.0 | 6.0.0 | Production readiness, audit, optimization, final documentation |
+| **Integration** | **2.4.1** | **6.0.0** | **Consolidated the parallel legacy v1.4.x production line into the canonical theme — see `PHASE-INTEGRATION-2.4.1-REPORT.md`** |

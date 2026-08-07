@@ -34,38 +34,106 @@ function remove_youtube_embed_scripts() {
 add_action( 'wp_enqueue_scripts', 'remove_youtube_embed_scripts', 999 );
 
 /**
- * تعطيل جميع السكريبتات والستايلات الزائدة مع الإبقاء على Rank Math SEO
- * KAYAN v1.4.2+ — Rank Math محمي من الحذف
+ * تعطيل السكربتات الزائدة مع حماية كاملة لـ Rank Math وتبعياته
+ * KAYAN v1.4.6+ — Rank Math يبقى مسؤولاً كاملاً عن مخرجاته على الواجهة؛
+ * هذه الحماية تمنع فقط تعطيل أصوله عن طريق الخطأ عبر disable_all_scripts أدناه.
  */
-function disable_all_scripts() {
-    global $wp_scripts, $wp_styles;
+function kayan_is_rank_math_active() {
+    return class_exists( 'RankMath' )
+        || class_exists( 'RankMath\\RankMath' )
+        || defined( 'RANK_MATH_VERSION' )
+        || function_exists( 'rank_math' );
+}
 
-    // الـ handles التي يجب حمايتها (Rank Math SEO)
-    $protected_prefix = 'rank-math';
-
-    foreach ( (array) $wp_scripts->queue as $handle ) {
-        if ( strpos( $handle, $protected_prefix ) !== false ) {
-            continue; // احمِ Rank Math
+function kayan_is_protected_asset_handle( $handle ) {
+    $handle = (string) $handle;
+    $protected_prefixes = array(
+        'rank-math',
+        'rank_math',
+        'seo-by-rank-math',
+        'kayan-',
+        'yourcolor-',
+        // تبعيات Rank Math / WP الأساسية التي يعتمد عليها الإضافة
+        'wp-i18n',
+        'wp-hooks',
+        'wp-element',
+        'wp-components',
+        'wp-api-fetch',
+        'wp-url',
+        'wp-data',
+        'wp-dom-ready',
+        'lodash',
+        'wp-polyfill',
+        'regenerator-runtime',
+    );
+    foreach ( $protected_prefixes as $prefix ) {
+        if ( 0 === strpos( $handle, $prefix ) ) {
+            return true;
         }
-        wp_dequeue_script( $handle );
-        wp_deregister_script( $handle );
+    }
+    return false;
+}
+
+function kayan_is_protected_asset_src( $src ) {
+    if ( ! is_string( $src ) || '' === $src ) {
+        return false;
+    }
+    $needles = array( 'rank-math', 'seo-by-rank-math', '/kayan-', 'fa-free-fixes' );
+    foreach ( $needles as $needle ) {
+        if ( false !== strpos( $src, $needle ) ) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function disable_all_scripts() {
+    // في الأدمن لا نلمس أي شيء — Rank Math ولوحة التحكم يحتاجان كل الأصول
+    if ( is_admin() ) {
+        return;
     }
 
-    foreach ( (array) $wp_styles->queue as $handle ) {
-        if ( strpos( $handle, $protected_prefix ) !== false ) {
-            continue; // احمِ Rank Math
+    global $wp_scripts, $wp_styles;
+
+    if ( isset( $wp_scripts->queue ) && is_array( $wp_scripts->queue ) ) {
+        foreach ( $wp_scripts->queue as $handle ) {
+            if ( kayan_is_protected_asset_handle( $handle ) ) {
+                continue;
+            }
+            $src = isset( $wp_scripts->registered[ $handle ]->src ) ? $wp_scripts->registered[ $handle ]->src : '';
+            if ( kayan_is_protected_asset_src( $src ) ) {
+                continue;
+            }
+            wp_dequeue_script( $handle );
         }
-        wp_dequeue_style( $handle );
+    }
+
+    if ( isset( $wp_styles->queue ) && is_array( $wp_styles->queue ) ) {
+        foreach ( $wp_styles->queue as $handle ) {
+            if ( kayan_is_protected_asset_handle( $handle ) ) {
+                continue;
+            }
+            $src = isset( $wp_styles->registered[ $handle ]->src ) ? $wp_styles->registered[ $handle ]->src : '';
+            if ( kayan_is_protected_asset_src( $src ) ) {
+                continue;
+            }
+            wp_dequeue_style( $handle );
+        }
     }
 }
 add_action('wp_enqueue_scripts', 'disable_all_scripts', 999999);
 
-add_action( 'wp_print_styles', 'wps_deregister_styles', 100 );
-function wps_deregister_styles() {
-    wp_dequeue_style( 'wp-block-library' );
-}
+# Rank Math على الواجهة يبقى نشطاً بالكامل — نحمي أصوله فقط من disable_all_scripts أعلاه
+# (الذي أصلاً لا يعمل في is_admin()، لكن هذه الحماية تغطي أي سياق frontend مستقبلي).
 
+# لا تحذف ?ver= من أصول Rank Math (قد يسبب كاش قديم بعد تحديث الإضافة)
 function remove_script_version($src) {
+    if ( ! is_string( $src ) ) {
+        return $src;
+    }
+    if ( false !== strpos( $src, 'rank-math' ) || false !== strpos( $src, 'seo-by-rank-math' ) ) {
+        return $src;
+    }
     if (strpos($src, 'ver=') !== false) {
         $src = remove_query_arg('ver', $src);
     }
@@ -74,12 +142,23 @@ function remove_script_version($src) {
 add_filter('script_loader_src', 'remove_script_version', 15, 1);
 
 function remove_css_version($src) {
+    if ( ! is_string( $src ) ) {
+        return $src;
+    }
+    if ( false !== strpos( $src, 'rank-math' ) || false !== strpos( $src, 'seo-by-rank-math' ) ) {
+        return $src;
+    }
     if (strpos($src, 'ver=') !== false) {
         $src = remove_query_arg('ver', $src);
     }
     return $src;
 }
 add_filter('style_loader_src', 'remove_css_version', 15, 1);
+
+add_action( 'wp_print_styles', 'wps_deregister_styles', 100 );
+function wps_deregister_styles() {
+    wp_dequeue_style( 'wp-block-library' );
+}
 
 function removeAppleTouchIcon() {
     remove_action('wp_head', 'wp_site_icon', 99);

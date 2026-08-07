@@ -1522,19 +1522,9 @@ jQuery(function($){
 			}
 	// # FIELDS SETUP.
 
-		$(".apbsortable").each(function(e,aps) {
-			if( $(aps).data('connect-with') != undefined ){
-				console.log($(aps).data('connect-with'));
-				$(aps).sortable({
-				  handle : $(aps).data('connect-with'),
-				  cursor : 'crosshair'
-				});
-
-			}else{
-				$(aps).sortable();
-	    		$(aps).disableSelection();
-			}
-		});
+		if ( typeof window.kayanInitSortables === 'function' ) {
+			window.kayanInitSortables($);
+		}
 
 		var EditorsLists = [];
 		function GetFieldValue(elem,argument){
@@ -3158,6 +3148,22 @@ jQuery(function($){
 						html_output +='</div>';
 
 						WidgetAppender.append(html_output);
+
+						// إعادة تفعيل السحب بعد إضافة ودجت جديد
+						if ( typeof window.kayanInitSortables === 'function' ) {
+							window.kayanInitSortables(jQuery);
+						} else if ( $.fn.sortable && WidgetAppender.hasClass('apbsortable') ) {
+							try { if ( WidgetAppender.data('ui-sortable') ) { WidgetAppender.sortable('destroy'); } } catch (err) {}
+							WidgetAppender.sortable({
+								handle: WidgetAppender.attr('data-connect-with') || 'sortbyme, .-widget-item-title-',
+								cursor: 'grabbing',
+								tolerance: 'pointer',
+								placeholder: 'kayan-sort-placeholder',
+								forcePlaceholderSize: true,
+								opacity: 0.92,
+								axis: 'y'
+							});
+						}
 
 						// # 
 
