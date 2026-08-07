@@ -343,10 +343,12 @@ class Kayan_Migration_Engine {
 	 * @return array<string,mixed>
 	 */
 	public function describe() {
+		$current = $this->current_version();
+		$target  = $this->target_version();
 		return array(
-			'current_version' => $this->current_version(),
-			'target_version'  => $this->target_version(),
-			'up_to_date'      => $this->current_version() >= $this->target_version(),
+			'current_version' => $current,
+			'target_version'  => $target,
+			'up_to_date'      => $current >= $target,
 			'migrations'      => array_keys( $this->migrations() ),
 			'history_table'   => $this->table_name(),
 			'apis'            => array(

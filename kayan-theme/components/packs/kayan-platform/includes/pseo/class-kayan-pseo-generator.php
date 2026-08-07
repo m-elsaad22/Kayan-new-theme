@@ -523,6 +523,11 @@ class Kayan_PSEO_Generator {
 		if ( ! empty( $result['ok'] ) && ! empty( $result['post_id'] ) ) {
 			update_post_meta( (int) $result['post_id'], Kayan_Content_Locale::META_TRANSLATION_GROUP, $group );
 			update_post_meta( (int) $result['post_id'], Kayan_Content_Locale::META_LANG, $target_lang );
+			// materialize() already flushed the query cache before these two writes —
+			// flush again so a translation's group/language meta is never served stale.
+			if ( function_exists( 'kayan_cache' ) ) {
+				kayan_cache()->flush_group( 'query' );
+			}
 			$result['source_post_id'] = $post_id;
 			$result['target_language'] = $target_lang;
 		}

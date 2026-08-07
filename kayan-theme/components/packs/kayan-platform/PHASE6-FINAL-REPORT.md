@@ -58,7 +58,7 @@ these are not arbitrary numbers.
 | Category | Score | Why |
 |---|---|---|
 | **Architecture** | 9/10 | Clean layering (Country/Language → Routing → Entities → PSEO → AI/Workflow/Quality/Dependency → Admin), one facade per engine (`kayan_platform()`, `kayan_pseo()`, `kayan_ai()`, `kayan_workflow()`, `kayan_quality()`, `kayan_dependencies()`, `kayan_migrations()`, `kayan_admin()`), no circular dependencies, consistent register()/describe() contract across every engine. Docked 1 point because a handful of engines (Generator, Jobs) have grown large (500+ lines) as a natural consequence of owning the full write path — still cohesive, but worth watching if more responsibilities are added post-v2. |
-| **Performance** | 8/10 | Query Engine caching, Cache Engine with object-cache preference, Migration Engine's single-`get_option()` steady-state fast path, chunked/resumable Queue processing (never a single unbounded run), targeted Dependency Graph invalidation (never a full-site regeneration sweep). Docked 2 points: (a) `Kayan_Quality_Engine::validate()` is called once per row when rendering the Blueprints admin table with no per-request caching — fine at tens/hundreds of generated pages, would need pagination or caching at thousands+ (documented in §10); (b) the `admin_init` rate-limited fallbacks (Migration Engine, Scheduler) are cheap individually but are two additional transient reads on every admin request — negligible in practice, noted for completeness. |
+| **Performance** | 8/10 | Query Engine caching, Cache Engine with object-cache preference, Migration Engine's single-`get_option()` steady-state fast path (independently confirmed correct by a dedicated performance audit), chunked/resumable Queue processing (never a single unbounded run), targeted Dependency Graph invalidation (never a full-site regeneration sweep), correctly-ordered early-exit checks in the Renderer (never resolves `{{tags}}` on data that won't be printed), and every DB index matches its actual query pattern across all three new tables (audit found zero missing-index gaps). Three small, safe fixes applied as a direct result of the audit (see §6): `recent_generated_summary()` now asks MySQL for a real count instead of materializing every ID with `posts_per_page => -1`; `Kayan_Migration_Engine::describe()` no longer computes `current_version()` twice; `translate_post()` now flushes the query cache after its final meta writes (closing the one confirmed, if low-probability, stale-cache window in the whole codebase). Docked 2 points for real, documented, but out-of-scope-to-fix-here findings: (a) `Kayan_Quality_Engine::validate()` is called once per row when rendering the Blueprints admin table, and its duplicate-detection check does an uncached, unindexed `get_posts( title => ... )` scan of the entire `wp_posts` table — the single clearest "could be slow even at modest scale" finding in this audit, scaling with total site content rather than PSEO page count (§10); (b) the Cache Engine's group-index bookkeeping (`track_key()`) costs 3–4 DB round trips per cache write on sites without a persistent object cache, which measurably undermines caching's benefit on typical shared hosting — an architectural characteristic of the group-flush design, not a bug, and out of scope to redesign in this phase (§10). |
 | **Security** | 8/10 | Every custom `$wpdb` query across Migration Engine, Queue, and Dependency Graph was independently re-verified twice (by this agent directly, and by a dedicated audit pass): all `%s`/`%d` placeholders correctly match their arguments, table names are always built from a fixed constant + `$wpdb->prefix` (never user input), and `dbDelta()`-format `CREATE TABLE` statements are correctly formatted (verified byte-for-byte, e.g. the double-space convention after `PRIMARY KEY`). Every admin `save()` handler across all 20 admin modules has `check_admin_referer()` on every distinct state-changing branch. Capability checks are centralized once in `Kayan_Admin_Platform::maybe_handle_module_post()` plus per-module capability in the registry — not duplicated, not missed. AI provider HTTP calls use `wp_remote_post()` (WordPress's vetted HTTP layer), never raw `curl`. `kayan-platform` itself registers **zero** REST routes and **zero** `wp_ajax_*` actions (all admin interactivity goes through the Admin Platform's own nonce-gated `admin_init` dispatch). Docked 2 points, both isolated to **legacy, pre-existing code never touched by this project**: (a) `kayan-track`'s public `/kayan/v1/track` REST endpoint accepts unauthenticated POST writes to custom tables, protected only by IP-based rate limiting (20 req/min) and a blocklist — very likely an intentional design for an anonymous tracking beacon, but worth a documented risk acceptance since IP rate limiting is bypassable via IP rotation; (b) `FieldsMachine`'s AJAX layer uses a generic dispatch-by-filename pattern (one `wp_ajax_*` action auto-registered per file) that, while only matching pre-registered filenames today, is a pattern worth a closer look in a future dedicated legacy-pack security pass (§12). |
 | **SEO / Rank Math compatibility** | 9/10 | The platform never prints a competing title/description/canonical/schema/OG/sitemap tag anywhere — verified by reading every `wp_head`/`the_content` hook the platform registers (`Kayan_SEO_Bridge::render_country_gtm` is analytics-only; `Kayan_PSEO_Renderer::render` never touches `<head>`; the schema adapter explicitly disables the legacy theme schema pack when Rank Math is active). The Generator writes only Rank Math's own postmeta keys (`rank_math_title`, `rank_math_description`, `rank_math_focus_keyword`, `rank_math_robots`) and only when a blueprint supplies a value — never blanking an editor's manual Rank Math edit. `kayan_pseo` CPT is registered `public => true`, which is what Rank Math's sitemap module keys off — **verify on staging** that a real Rank Math install includes it as expected. Docked 1 point purely because this last point cannot be confirmed without a live Rank Math install in this environment. |
 | **Scalability** | 8/10 | The Queue table (not a single options row) was specifically built in Phase 4 because bulk generation is meant to scale into the thousands of pages; Rules' cartesian expansion has a configurable, filterable cap (`kayan_pseo_bulk_limit`, default 2000) with an explicit `truncated` flag rather than silently running out of memory; the Dependency Graph flags only affected pages, never a full-site sweep. Docked 2 points: (a) `Kayan_PSEO_Rules::candidates_for()` fetches up to 500 items per entity type per call with no caching between repeated preview calls in the same request — acceptable at current scale, would benefit from a short-lived cache at very large catalogs (thousands of services × cities); (b) the admin Blueprints/Queue list screens have no pagination UI yet (fixed 50-row limit) — fine today, worth adding before a site accumulates thousands of generated pages (§10, §12). |
@@ -232,8 +232,32 @@ silently assumed to work.
 
 Per the "no architecture changes" constraint, optimization in this phase
 was limited to verification (confirming existing optimizations are
-correctly implemented) and small, safe corrections:
+correctly implemented) and small, safe corrections. A dedicated
+performance audit (read-only static review, file:line citations, real-
+world impact estimates, fixes proposed only where safe/non-architectural)
+surfaced three fixes that were applied:
 
+- **`Kayan_Admin_Module_Pseo::recent_generated_summary()`** used
+  `posts_per_page => -1` purely to `count()` the resulting ID array on
+  every render of the Programmatic SEO admin screen. Changed to
+  `posts_per_page => 1, no_found_rows => false` and read `$q->found_posts`
+  instead — same query, but the count now comes from MySQL's native
+  `SELECT COUNT(*)` rather than materializing every matching post ID into
+  a PHP array first.
+- **`Kayan_Migration_Engine::describe()`** called `current_version()`
+  twice (each of which runs `dbDelta()`'s schema-introspection queries via
+  `ensure_history_table()`) to populate both the `current_version` key and
+  the `up_to_date` comparison. Now computed once and reused.
+- **`Kayan_PSEO_Generator::translate_post()`** had the one confirmed
+  (low-probability but real) stale-cache window in the entire codebase:
+  `materialize()` flushes the `query` cache group as its last internal
+  step, but `translate_post()` then writes two more meta fields
+  (`translation_group`, `language`) *after* that flush with no follow-up
+  invalidation. Added one more `kayan_cache()->flush_group( 'query' )`
+  call after those writes, mirroring the pattern already used everywhere
+  else in the Generator.
+
+Other fixes applied (unrelated to performance):
 - Corrected 6 stale hardcoded version-fallback strings across
   `class-kayan-docs-generator.php`, `class-kayan-pseo-engine.php`,
   `class-kayan-pseo-generator.php`, `class-kayan-admin-platform.php`
@@ -243,11 +267,20 @@ correctly implemented) and small, safe corrections:
 - Refreshed 2 stale entries + added 2 new entries in the Theme
   Integration compatibility report so it accurately reflects Phases 4–5
   instead of stopping at Phase 3.0/2.5 status.
-- Verified (did not need to change): cache invalidation after every
-  Generator write path, dbDelta-based table creation/upgrade patterns,
-  the Migration Engine's cheap steady-state boot check, and the Queue's
-  chunked/resumable processing — all already correctly implemented from
-  Phases 4–5.
+- Added a clarifying code comment (no functional change) to
+  `Kayan_PSEO_Jobs::all()` explaining why its assembled-SQL pattern
+  (each WHERE fragment independently `$wpdb->prepare()`'d before
+  concatenation) is safe despite needing a PHPCS ignore annotation.
+
+**Verified correct, no change needed** (confirmed by the same audit):
+cache invalidation after every other Generator write path; dbDelta-based
+table creation/upgrade formatting (byte-for-byte checked against
+dbDelta's parser requirements); the Migration Engine's `boot_check()`
+steady-state cost (confirmed to be exactly one `get_option()` call, as
+designed); the Queue's chunked/resumable processing; the Renderer's
+early-exit ordering (empty/disabled blocks are filtered *before* dynamic
+tag resolution, never after); and every index on all three new database
+tables matches its actual query usage (zero missing-index gaps found).
 
 **Dead code / removal:** no dead code, unused methods, or duplicate logic
 requiring removal was found in the kayan-platform code authored across
@@ -347,12 +380,16 @@ urgency):
 
 | Priority | Item | Detail |
 |---|---|---|
-| P2 | Quality Engine re-validates on every admin list render | `Kayan_Admin_Module_Blueprints::screen()` calls `kayan_quality()->validate()` once per row with no request-level cache. Fine at current expected scale (tens/hundreds of generated pages per site); would benefit from a short cache or lazy on-demand ("click to check") pattern before a site accumulates thousands of generated pages. |
+| P1 | Quality Engine's duplicate-detection check is an uncached, unindexed full-table scan | `Kayan_Quality_Engine::check_duplicate_detection()` calls `get_posts( array( 'title' => $post->post_title, … ) )` once per row rendered on the Blueprints admin screen. WordPress's `post_title` column has no index (standard WP core schema, not specific to this codebase), so this is a near-full `wp_posts` scan — its cost scales with **total site content**, not with the number of PSEO-generated pages, and is paid once per visible row on every screen load. This is the single clearest "could be slow even at modest scale" finding from the performance audit. No fix was applied in this phase (adding a DB index would touch WP core's own schema; caching the result changes behavior slightly) — flagged as the top candidate for v3.0. |
+| P2 | Cache Engine's group-index bookkeeping adds 3–4 DB round trips per cache write | `Kayan_Cache_Engine::track_key()` reads+writes a shared `kayan_cache_group_index` option on every cache `set()` (so `flush_group()` can enumerate and delete tracked keys), on top of the driver's own write (itself another `update_option()`/`add_option()` pair when using WordPress's transient fallback on sites without a persistent object cache). This measurably increases the cost of every unique cached query on typical shared hosting — confirmed correct in *intent* (no staleness bugs), but a real efficiency cost inherent to how group-based flushing is implemented without a native prefix-flush primitive. Redesigning this (e.g. group-versioning instead of an index) would be an architecture change, out of scope for this phase. |
+| P2 | Quality Engine re-validates on every admin list render | `Kayan_Admin_Module_Blueprints::screen()` calls `kayan_quality()->validate()` once per row with no request-level cache — and `render_quality_detail()` calls it a *second* time for the same post when viewing its detail report. Fine at current expected scale (tens/hundreds of generated pages per site); would benefit from a short per-request cache (avoiding the confirmed duplicate call) or lazy on-demand ("click to check") pattern before a site accumulates thousands of generated pages. |
+| P3 | Dependency Graph fan-out runs synchronously on the editor's own save request | Saving a source entity (e.g. a "service" post) with hundreds of dependent generated pages triggers that many sequential `get_post()` + 2×`update_post_meta()` calls inline, before the editor's save request returns. Correct and safe (no data issue), but a real, noticeable delay is possible for a heavily-referenced entity on a large site. Deferring this fan-out to a queued/background tick would be an architecture change, out of scope here. |
+| P3 | Admin Platform is fully constructed and registered on front-end requests too | `Kayan_Platform::boot()` calls `$this->admin->register()` unconditionally (no `is_admin()` guard), so all 17 admin modules are instantiated and registered on every front-end page view as well as every wp-admin view. Confirmed to be sub-millisecond, correct, but literally unnecessary work for a pure front-end visitor. Adding an `is_admin()` gate would be a (small) behavior change to the boot sequence, left as a v3.0 candidate rather than applied here. |
 | P2 | No pagination on Blueprints/Queue admin lists | Both cap at 50 rows via `wp_query()`/`all()` args. Acceptable today; a site with hundreds of rules or thousands of generated pages will need pager UI (the existing `Kayan_Admin_UI::pagination()` component already exists and could be wired in without any architecture change). |
 | P3 | `Kayan_PSEO_Rules::candidates_for()` has no request-level cache | Each call re-queries the Query Engine (which itself caches, but the enumerated/filtered candidate list is rebuilt each time). Only matters at very large service/city catalogs combined with frequent rule previews. |
 | P3 | No automated CI test runner in the repository | The four functional test suites built across this project live in the execution environment, not the repository, because no PHPUnit/`wp-env` scaffolding exists in this theme. They are real, valuable tests — they are just not currently wired into a CI pipeline. |
 | P3 | Legacy pack security/AJAX audit not exhaustive | Booking, payment, tracking, RuknContact, and FieldsMachine were reviewed at the integration-point level (Phase 3.1) but not re-audited line-by-line for their own internal security posture in this phase, since they are pre-existing, working, and out of this phase's mandate to modify. Two specific legacy patterns worth a closer look in a future pass: `kayan-track`'s public `/kayan/v1/track` REST write endpoint (IP-rate-limited only), and `FieldsMachine`'s dispatch-by-filename AJAX pattern. |
-| P3 | `Kayan_PSEO_Jobs::all()`'s WHERE-fragment SQL pattern reads as a PHPCS false-positive | Each dynamic WHERE fragment (`status = %s`, `job_type = %s`) is independently `$wpdb->prepare()`'d before being concatenated — genuinely safe, but the necessary `// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared` on the final assembled-string call is easy to misread as "unprepared SQL" on future review. No functional change needed; worth a code comment expansion if touched again. |
+| ~~P3~~ Resolved | `Kayan_PSEO_Jobs::all()`'s WHERE-fragment SQL pattern read as a PHPCS false-positive | Each dynamic WHERE fragment (`status = %s`, `job_type = %s`) is independently `$wpdb->prepare()`'d before being concatenated — genuinely safe, but the `// phpcs:ignore` annotation was easy to misread as "unprepared SQL" on future review. **Addressed in this phase**: added a clarifying code comment explaining the safety of the pattern (no functional change). |
 
 ---
 
@@ -404,24 +441,36 @@ plans the next major version:
 2. **Add pagination to the Blueprints and Queue admin screens** using the
    existing `Kayan_Admin_UI::pagination()` component (already built,
    currently unused by those two screens) — a small, additive change.
-3. **Add a lightweight cache layer to `Kayan_Quality_Engine::validate()`**
-   (e.g. cache the result in post meta with an invalidation hook on
-   blueprint change) so admin list rendering stays fast even with
-   thousands of generated pages.
-4. **AI Platform: add a lightweight per-provider request cache/rate
+3. **Fix the Quality Engine's duplicate-detection full-table scan** (§10,
+   P1 — the top-priority item from this audit) by scoping
+   `check_duplicate_detection()` to PSEO-managed post types only, adding a
+   short-lived cache, or making the check opt-in via a filter.
+4. **Add a lightweight cache layer to the rest of
+   `Kayan_Quality_Engine::validate()`** (e.g. cache the full result in
+   post meta with an invalidation hook on blueprint change) so admin list
+   rendering stays fast even with thousands of generated pages.
+5. **Consider a version-counter-based cache group flush** instead of
+   `Kayan_Cache_Engine`'s current key-index bookkeeping, to remove the
+   3–4-round-trip cost per cache write on sites without a persistent
+   object cache (§10, P2) — a genuine architectural change, so
+   deliberately not attempted in this phase.
+6. **AI Platform: add a lightweight per-provider request cache/rate
    limiter** for translation of very large sites (e.g. don't re-translate
    an unchanged source string) — currently every `translate_post()` call
    re-translates every text field.
-5. **Consider a real image-generation AI capability** if the business
+7. **Consider a real image-generation AI capability** if the business
    need for AI-generated media (not just text) becomes a priority —
    `Kayan_PSEO_Media::generate_ai_image()` already has a documented stub
    contract from Phase 2.5 ready to be implemented against the same
    `kayan_ai()` provider registry.
-6. **A dedicated legacy-pack modernization pass** (booking, payment,
-   tracking, RuknContact) if there is appetite to bring those packs onto
-   the Query/Cache/Settings/Logger engines the same way Phases 4–6 do —
-   entirely optional, since they work correctly as-is today.
-7. **Multisite/WPML support** — only if there is an actual business
+8. **A dedicated legacy-pack modernization/security pass** (booking,
+   payment, tracking, RuknContact, FieldsMachine) if there is appetite to
+   bring those packs onto the Query/Cache/Settings/Logger engines the
+   same way Phases 4–6 do, and to take a closer look at `kayan-track`'s
+   public rate-limited-only REST write endpoint and `FieldsMachine`'s
+   dispatch-by-filename AJAX pattern (§10, both P3) — entirely optional,
+   since they work correctly as-is today.
+9. **Multisite/WPML support** — only if there is an actual business
    requirement; this was explicitly out of scope for every phase of this
    project and would be a genuinely new architectural decision, not a
    small addition.
