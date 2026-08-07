@@ -813,7 +813,7 @@ class Kayan_PSEO_Generator {
 	 */
 	public function status() {
 		return array(
-			'phase'                => defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '4.0.0',
+			'phase'                => defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '6.0.0',
 			'generation_enabled'   => true,
 			'entity_types'         => count( $this->entities->get_entity_types() ),
 			'patterns'             => count( $this->patterns->all() ),

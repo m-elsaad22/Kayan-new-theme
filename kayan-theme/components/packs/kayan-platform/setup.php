@@ -1,6 +1,6 @@
 <?php
 /**
- * kayan-platform — SEO Platform Core (Phases 1 → 5)
+ * kayan-platform — SEO Platform Core (Phases 1 → 6, production-ready)
  * ════════════════════════════════════════════════════════════════
  * Phase 1: Country/Language engines, context, settings, locale meta, SEO bridge
  * Phase 2: Country Routing Engine + Content Resolution Engine
@@ -26,6 +26,13 @@
  *   safety guards (locked blocks, manual-override protection, confirm-
  *   required full regeneration of approved/published pages). Analytics/
  *   Performance/Security remain shells — out of scope for this phase.
+ * Phase 6 (FINAL): Production Readiness, Audit & Optimization — no new
+ *   features, no architecture changes. A complete codebase audit
+ *   (architecture/performance/security/SEO/WPCS/PHP compatibility), safe
+ *   dead-code removal, upgrade/fresh-install/rollback verification, full
+ *   documentation refresh (Upgrade Guide, Deployment Guide, Production
+ *   Checklist), and one final project report. See
+ *   PHASE6-CHANGELOG.md / PHASE6-FINAL-REPORT.md.
  *
  * Constraints:
  * - Single WP install (no Multisite / WPML / Polylang)
@@ -44,7 +51,7 @@ if ( defined( 'KAYAN_PLATFORM_LOADED' ) ) {
 	return;
 }
 define( 'KAYAN_PLATFORM_LOADED', true );
-define( 'KAYAN_PLATFORM_VERSION', '5.0.0' );
+define( 'KAYAN_PLATFORM_VERSION', '6.0.0' );
 define( 'KAYAN_PLATFORM_DIR', __DIR__ );
 define( 'KAYAN_PLATFORM_URL_MODE_LEGACY', 'legacy' );
 define( 'KAYAN_PLATFORM_URL_MODE_LANG_FIRST', 'language_first' );

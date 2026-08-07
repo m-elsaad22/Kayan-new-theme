@@ -131,6 +131,12 @@ class Kayan_Docs_Generator {
 			$lines[] = '- [' . $file . '](./' . $file . ')';
 		}
 		$lines[] = '';
+		$lines[] = '## Operations guides (Phase 6)';
+		$lines[] = '';
+		$lines[] = '- [UpgradeGuide.md](./UpgradeGuide.md)';
+		$lines[] = '- [DeploymentGuide.md](./DeploymentGuide.md)';
+		$lines[] = '- [ProductionChecklist.md](./ProductionChecklist.md)';
+		$lines[] = '';
 		$lines[] = 'Platform version: `' . ( defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '' ) . '`';
 		$lines[] = '';
 		return implode( "\n", $lines );
@@ -612,8 +618,8 @@ MD;
 
 	private function doc_admin_platform( $platform ) {
 		$version = isset( $platform->admin ) && method_exists( $platform->admin, 'describe' )
-			? (string) ( $platform->admin->describe()['version'] ?? '3.2.0' )
-			: '3.2.0';
+			? (string) ( $platform->admin->describe()['version'] ?? '6.0.0' )
+			: '6.0.0';
 		return <<<MD
 # Admin Platform
 

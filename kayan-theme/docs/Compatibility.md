@@ -2,8 +2,8 @@
 
 **Phase:** 3.1 — Existing Theme Integration
 **Theme version:** `2.1.0`
-**Platform version:** `5.0.0`
-**Generated:** `2026-08-07T00:37:51+00:00`
+**Platform version:** `6.0.0`
+**Generated:** `2026-08-07T01:34:39+00:00`
 
 This report maps every major existing KAYAN Theme system to the platform.
 Adapters wrap/extend existing packs — they do not replace them.
@@ -332,7 +332,7 @@ Already maps city→country via term meta. No duplicate relationship layer.
 
 **Migration strategy:** Use `kayan_entity()` / `kayan_tags()`.
 
-### PSEO architecture
+### Programmatic SEO Platform (complete)
 
 | Field | Value |
 |-------|-------|
@@ -341,13 +341,13 @@ Already maps city→country via term meta. No duplicate relationship layer.
 | Adapter | — |
 | Path | `includes/pseo/` |
 
-Architecture-only; no generation. Prefer existing CPTs.
+Phase 4 completed generation (Generator/Queue/Scheduler/Renderer). Prefers existing CPTs (services/faqs/pricing); only true multi-entity combinations use the kayan_pseo host type. Every write is fingerprint-keyed — never changes an existing post's URL.
 
-**Migration strategy:** No change until generation phase approved.
+**Migration strategy:** No action required. Bulk-generate only via reviewed Rules; always Preview before Bulk Generate in production.
 
-No AI / Templates UI in 3.1.
+Rank Math remains the only SEO engine — the Generator only writes RM's own postmeta fields.
 
-### Admin Platform Core
+### Admin Platform Core (complete)
 
 | Field | Value |
 |-------|-------|
@@ -356,9 +356,35 @@ No AI / Templates UI in 3.1.
 | Adapter | `admin_bridges` |
 | Path | `includes/admin/` |
 
-Phase 3 completed Dashboard, Navigation, Settings, Countries, Languages, Entities, Relationships, Permissions, Logs, System Health, Import/Export, and Rank Math Integration. Templates/Blueprints/Blocks/PSEO/AI/Queue/Analytics/Performance/Security remain placeholder shells for later phases.
+Phases 3–5 completed Dashboard, Navigation, Settings, Countries, Languages, Entities, Relationships, Permissions, Logs, System Health, Import/Export, Rank Math Integration, Templates, Blueprints, Blocks, Programmatic SEO, Queue, and AI. Media/Analytics/Performance/Security remain placeholder shells (out of the approved roadmap).
 
 **Migration strategy:** Register future UIs only through `kayan_admin()` when approved.
+
+### Migration & Version Engine
+
+| Field | Value |
+|-------|-------|
+| Status | Already compatible |
+| Risk | Low |
+| Adapter | — |
+| Path | `includes/migration/` |
+
+New in Phase 4. Additive only — existing booking/payment/track ad-hoc version checks are untouched and continue to work exactly as before.
+
+**Migration strategy:** No action required. Other packs may adopt `kayan_migrations_register` later; nothing is forced.
+
+### AI Platform / Content Workflow / Quality Engine / Dependency Graph
+
+| Field | Value |
+|-------|-------|
+| Status | Already compatible |
+| Risk | Low |
+| Adapter | — |
+| Path | `includes/ai/, includes/workflow/, includes/quality/, includes/dependency/` |
+
+New in Phase 5. Only affect posts carrying a PSEO fingerprint/blueprint (i.e. platform-generated pages). Manually authored content, and every pre-existing pack, is completely unaffected — verified by automated tests confirming a manually created post has no workflow/quality/dependency footprint.
+
+**Migration strategy:** Configure an AI provider (optional) at KAYAN → AI to enable block regeneration/translation. Safe to leave unconfigured.
 
 ## Adapter inventory
 

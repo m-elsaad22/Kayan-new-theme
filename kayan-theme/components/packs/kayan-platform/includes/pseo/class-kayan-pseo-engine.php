@@ -293,7 +293,7 @@ class Kayan_PSEO_Engine {
 	 */
 	public function describe() {
 		return array(
-			'version'   => defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '2.6.0',
+			'version'   => defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '6.0.0',
 			'status'    => $this->generator->status(),
 			'entities'  => array_keys( $this->entities->get_entity_types() ),
 			'patterns'  => array_keys( $this->patterns->all() ),
