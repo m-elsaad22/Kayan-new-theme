@@ -10,11 +10,15 @@ Registered modules:
 
 ## Functional (Phase 4)
 
-`templates` · `blueprints` · `blocks` · `pseo` (rules, preview, bulk generate) · `queue` (real DB-backed jobs + scheduler)
+`templates` · `blueprints` (+ workflow state, quality score, translate action) · `blocks` · `pseo` (rules, preview, bulk generate) · `queue` (real DB-backed jobs + scheduler)
+
+## Functional (Phase 5)
+
+`ai` (interchangeable provider configuration)
 
 ## Architecture shells (later phases)
 
-`ai` · `media` · `analytics` · `performance` · `security` · `tools` (bridges to Theme Options) · `export` (merged into `import` screen)
+`media` · `analytics` · `performance` · `security` · `tools` (bridges to Theme Options) · `export` (merged into `import` screen)
 
 ## Registration buckets
 

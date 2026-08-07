@@ -45,6 +45,15 @@ class Kayan_PSEO_Generator {
 	/** @var Kayan_PSEO_Media */
 	private $media;
 
+	/** @var Kayan_Content_Workflow|null */
+	private $workflow;
+
+	/** @var Kayan_Quality_Engine|null */
+	private $quality;
+
+	/** @var Kayan_Dependency_Graph|null */
+	private $dependency_graph;
+
 	public function __construct(
 		Kayan_Programmatic_SEO $entities,
 		Kayan_PSEO_Patterns $patterns,
@@ -67,6 +76,20 @@ class Kayan_PSEO_Generator {
 		$this->templates = $templates;
 		$this->blocks    = $blocks;
 		$this->media     = $media;
+	}
+
+	/**
+	 * Wired by Kayan_PSEO_Engine after Workflow/Quality/Dependency Graph exist.
+	 *
+	 * @param Kayan_Content_Workflow $workflow     Workflow.
+	 * @param Kayan_Quality_Engine   $quality      Quality engine.
+	 * @param Kayan_Dependency_Graph $dependency_graph Dependency graph.
+	 * @return void
+	 */
+	public function set_workflow_services( Kayan_Content_Workflow $workflow, Kayan_Quality_Engine $quality, Kayan_Dependency_Graph $dependency_graph ) {
+		$this->workflow         = $workflow;
+		$this->quality          = $quality;
+		$this->dependency_graph = $dependency_graph;
 	}
 
 	/**
@@ -174,19 +197,14 @@ class Kayan_PSEO_Generator {
 		$post_type   = $this->storage->resolve_post_type( $pattern_id );
 		$existing_id = $this->identity->find_post_id_by_fingerprint( $fingerprint, $this->storage->host_post_types() );
 
-		$post_status = isset( $args['post_status'] ) ? sanitize_key( $args['post_status'] ) : 'draft';
-		if ( ! in_array( $post_status, array( 'draft', 'publish', 'future', 'pending' ), true ) ) {
-			$post_status = 'draft';
+		// Safety: never silently overwrite a page an operator flagged as manually protected.
+		if ( $existing_id && ! empty( $args['force'] ) === false && $this->is_manually_protected( $existing_id ) ) {
+			return array( 'ok' => true, 'post_id' => $existing_id, 'created' => false, 'skipped' => true, 'reason' => 'manual_override_protected' );
 		}
-		$post_date = '';
-		if ( 'future' === $post_status ) {
-			$schedule_at = isset( $args['schedule_at'] ) ? (string) $args['schedule_at'] : '';
-			$ts          = $schedule_at ? strtotime( $schedule_at . ' UTC' ) : false;
-			if ( ! $ts || $ts <= time() ) {
-				$post_status = 'draft';
-			} else {
-				$post_date = gmdate( 'Y-m-d H:i:s', $ts );
-			}
+
+		$requested_status = isset( $args['post_status'] ) ? sanitize_key( $args['post_status'] ) : 'draft';
+		if ( ! in_array( $requested_status, array( 'draft', 'publish', 'future', 'pending' ), true ) ) {
+			$requested_status = 'draft';
 		}
 
 		$path_slug = isset( $preview['public_slug'] ) ? (string) $preview['public_slug'] : $this->identity->suggest_public_slug( $pattern_id, $preview['data_tags']['context']['tokens'] ?? array() );
@@ -201,16 +219,15 @@ class Kayan_PSEO_Generator {
 		$title   = $this->build_title( $pattern_id, $entities, $tag_context, $preview['blueprint'] );
 		$excerpt = isset( $preview['blueprint']['rank_math']['description'] ) ? (string) $preview['blueprint']['rank_math']['description'] : '';
 
+		// Always write as draft first; the Workflow engine (quality-gated) owns
+		// the final live post_status — a single source of truth, never two
+		// competing writers of post_status.
 		$post_args = array(
 			'post_type'    => $post_type,
-			'post_status'  => $post_status,
+			'post_status'  => 'draft',
 			'post_title'   => $title,
 			'post_excerpt' => $excerpt,
 		);
-		if ( $post_date ) {
-			$post_args['post_date']     = $post_date;
-			$post_args['post_date_gmt'] = $post_date;
-		}
 
 		$created = false;
 		if ( $existing_id ) {
@@ -226,8 +243,15 @@ class Kayan_PSEO_Generator {
 		if ( is_wp_error( $post_id ) || ! $post_id ) {
 			return array( 'ok' => false, 'errors' => array( is_wp_error( $post_id ) ? $post_id->get_error_message() : 'write_failed' ) );
 		}
+		$post_id = (int) $post_id;
 
-		$this->write_post_meta( (int) $post_id, $created, $pattern_id, $entities, $country, $language, $path_slug, $preview['blueprint'], $args );
+		$this->write_post_meta( $post_id, $created, $pattern_id, $entities, $country, $language, $path_slug, $preview['blueprint'], $args );
+
+		if ( $this->dependency_graph ) {
+			$this->dependency_graph->record( $post_id, $entities );
+		}
+
+		$workflow_result = $this->apply_workflow_state( $post_id, $created, $requested_status, $args );
 
 		if ( function_exists( 'kayan_cache' ) ) {
 			kayan_cache()->flush_group( 'query' );
@@ -238,11 +262,70 @@ class Kayan_PSEO_Generator {
 
 		return array(
 			'ok'          => true,
-			'post_id'     => (int) $post_id,
+			'post_id'     => $post_id,
 			'created'     => $created,
 			'url'         => $this->identity->build_canonical_url( $pattern_id, $tag_context['tokens'], $country, $language ),
 			'fingerprint' => $fingerprint,
+			'workflow'    => $workflow_result,
 		);
+	}
+
+	/**
+	 * @param int    $post_id          Post ID.
+	 * @return bool
+	 */
+	private function is_manually_protected( $post_id ) {
+		return (bool) get_post_meta( (int) $post_id, 'kayan_pseo_manual_override', true );
+	}
+
+	/**
+	 * Advance a freshly written post through the Workflow to its requested
+	 * lifecycle state. Quality-gated for publish/scheduled — a failed check
+	 * leaves the post safely as a draft pending Human Review instead of
+	 * hard-failing the whole materialize() call.
+	 *
+	 * @param int    $post_id          Post ID.
+	 * @param bool   $created          Newly created.
+	 * @param string $requested_status draft|publish|future|pending.
+	 * @param array  $args             source, schedule_at, force.
+	 * @return array<string,mixed>|null
+	 */
+	private function apply_workflow_state( $post_id, $created, $requested_status, array $args ) {
+		if ( ! $this->workflow ) {
+			return null;
+		}
+
+		$source = isset( $args['source'] ) ? sanitize_key( (string) $args['source'] ) : 'manual';
+		$target = Kayan_Content_Workflow::DRAFT;
+		if ( 'publish' === $requested_status ) {
+			$target = Kayan_Content_Workflow::PUBLISHED;
+		} elseif ( 'future' === $requested_status ) {
+			$target = Kayan_Content_Workflow::SCHEDULED;
+		} elseif ( 'pending' === $requested_status ) {
+			$target = Kayan_Content_Workflow::HUMAN_REVIEW;
+		} elseif ( in_array( $source, array( 'ai', 'ai_regenerate' ), true ) ) {
+			$target = Kayan_Content_Workflow::AI_DRAFT;
+		}
+
+		// New drafts/ai-drafts/review states never fail a "transition" (map allows from DRAFT baseline);
+		// force only for the very first assignment on brand-new posts to skip map validation noise.
+		$result = $this->workflow->transition(
+			$post_id,
+			$target,
+			array(
+				'force'       => $created && Kayan_Content_Workflow::DRAFT !== $target ? true : ! empty( $args['force'] ),
+				'schedule_at' => $args['schedule_at'] ?? '',
+				'note'        => $created ? 'materialize:create' : 'materialize:update',
+			)
+		);
+
+		if ( empty( $result['ok'] ) && in_array( $target, array( Kayan_Content_Workflow::PUBLISHED, Kayan_Content_Workflow::SCHEDULED ), true ) ) {
+			// Quality gate rejected publish/schedule — route to Human Review instead of leaving it silently stuck.
+			$this->workflow->transition( $post_id, Kayan_Content_Workflow::HUMAN_REVIEW, array( 'force' => true, 'note' => 'quality_gate_downgrade' ) );
+			$result['downgraded_to'] = Kayan_Content_Workflow::HUMAN_REVIEW;
+		}
+
+		return $result;
 	}
 
 	/**
@@ -259,6 +342,17 @@ class Kayan_PSEO_Generator {
 		$post    = get_post( $post_id );
 		if ( ! $post ) {
 			return array( 'ok' => false, 'errors' => array( 'post_not_found' ) );
+		}
+		if ( empty( $args['force'] ) && $this->is_manually_protected( $post_id ) ) {
+			return array( 'ok' => false, 'errors' => array( 'manual_override_protected' ) );
+		}
+		// Full regeneration of an already-approved/published page needs explicit confirmation (safety).
+		$current_state = $this->workflow ? $this->workflow->get_state( $post_id ) : '';
+		if ( 'full' === ( $args['mode'] ?? 'content_only' )
+			&& in_array( $current_state, array( Kayan_Content_Workflow::APPROVED, Kayan_Content_Workflow::PUBLISHED ), true )
+			&& empty( $args['confirm'] ) && empty( $args['force'] )
+		) {
+			return array( 'ok' => false, 'errors' => array( 'confirmation_required' ), 'current_state' => $current_state );
 		}
 
 		$blueprint  = $this->blueprint->get_for_post( $post_id );
@@ -314,6 +408,21 @@ class Kayan_PSEO_Generator {
 			update_post_meta( $post_id, 'kayan_pseo_source', 'regenerate' );
 		}
 
+		// A page that was flagged as stale is never silently re-published — it always lands
+		// back in Human Review unless the caller explicitly asks to auto-republish (and even
+		// then, publishing is still quality-gated).
+		$workflow_result = null;
+		if ( $this->workflow && in_array( $current_state, array( Kayan_Content_Workflow::NEEDS_REGENERATION, Kayan_Content_Workflow::NEEDS_UPDATE, Kayan_Content_Workflow::FAILED ), true ) ) {
+			if ( ! empty( $args['auto_republish'] ) ) {
+				$workflow_result = $this->workflow->transition( $post_id, Kayan_Content_Workflow::PUBLISHED, array( 'note' => 'regenerate:auto_republish' ) );
+				if ( empty( $workflow_result['ok'] ) ) {
+					$this->workflow->transition( $post_id, Kayan_Content_Workflow::HUMAN_REVIEW, array( 'force' => true, 'note' => 'regenerate:needs_review' ) );
+				}
+			} else {
+				$workflow_result = $this->workflow->transition( $post_id, Kayan_Content_Workflow::HUMAN_REVIEW, array( 'force' => true, 'note' => 'regenerate:needs_review' ) );
+			}
+		}
+
 		if ( function_exists( 'kayan_cache' ) ) {
 			kayan_cache()->flush_group( 'query' );
 		}
@@ -321,7 +430,150 @@ class Kayan_PSEO_Generator {
 			kayan_logger()->log( 'generator', 'pseo.regenerate.completed', array( 'post_id' => $post_id, 'changed_blocks' => $changed ) );
 		}
 
-		return array( 'ok' => true, 'post_id' => $post_id, 'changed_blocks' => $changed );
+		return array( 'ok' => true, 'post_id' => $post_id, 'changed_blocks' => $changed, 'workflow' => $workflow_result );
+	}
+
+	/**
+	 * AI-translate a generated page into another registered language,
+	 * keeping the translation linked to its source via the existing
+	 * Content Locale `kayan_translation_group` contract — never a
+	 * second translation-linking system.
+	 *
+	 * Reuses materialize() for the actual write (same fingerprint/workflow/
+	 * dependency-graph plumbing); this method only builds the translated
+	 * blueprint and preview payload.
+	 *
+	 * @param int    $post_id      Source post ID.
+	 * @param string $target_lang  Target language code.
+	 * @param array  $args         post_status, provider.
+	 * @return array{ok:bool,post_id?:int,created?:bool,source_post_id?:int,errors?:string[]}
+	 */
+	public function translate_post( $post_id, $target_lang, array $args = array() ) {
+		$post_id     = (int) $post_id;
+		$target_lang = sanitize_key( $target_lang );
+		$post        = get_post( $post_id );
+
+		if ( ! $post || '' === $target_lang ) {
+			return array( 'ok' => false, 'errors' => array( 'invalid_arguments' ) );
+		}
+		if ( function_exists( 'kayan_platform' ) && ! kayan_platform()->languages->exists( $target_lang ) ) {
+			return array( 'ok' => false, 'errors' => array( 'unknown_target_language' ) );
+		}
+		if ( ! function_exists( 'kayan_ai' ) || ! kayan_ai()->is_any_available() ) {
+			return array( 'ok' => false, 'errors' => array( 'ai_not_configured' ) );
+		}
+
+		$pattern_id = (string) get_post_meta( $post_id, Kayan_PSEO_Identity::META_PATTERN, true );
+		$entities   = get_post_meta( $post_id, Kayan_PSEO_Identity::META_ENTITIES, true );
+		$entities   = is_array( $entities ) ? $entities : array();
+		$countries  = get_post_meta( $post_id, Kayan_Content_Locale::META_COUNTRIES, true );
+		$country    = is_array( $countries ) && $countries ? sanitize_key( (string) $countries[0] ) : '';
+		$source_lang = (string) get_post_meta( $post_id, Kayan_Content_Locale::META_LANG, true );
+		$source_lang = $source_lang ?: 'ar';
+		$blueprint  = $this->blueprint->get_for_post( $post_id );
+
+		if ( ! $pattern_id || ! $this->patterns->get( $pattern_id ) ) {
+			return array( 'ok' => false, 'errors' => array( 'source_not_pseo_managed' ) );
+		}
+		if ( $source_lang === $target_lang ) {
+			return array( 'ok' => false, 'errors' => array( 'same_language' ) );
+		}
+
+		// Keep the source ↔ translation link (existing Content Locale contract).
+		$group = get_post_meta( $post_id, Kayan_Content_Locale::META_TRANSLATION_GROUP, true );
+		if ( ! $group ) {
+			$group = function_exists( 'wp_generate_uuid4' ) ? wp_generate_uuid4() : uniqid( 'kayan_tr_', true );
+			update_post_meta( $post_id, Kayan_Content_Locale::META_TRANSLATION_GROUP, $group );
+		}
+
+		$translated_blueprint = $this->translate_blueprint( $blueprint, $source_lang, $target_lang, $args['provider'] ?? null );
+		if ( is_wp_error( $translated_blueprint ) ) {
+			return array( 'ok' => false, 'errors' => array( $translated_blueprint->get_error_message() ) );
+		}
+
+		$title_result = kayan_ai()->translate( (string) $post->post_title, $source_lang, $target_lang, array( 'provider' => $args['provider'] ?? null ) );
+		$title        = ! empty( $title_result['ok'] ) ? $title_result['text'] : $post->post_title;
+		$translated_blueprint['rank_math']['title'] = $title;
+
+		$tokens = array();
+		foreach ( $entities as $type => $ref ) {
+			$tokens[ $type . '_slug' ] = $ref;
+		}
+
+		$preview = array(
+			'ok'          => true,
+			'pattern_id'  => $pattern_id,
+			'entities'    => $entities,
+			'country'     => $country,
+			'language'    => $target_lang,
+			'fingerprint' => $this->identity->fingerprint( $pattern_id, $entities, $country, $target_lang ),
+			'public_slug' => $this->identity->suggest_public_slug( $pattern_id, $tokens ),
+			'blueprint'   => $translated_blueprint,
+			'data_tags'   => array( 'context' => array( 'tokens' => $tokens ) ),
+		);
+
+		$result = $this->materialize(
+			$preview,
+			array(
+				'post_status' => $args['post_status'] ?? 'draft',
+				'source'      => 'ai',
+			)
+		);
+
+		if ( ! empty( $result['ok'] ) && ! empty( $result['post_id'] ) ) {
+			update_post_meta( (int) $result['post_id'], Kayan_Content_Locale::META_TRANSLATION_GROUP, $group );
+			update_post_meta( (int) $result['post_id'], Kayan_Content_Locale::META_LANG, $target_lang );
+			$result['source_post_id'] = $post_id;
+			$result['target_language'] = $target_lang;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @param array       $blueprint   Source blueprint.
+	 * @param string      $from        From lang.
+	 * @param string      $to          To lang.
+	 * @param string|null $provider    Optional provider override.
+	 * @return array|WP_Error
+	 */
+	private function translate_blueprint( array $blueprint, $from, $to, $provider = null ) {
+		if ( empty( $blueprint['blocks'] ) || ! is_array( $blueprint['blocks'] ) ) {
+			return $blueprint;
+		}
+
+		foreach ( $blueprint['blocks'] as $block_id => &$instance ) {
+			if ( ! empty( $instance['locked'] ) ) {
+				continue; // safety: locked blocks are never translated/overwritten.
+			}
+			if ( empty( $instance['data'] ) || ! is_array( $instance['data'] ) ) {
+				continue;
+			}
+			$instance['data'] = $this->translate_data_recursive( $instance['data'], $from, $to, $provider );
+		}
+		unset( $instance );
+
+		return $blueprint;
+	}
+
+	/**
+	 * @param array       $data     Data.
+	 * @param string      $from     From.
+	 * @param string      $to       To.
+	 * @param string|null $provider Provider.
+	 * @return array
+	 */
+	private function translate_data_recursive( array $data, $from, $to, $provider ) {
+		foreach ( $data as $key => $value ) {
+			// IDs / refs / numbers must never be "translated" — only human-readable strings.
+			if ( is_string( $value ) && '' !== trim( $value ) && ! is_numeric( $value ) && ! in_array( $key, array( 'url', 'image_id', 'poster_id', 'embed', 'primary_url', 'secondary_url' ), true ) ) {
+				$translated  = kayan_ai()->translate( $value, $from, $to, array( 'provider' => $provider ) );
+				$data[ $key ] = ! empty( $translated['ok'] ) ? $translated['text'] : $value;
+			} elseif ( is_array( $value ) ) {
+				$data[ $key ] = $this->translate_data_recursive( $value, $from, $to, $provider );
+			}
+		}
+		return $data;
 	}
 
 	/**

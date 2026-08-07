@@ -25,6 +25,10 @@ kayan_platform()->docs->generate();
 - [SettingsEngine.md](./SettingsEngine.md)
 - [Logger.md](./Logger.md)
 - [MigrationEngine.md](./MigrationEngine.md)
+- [AIPlatform.md](./AIPlatform.md)
+- [ContentWorkflow.md](./ContentWorkflow.md)
+- [QualityEngine.md](./QualityEngine.md)
+- [DependencyGraph.md](./DependencyGraph.md)
 - [AdminPlatform.md](./AdminPlatform.md)
 - [AdminModules.md](./AdminModules.md)
 - [AdminPermissions.md](./AdminPermissions.md)
@@ -33,4 +37,4 @@ kayan_platform()->docs->generate();
 - [ThemeIntegration.md](./ThemeIntegration.md)
 - [Compatibility.md](./Compatibility.md)
 
-Platform version: `4.0.0`
+Platform version: `5.0.0`

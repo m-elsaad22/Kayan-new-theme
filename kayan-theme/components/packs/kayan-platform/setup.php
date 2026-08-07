@@ -1,6 +1,6 @@
 <?php
 /**
- * kayan-platform — SEO Platform Core (Phases 1 → 4)
+ * kayan-platform — SEO Platform Core (Phases 1 → 5)
  * ════════════════════════════════════════════════════════════════
  * Phase 1: Country/Language engines, context, settings, locale meta, SEO bridge
  * Phase 2: Country Routing Engine + Content Resolution Engine
@@ -16,8 +16,16 @@
  *   Platform: real Template/Blueprint/Block engines, a Generator that
  *   creates/updates real WP posts (preview, draft, publish, scheduled,
  *   bulk, regeneration), a DB-backed Queue, and a Scheduler that drives it
- *   automatically. AI/Analytics/Performance/Security remain shells for
- *   Phase 5+.
+ *   automatically.
+ * Phase 5: AI, Workflow & Quality Platform — an interchangeable AI provider
+ *   registry (OpenAI/Claude/Gemini/Mistral/future, never leaking
+ *   vendor-specific logic into application code), a Content Workflow with
+ *   10 explicit lifecycle states, a Quality Engine gating publish, a
+ *   Dependency Graph that targets ONLY affected pages for regeneration, AI
+ *   translation linked via the existing Content Locale contract, and
+ *   safety guards (locked blocks, manual-override protection, confirm-
+ *   required full regeneration of approved/published pages). Analytics/
+ *   Performance/Security remain shells — out of scope for this phase.
  *
  * Constraints:
  * - Single WP install (no Multisite / WPML / Polylang)
@@ -36,7 +44,7 @@ if ( defined( 'KAYAN_PLATFORM_LOADED' ) ) {
 	return;
 }
 define( 'KAYAN_PLATFORM_LOADED', true );
-define( 'KAYAN_PLATFORM_VERSION', '4.0.0' );
+define( 'KAYAN_PLATFORM_VERSION', '5.0.0' );
 define( 'KAYAN_PLATFORM_DIR', __DIR__ );
 define( 'KAYAN_PLATFORM_URL_MODE_LEGACY', 'legacy' );
 define( 'KAYAN_PLATFORM_URL_MODE_LANG_FIRST', 'language_first' );
@@ -53,7 +61,18 @@ require_once KAYAN_PLATFORM_DIR . '/includes/infra/class-kayan-logger.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/infra/class-kayan-query-engine.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/infra/class-kayan-docs-generator.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/migration/class-kayan-migration-engine.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/ai/class-kayan-ai-provider-interface.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/ai/class-kayan-ai-provider-base.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/ai/class-kayan-ai-provider-null.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/ai/class-kayan-ai-provider-openai.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/ai/class-kayan-ai-provider-claude.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/ai/class-kayan-ai-provider-gemini.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/ai/class-kayan-ai-provider-mistral.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/ai/class-kayan-ai-platform.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/class-kayan-programmatic-seo.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/quality/class-kayan-quality-engine.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/workflow/class-kayan-content-workflow.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/dependency/class-kayan-dependency-graph.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/entities/class-kayan-entity-api.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/entities/class-kayan-entity-relationships.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/entities/class-kayan-entity-engine.php';
@@ -68,6 +87,7 @@ require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-blueprint.php
 require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-storage.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-jobs.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-ai.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-ai-bridge-provider.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-generator.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-renderer.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-scheduler.php';

@@ -13,6 +13,9 @@
 - Reuse existing packs via adapters — never fork a second implementation
 - Register schema/table/option changes via `kayan_migrations()->register_migration()` — never a manual SQL/upgrade step
 - Use `kayan_pseo()->generator` for any post created/updated by the platform — never a second write path
+- Use `kayan_ai()` for any AI text/translation call — never a vendor SDK/HTTP call outside `includes/ai/`
+- Use `kayan_workflow()->transition()` to change a generated page's lifecycle — never `wp_update_post( ['post_status' => …] )` directly on one
+- Respect `kayan_pseo_manual_override` post meta — the Generator refuses to overwrite a protected post without `force`
 
 ## Do not
 

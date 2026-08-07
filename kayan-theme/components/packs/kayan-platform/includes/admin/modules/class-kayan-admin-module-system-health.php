@@ -188,6 +188,16 @@ class Kayan_Admin_Module_System_Health {
 			);
 		}
 
+		if ( function_exists( 'kayan_ai' ) ) {
+			$default = kayan_ai()->default_provider_id();
+			$checks[] = array(
+				'label'        => __( 'AI Platform', 'kayan' ),
+				'type'         => 'null' === $default ? 'warning' : 'success',
+				'status_label' => 'null' === $default ? __( 'No provider configured', 'kayan' ) : kayan_ai()->get_provider( $default )->label(),
+				'detail'       => __( 'Providers are interchangeable — configure one in the AI module.', 'kayan' ),
+			);
+		}
+
 		return $checks;
 	}
 

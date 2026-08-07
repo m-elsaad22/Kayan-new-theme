@@ -12,6 +12,10 @@ kayan_cache();             // Cache Engine
 kayan_settings();          // Settings Engine
 kayan_logger();            // Logger
 kayan_migrations();        // Migration & Version Engine
+kayan_ai();                // AI Platform (interchangeable providers)
+kayan_workflow();          // Content Workflow
+kayan_quality();           // Quality Engine
+kayan_dependencies();      // Dependency Graph
 kayan_admin();             // Admin Platform
 kayan_integration();       // Theme Integration (adapters)
 kayan_theme_option();      // Theme option + country profile bridge

@@ -78,6 +78,10 @@ class Kayan_Docs_Generator {
 			'SettingsEngine.md'   => $this->doc_settings( $platform ),
 			'Logger.md'           => $this->doc_logger( $platform ),
 			'MigrationEngine.md'  => $this->doc_migration_engine( $platform ),
+			'AIPlatform.md'       => $this->doc_ai_platform( $platform ),
+			'ContentWorkflow.md'  => $this->doc_content_workflow( $platform ),
+			'QualityEngine.md'    => $this->doc_quality_engine( $platform ),
+			'DependencyGraph.md'  => $this->doc_dependency_graph( $platform ),
 			'AdminPlatform.md'    => $this->doc_admin_platform( $platform ),
 			'AdminModules.md'     => $this->doc_admin_modules( $platform ),
 			'AdminPermissions.md' => $this->doc_admin_permissions( $platform ),
@@ -148,10 +152,12 @@ KAYAN is a single-install WordPress SEO platform (no Multisite, no WPML/Polylang
 3. **Entity Relationship Engine** — reusable entities + edges
 4. **Dynamic Data Tags** — `{{tag}}` tokens for templates/blocks/AI
 5. **Programmatic SEO Platform** — patterns, templates, blocks, blueprints, generator, queue, scheduler (Phase 4 — generation is live)
-6. **Core Infrastructure** — Query, Cache, Settings, Logger, Migration & Version Engine
-7. **Admin Platform** — Module Registry, Permissions, UI Framework, Dashboard, functional feature modules
-8. **Theme Integration** — Adapters connecting existing KAYAN Theme packs (Phase 3.1)
-9. **SEO Bridge** — Rank Math only (filters, never competing head tags)
+6. **AI Platform** — interchangeable provider registry (OpenAI/Claude/Gemini/Mistral/future) — Phase 5
+7. **Content Workflow + Quality Engine + Dependency Graph** — lifecycle, pre-publish validation, targeted regeneration — Phase 5
+8. **Core Infrastructure** — Query, Cache, Settings, Logger, Migration & Version Engine
+9. **Admin Platform** — Module Registry, Permissions, UI Framework, Dashboard, functional feature modules
+10. **Theme Integration** — Adapters connecting existing KAYAN Theme packs (Phase 3.1)
+11. **SEO Bridge** — Rank Math only (filters, never competing head tags)
 
 ## Design rules
 
@@ -162,10 +168,12 @@ KAYAN is a single-install WordPress SEO platform (no Multisite, no WPML/Polylang
 - Rank Math remains the only SEO engine — the Generator only writes RM's own postmeta fields
 - Reuse / extend / wrap existing theme packs — never duplicate implementations
 - Schema/DB changes go through the Migration Engine — never a manual upgrade step
+- Application code never talks to a concrete AI vendor — always `kayan_ai()`
+- Publishing a generated page always goes through `kayan_workflow()->transition()` — never set `post_status` directly on a PSEO-managed post
 
 ## Boot order
 
-Content Locale → Programmatic entities → Entity Engine → Data Tags → Cache → Settings Engine → Logger → Query → Migration Engine → PSEO → Router → Resolver → SEO Bridge → Admin Platform → Theme Integration
+Content Locale → Programmatic entities → Entity Engine → Data Tags → Cache → Settings Engine → Logger → Query → Migration Engine → AI Platform → Quality Engine → Content Workflow → Dependency Graph → PSEO → Router → Resolver → SEO Bridge → Admin Platform → Theme Integration
 MD;
 	}
 
@@ -185,6 +193,10 @@ kayan_cache();             // Cache Engine
 kayan_settings();          // Settings Engine
 kayan_logger();            // Logger
 kayan_migrations();        // Migration & Version Engine
+kayan_ai();                // AI Platform (interchangeable providers)
+kayan_workflow();          // Content Workflow
+kayan_quality();           // Quality Engine
+kayan_dependencies();      // Dependency Graph
 kayan_admin();             // Admin Platform
 kayan_integration();       // Theme Integration (adapters)
 kayan_theme_option();      // Theme option + country profile bridge
@@ -353,18 +365,28 @@ kayan_pseo()->generator->regenerate( \$post_id, array( 'mode' => 'content_only' 
 kayan_pseo()->bulk_generate( \$rule_id, array( 'post_status' => 'draft' ) ); // enqueues a Queue job
 kayan_pseo()->regenerate_bulk( \$post_ids );
 kayan_pseo()->scheduler->process_now();                       // manual batch trigger (also automatic)
+kayan_pseo()->generator->translate_post( \$post_id, 'en' );     // AI translation (Phase 5), linked via translation_group
+kayan_pseo()->generator->regenerate_block( \$post_id, 'hero', array() ); // via the AI Platform bridge — never a vendor call here
 ```
 
 Prefer existing CPTs (`services`, `faqs`, `pricing`, …); `kayan_pseo` hosts
 true multi-entity combination pages. Every write is keyed by a stable
 fingerprint — regenerating never changes a post's URL. AI-authored block
-content (hero copy, FAQ text, etc.) remains a null-provider stub until
-Phase 5; `regenerate()` refreshes derived data (contact info, related
-entities, breadcrumb) without inventing text.
+content (hero copy, FAQ items) goes through the AI Platform bridge
+(`Kayan_PSEO_AI_Bridge_Provider`) — configure a provider in the AI admin
+module. `regenerate()` always refreshes derived data (contact info,
+related entities, breadcrumb); it also calls the bridge for text/list
+blocks when a provider is available. Locked blocks are never touched by
+either path.
 
-See [MigrationEngine.md](./MigrationEngine.md) for the Queue's storage and
-[Countries.md](./Countries.md)/[Languages.md](./Languages.md) for locale
-integration.
+Every `materialize()` call assigns a Content Workflow state (quality-gated
+for publish/scheduled) and records Dependency Graph rows so future source
+changes flag only this page for regeneration.
+
+See [MigrationEngine.md](./MigrationEngine.md) for the Queue's storage,
+[AIPlatform.md](./AIPlatform.md) for providers, [ContentWorkflow.md](./ContentWorkflow.md),
+[QualityEngine.md](./QualityEngine.md), [DependencyGraph.md](./DependencyGraph.md), and
+[Countries.md](./Countries.md)/[Languages.md](./Languages.md) for locale integration.
 MD;
 	}
 
@@ -486,6 +508,9 @@ MD;
 - Reuse existing packs via adapters — never fork a second implementation
 - Register schema/table/option changes via `kayan_migrations()->register_migration()` — never a manual SQL/upgrade step
 - Use `kayan_pseo()->generator` for any post created/updated by the platform — never a second write path
+- Use `kayan_ai()` for any AI text/translation call — never a vendor SDK/HTTP call outside `includes/ai/`
+- Use `kayan_workflow()->transition()` to change a generated page's lifecycle — never `wp_update_post( ['post_status' => …] )` directly on one
+- Respect `kayan_pseo_manual_override` post meta — the Generator refuses to overwrite a protected post without `force`
 
 ## Do not
 
@@ -597,8 +622,9 @@ MD;
 Functional modules: Dashboard, Settings, Countries, Languages, Entities,
 Relationships, Permissions, Logs, System Health, Import/Export, Rank Math
 Integration (Phase 3); Templates, Blueprints, Blocks, Programmatic SEO,
-Queue (Phase 4 — real Generator + DB-backed Scheduler). AI, Media,
-Analytics, Performance, Security remain architecture shells for Phase 5+.
+Queue (Phase 4 — real Generator + DB-backed Scheduler); AI (Phase 5 —
+interchangeable provider configuration). Media, Analytics, Performance,
+Security remain architecture shells.
 
 Centralized administration shell. Future modules register through one API — no isolated admin pages.
 
@@ -644,11 +670,15 @@ Registered modules:
 
 ## Functional (Phase 4)
 
-`templates` · `blueprints` · `blocks` · `pseo` (rules, preview, bulk generate) · `queue` (real DB-backed jobs + scheduler)
+`templates` · `blueprints` (+ workflow state, quality score, translate action) · `blocks` · `pseo` (rules, preview, bulk generate) · `queue` (real DB-backed jobs + scheduler)
+
+## Functional (Phase 5)
+
+`ai` (interchangeable provider configuration)
 
 ## Architecture shells (later phases)
 
-`ai` · `media` · `analytics` · `performance` · `security` · `tools` (bridges to Theme Options) · `export` (merged into `import` screen)
+`media` · `analytics` · `performance` · `security` · `tools` (bridges to Theme Options) · `export` (merged into `import` screen)
 
 ## Registration buckets
 
@@ -806,6 +836,112 @@ kayan_integration()->report->write_files();
 ```
 
 See [Compatibility.md](./Compatibility.md).
+MD;
+	}
+
+	private function doc_ai_platform( $platform ) {
+		$providers = isset( $platform->ai ) ? array_keys( $platform->ai->providers() ) : array();
+		$list = implode( ', ', array_map( static function ( $p ) { return '`' . $p . '`'; }, $providers ) );
+		return <<<MD
+# AI Platform (Phase 5)
+
+Interchangeable AI provider registry — application code (PSEO block
+regeneration, translation) only ever calls `kayan_ai()`, never a concrete
+vendor class. Swapping providers requires zero code changes.
+
+Registered providers: {$list}
+
+```php
+kayan_ai()->complete( array( 'prompt' => 'Write a headline for {service} in {city}.' ) );
+kayan_ai()->translate( \$text, 'ar', 'en' );
+kayan_ai()->default_provider_id();
+kayan_ai()->is_any_available();
+kayan_ai()->register_provider( \$my_provider ); // implements Kayan_AI_Provider_Interface
+```
+
+API keys/model live in the existing Settings Engine (module scope
+`ai_{provider_id}`) — configured via the AI admin module. No new options
+table.
+
+## PSEO bridge
+
+`Kayan_PSEO_AI` (the existing block/blueprint-shaped contract from Phase
+2.5) now defaults to `Kayan_PSEO_AI_Bridge_Provider`, which translates
+block regeneration requests into `kayan_ai()->complete()` calls and maps
+the response back into each block's data shape. Locked blocks are never
+sent for regeneration.
+MD;
+	}
+
+	private function doc_content_workflow( $platform ) {
+		unset( $platform );
+		return <<<MD
+# Content Workflow (Phase 5)
+
+Every PSEO-generated page has an explicit lifecycle state, stored in
+`kayan_workflow_state` post meta:
+
+`draft` → `ai_draft` → `human_review` → `approved` → `scheduled` / `published`
+plus `needs_update`, `needs_regeneration`, `archived`, `failed`.
+
+```php
+kayan_workflow()->get_state( \$post_id );
+kayan_workflow()->transition( \$post_id, Kayan_Content_Workflow::PUBLISHED );
+kayan_workflow()->history( \$post_id );
+kayan_workflow()->transition_map();
+```
+
+Publishing/scheduling is gated by the Quality Engine unless
+`array( 'force' => true )` is passed. A failed gate routes the page to
+`human_review` instead of silently failing. Transitions sync the
+underlying WordPress `post_status` — a single source of truth (the
+Generator never sets `post_status` directly for anything but the initial
+safe `draft` write).
+MD;
+	}
+
+	private function doc_quality_engine( $platform ) {
+		unset( $platform );
+		return <<<MD
+# Quality Engine (Phase 5)
+
+Validates a generated page before it is allowed to publish. Checks:
+content length, heading structure, duplicate detection, internal/external
+links, image ALT coverage, schema source completeness, dynamic tag
+resolution, country/language consistency, blueprint completeness, broken
+relationships, missing entities, missing CTA/FAQ/Reviews/Pricing (only
+when the assigned template requires them), and SEO completeness.
+
+```php
+kayan_quality()->validate( \$post_id );
+// => array( 'ok' => bool, 'score' => 0..1, 'checks' => array(...), 'blockers' => array(...) )
+```
+
+Posts without a PSEO blueprint always pass (`not_applicable`) — this never
+affects existing manually-authored content.
+MD;
+	}
+
+	private function doc_dependency_graph( $platform ) {
+		unset( $platform );
+		return <<<MD
+# Dependency Graph (Phase 5)
+
+Tracks which generated pages depend on which source entities (service,
+city, faq, pricing, portfolio, review, article, …) via the
+`kayan_pseo_dependencies` table (Migration Engine). When a source post is
+saved or a source term is edited, only the pages that actually depend on
+it are flagged `needs_regeneration` — never a full-site sweep.
+
+```php
+kayan_dependencies()->record( \$post_id, \$entities );      // written by materialize()
+kayan_dependencies()->find_affected( 'service', 'plumbing' );
+kayan_dependencies()->mark_affected( 'service', 'plumbing' );
+```
+
+Hooked automatically on `save_post` and `edited_term` for every post
+type/taxonomy already registered in the Programmatic SEO entity registry —
+no per-pack wiring required.
 MD;
 	}
 

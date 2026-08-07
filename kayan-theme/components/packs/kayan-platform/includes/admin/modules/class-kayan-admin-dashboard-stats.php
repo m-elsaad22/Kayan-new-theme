@@ -91,6 +91,29 @@ class Kayan_Admin_Dashboard_Stats {
 				'callback'    => array( $this, 'render_queue' ),
 			)
 		);
+		$dashboard->register_widget(
+			'ai',
+			array(
+				'title'       => __( 'AI', 'kayan' ),
+				'module'      => 'ai',
+				'capability'  => 'kayan_manage_ai',
+				'position'    => 60,
+				'placeholder' => false,
+				'callback'    => array( $this, 'render_ai' ),
+			)
+		);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function render_ai() {
+		if ( ! function_exists( 'kayan_ai' ) ) {
+			return '<p class="description">' . esc_html__( 'AI Platform not available.', 'kayan' ) . '</p>';
+		}
+		$default = kayan_ai()->default_provider_id();
+		$label   = 'null' === $default ? __( 'None configured', 'kayan' ) : kayan_ai()->get_provider( $default )->label();
+		return '<p class="kayan-admin-stat">' . esc_html( $label ) . '</p>';
 	}
 
 	/**

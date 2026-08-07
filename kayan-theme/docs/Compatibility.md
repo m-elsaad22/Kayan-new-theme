@@ -2,8 +2,8 @@
 
 **Phase:** 3.1 — Existing Theme Integration
 **Theme version:** `2.1.0`
-**Platform version:** `4.0.0`
-**Generated:** `2026-08-06T22:35:10+00:00`
+**Platform version:** `5.0.0`
+**Generated:** `2026-08-07T00:37:51+00:00`
 
 This report maps every major existing KAYAN Theme system to the platform.
 Adapters wrap/extend existing packs — they do not replace them.

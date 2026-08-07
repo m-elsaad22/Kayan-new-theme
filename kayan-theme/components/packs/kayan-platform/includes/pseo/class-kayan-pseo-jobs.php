@@ -129,7 +129,7 @@ class Kayan_PSEO_Jobs {
 	public function enqueue( $type, array $args = array() ) {
 		global $wpdb;
 		$type = sanitize_key( $type );
-		if ( ! in_array( $type, array( 'bulk', 'schedule', 'regenerate', 'ai_regenerate' ), true ) ) {
+		if ( ! in_array( $type, array( 'bulk', 'schedule', 'regenerate', 'ai_regenerate', 'translate' ), true ) ) {
 			return array( 'ok' => false, 'errors' => array( 'invalid_job_type' ) );
 		}
 
@@ -145,6 +145,9 @@ class Kayan_PSEO_Jobs {
 		}
 		if ( 'bulk' === $type && empty( $combos ) && empty( $rule_id ) ) {
 			return array( 'ok' => false, 'errors' => array( 'combinations_or_rule_required' ) );
+		}
+		if ( 'translate' === $type && ( empty( $post_ids ) || empty( $args['options']['target_language'] ?? '' ) ) ) {
+			return array( 'ok' => false, 'errors' => array( 'post_ids_and_target_language_required' ) );
 		}
 
 		$total = $combos ? count( $combos ) : count( $post_ids );
@@ -382,7 +385,23 @@ class Kayan_PSEO_Jobs {
 				$result['stats']['failed'] = (int) ( $result['stats']['failed'] ?? 0 ) + 1;
 				return;
 			}
+			if ( ! empty( $mat['skipped'] ) ) {
+				$result['stats']['skipped'] = (int) ( $result['stats']['skipped'] ?? 0 ) + 1;
+				return;
+			}
 			$key = ! empty( $mat['created'] ) ? 'created' : 'updated';
+			$result['stats'][ $key ] = (int) ( $result['stats'][ $key ] ?? 0 ) + 1;
+			return;
+		}
+
+		if ( 'translate' === $type ) {
+			$post_id = absint( $item );
+			$res     = $this->generator->translate_post( $post_id, (string) ( $options['target_language'] ?? '' ), $options );
+			if ( empty( $res['ok'] ) ) {
+				$result['stats']['failed'] = (int) ( $result['stats']['failed'] ?? 0 ) + 1;
+				return;
+			}
+			$key = ! empty( $res['created'] ) ? 'created' : 'updated';
 			$result['stats'][ $key ] = (int) ( $result['stats'][ $key ] ?? 0 ) + 1;
 			return;
 		}

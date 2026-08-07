@@ -1,9 +1,11 @@
 <?php
 /**
- * PSEO AI Provider Interface — future AI content / regeneration.
+ * PSEO AI Provider Interface — blueprint/block-shaped AI content contract.
  *
- * Phase 2.5 registers the contract + null provider. No external calls.
- * Supports full-blueprint and per-block regeneration.
+ * Phase 5: the default provider is a bridge to the central Kayan_AI_Platform
+ * (Kayan_PSEO_AI_Bridge_Provider) — real OpenAI/Claude/Gemini/Mistral calls
+ * happen there, never here. This registry still supports fully custom
+ * PSEO-shaped providers via `kayan_pseo_register_ai_providers` if ever needed.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -112,7 +114,7 @@ class Kayan_PSEO_AI {
 	private $providers = array();
 
 	/** @var string */
-	private $default_provider = 'null';
+	private $default_provider = 'bridge';
 
 	/** @var Kayan_PSEO_Blocks|null */
 	private $blocks;
@@ -134,9 +136,12 @@ class Kayan_PSEO_AI {
 	 */
 	public function register() {
 		$this->register_provider( new Kayan_PSEO_AI_Null_Provider() );
+		if ( $this->blocks ) {
+			$this->register_provider( new Kayan_PSEO_AI_Bridge_Provider( $this->blocks ) );
+		}
 
 		/**
-		 * Register AI providers: $ai->register_provider( $instance ).
+		 * Register additional PSEO-shaped AI providers: $ai->register_provider( $instance ).
 		 *
 		 * @param Kayan_PSEO_AI $ai AI manager.
 		 */

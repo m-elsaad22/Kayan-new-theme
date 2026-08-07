@@ -571,5 +571,26 @@ class Kayan_Migration_Engine {
 				},
 			)
 		);
+
+		$this->register_migration(
+			'pseo_dependencies_table_v1',
+			array(
+				'version'     => 2,
+				'type'        => 'table',
+				'description' => 'Create the kayan_pseo_dependencies table backing the Dependency Graph (Phase 5).',
+				'up'          => function ( Kayan_Migration_Engine $engine ) {
+					return $engine->create_or_upgrade_table(
+						'kayan_pseo_dependencies',
+						"id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+						post_id BIGINT UNSIGNED NOT NULL,
+						entity_type VARCHAR(32) NOT NULL,
+						entity_ref VARCHAR(191) NOT NULL,
+						PRIMARY KEY  (id),
+						UNIQUE KEY post_entity (post_id, entity_type, entity_ref),
+						KEY entity_lookup (entity_type, entity_ref)"
+					);
+				},
+			)
+		);
 	}
 }

@@ -61,6 +61,18 @@ class Kayan_Platform {
 	/** @var Kayan_Migration_Engine */
 	public $migrations;
 
+	/** @var Kayan_AI_Platform */
+	public $ai;
+
+	/** @var Kayan_Quality_Engine */
+	public $quality;
+
+	/** @var Kayan_Content_Workflow */
+	public $workflow;
+
+	/** @var Kayan_Dependency_Graph */
+	public $dependencies;
+
 	/** @var Kayan_Docs_Generator */
 	public $docs;
 
@@ -105,7 +117,11 @@ class Kayan_Platform {
 		$this->settings_engine = new Kayan_Settings_Engine( $this->countries, $this->languages, $this->settings );
 		$this->settings_engine->set_cache( $this->cache );
 		$this->query      = new Kayan_Query_Engine( $this->cache, $this->logger, $this->countries );
-		$this->migrations = new Kayan_Migration_Engine( $this->logger );
+		$this->migrations   = new Kayan_Migration_Engine( $this->logger );
+		$this->ai           = new Kayan_AI_Platform( $this->logger );
+		$this->quality      = new Kayan_Quality_Engine();
+		$this->workflow     = new Kayan_Content_Workflow( $this->logger );
+		$this->dependencies = new Kayan_Dependency_Graph( $this->logger );
 
 		$this->programmatic = new Kayan_Programmatic_SEO();
 		$this->entity       = new Kayan_Entity_Engine(
@@ -120,6 +136,9 @@ class Kayan_Platform {
 			$this->countries
 		);
 		$this->pseo         = new Kayan_PSEO_Engine( $this->programmatic, $this->content, $this->countries );
+		$this->workflow->set_dependencies( $this->pseo->storage, $this->quality );
+		$this->dependencies->set_dependencies( $this->workflow, $this->programmatic );
+		$this->pseo->set_workflow_services( $this->workflow, $this->quality, $this->dependencies );
 		$this->router       = new Kayan_Country_Router(
 			$this->countries,
 			$this->languages,
@@ -158,6 +177,10 @@ class Kayan_Platform {
 		$this->logger->register();
 		$this->query->register();
 		$this->migrations->register();
+		$this->ai->register();
+		$this->quality->register();
+		$this->workflow->register();
+		$this->dependencies->register();
 
 		$this->pseo->register();
 		$this->router->register();

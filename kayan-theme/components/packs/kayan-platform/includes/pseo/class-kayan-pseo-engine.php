@@ -55,6 +55,15 @@ class Kayan_PSEO_Engine {
 	/** @var Kayan_PSEO_Scheduler */
 	public $scheduler;
 
+	/** @var Kayan_Content_Workflow|null */
+	public $workflow;
+
+	/** @var Kayan_Quality_Engine|null */
+	public $quality;
+
+	/** @var Kayan_Dependency_Graph|null */
+	public $dependencies;
+
 	/** @var Kayan_Country_Engine */
 	private $countries;
 
@@ -92,6 +101,23 @@ class Kayan_PSEO_Engine {
 		$this->jobs->set_dependencies( $this->generator, $this->rules );
 		$this->renderer  = new Kayan_PSEO_Renderer( $this->blueprint, $this->storage, $this->blocks );
 		$this->scheduler = new Kayan_PSEO_Scheduler( $this->jobs );
+	}
+
+	/**
+	 * Wired by Kayan_Platform once Workflow/Quality/Dependency Graph exist
+	 * (they, in turn, depend on this engine's Storage) — avoids a
+	 * constructor circularity while keeping every engine a real dependency.
+	 *
+	 * @param Kayan_Content_Workflow  $workflow     Workflow.
+	 * @param Kayan_Quality_Engine    $quality      Quality engine.
+	 * @param Kayan_Dependency_Graph  $dependencies Dependency graph.
+	 * @return void
+	 */
+	public function set_workflow_services( Kayan_Content_Workflow $workflow, Kayan_Quality_Engine $quality, Kayan_Dependency_Graph $dependencies ) {
+		$this->workflow     = $workflow;
+		$this->quality      = $quality;
+		$this->dependencies = $dependencies;
+		$this->generator->set_workflow_services( $workflow, $quality, $dependencies );
 	}
 
 	/**
@@ -138,6 +164,25 @@ class Kayan_PSEO_Engine {
 		$type = ! empty( $options['ai_enabled'] ) ? 'ai_regenerate' : 'regenerate';
 		return $this->jobs->enqueue(
 			$type,
+			array(
+				'post_ids' => $post_ids,
+				'options'  => $options,
+			)
+		);
+	}
+
+	/**
+	 * Enqueue an AI translation job for one or more generated pages.
+	 *
+	 * @param int[]  $post_ids     Source post ids.
+	 * @param string $target_lang  Target language code.
+	 * @param array  $options      post_status, provider.
+	 * @return array{ok:bool,job?:array,errors?:string[]}
+	 */
+	public function translate_bulk( array $post_ids, $target_lang, array $options = array() ) {
+		$options['target_language'] = sanitize_key( $target_lang );
+		return $this->jobs->enqueue(
+			'translate',
 			array(
 				'post_ids' => $post_ids,
 				'options'  => $options,

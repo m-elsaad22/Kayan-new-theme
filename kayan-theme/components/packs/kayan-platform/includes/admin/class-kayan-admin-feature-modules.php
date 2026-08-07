@@ -37,6 +37,7 @@ class Kayan_Admin_Feature_Modules {
 			'class-kayan-admin-module-blueprints.php'     => 'Kayan_Admin_Module_Blueprints',
 			'class-kayan-admin-module-pseo.php'           => 'Kayan_Admin_Module_Pseo',
 			'class-kayan-admin-module-queue.php'          => 'Kayan_Admin_Module_Queue',
+			'class-kayan-admin-module-ai.php'             => 'Kayan_Admin_Module_AI',
 		);
 
 		foreach ( $classes as $file => $class ) {

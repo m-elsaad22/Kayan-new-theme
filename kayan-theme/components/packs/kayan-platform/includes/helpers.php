@@ -159,6 +159,51 @@ if ( ! function_exists( 'kayan_migrations' ) ) {
 	}
 }
 
+if ( ! function_exists( 'kayan_ai' ) ) {
+	/**
+	 * AI Platform facade — the only entry point application code should use
+	 * for AI text completion / translation (never a concrete provider class).
+	 *
+	 * @return Kayan_AI_Platform
+	 */
+	function kayan_ai() {
+		return kayan_platform()->ai;
+	}
+}
+
+if ( ! function_exists( 'kayan_workflow' ) ) {
+	/**
+	 * Content Workflow facade — draft/review/approve/publish/regenerate lifecycle.
+	 *
+	 * @return Kayan_Content_Workflow
+	 */
+	function kayan_workflow() {
+		return kayan_platform()->workflow;
+	}
+}
+
+if ( ! function_exists( 'kayan_quality' ) ) {
+	/**
+	 * Quality Engine facade — pre-publish validation for generated pages.
+	 *
+	 * @return Kayan_Quality_Engine
+	 */
+	function kayan_quality() {
+		return kayan_platform()->quality;
+	}
+}
+
+if ( ! function_exists( 'kayan_dependencies' ) ) {
+	/**
+	 * Dependency Graph facade — marks affected generated pages for regeneration.
+	 *
+	 * @return Kayan_Dependency_Graph
+	 */
+	function kayan_dependencies() {
+		return kayan_platform()->dependencies;
+	}
+}
+
 if ( ! function_exists( 'kayan_logger' ) ) {
 	/**
 	 * @return Kayan_Logger
