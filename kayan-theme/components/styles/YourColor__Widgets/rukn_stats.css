@@ -1,0 +1,28 @@
+/* ==== RUKN v3 STATS - rukn_stats.css (ودجت جديدة) ====
+   الشريط الكحلي المتدرج بالعدادات المتحركة */
+/* ═══════════════ Stats (dark) ═══════════════ */
+.stats{background:var(--grad);color:#fff;overflow:hidden}
+.stats::before{content:"";position:absolute;inset:0;background:radial-gradient(700px 400px at 15% 20%,rgba(79,168,255,.20),transparent 60%),radial-gradient(700px 400px at 85% 80%,rgba(201,162,39,.16),transparent 60%)}
+.stats .wrap{position:relative;z-index:2}
+.stats .shead h2,.stats .shead p{color:#fff}
+.stats .shead .tag{background:rgba(255,255,255,.14);color:#bdfff0}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.stat{text-align:center;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:var(--r-m);padding:34px 18px;transition:.3s}
+.stat:hover{transform:translateY(-6px);background:rgba(255,255,255,.12)}
+.stat i{font-size:30px;color:var(--aqua);margin-bottom:12px}
+.stat .num{font-family:'Cairo';font-weight:900;font-size:clamp(34px,4vw,50px);line-height:1;background:linear-gradient(120deg,#fff,var(--aqua));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat .lbl{color:rgba(255,255,255,.82);font-weight:600;margin-top:8px}
+
+/* ==== WordPress adjustments ==== */
+/* الشريط الكحلي بيغطي القسم بالكامل */
+.-YC-WidgetType-rukn_stats{padding:0}
+.-YC-WidgetType-rukn_stats .-YC-Widgets-Inner-Row{padding:0}
+.rukn-stats-inner{position:relative;background:var(--grad);color:#fff;overflow:hidden;padding:var(--pad) 0}
+.rukn-stats-inner::before{content:"";position:absolute;inset:0;background:radial-gradient(700px 400px at 15% 20%,rgba(79,168,255,.20),transparent 60%),radial-gradient(700px 400px at 85% 80%,rgba(201,162,39,.16),transparent 60%)}
+.rukn-stats-inner .wrap{position:relative;z-index:2}
+.rukn-stats-inner .shead h2,.rukn-stats-inner .shead p{color:#fff}
+.rukn-stats-inner .shead .tag{background:rgba(255,255,255,.14);color:#bdfff0}
+
+/* الريسبونسف */
+@media (max-width:1024px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){.stats-grid{grid-template-columns:1fr 1fr;gap:14px}.stat{padding:24px 12px}}

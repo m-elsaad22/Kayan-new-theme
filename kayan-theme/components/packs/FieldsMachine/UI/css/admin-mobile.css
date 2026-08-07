@@ -1,0 +1,803 @@
+/**
+ * لوحة تحكم YourColor / Kayan — عرض للهاتف أولاً
+ * يُحمَّل بعد Custom-Style.css — الأساس للشاشات الضيقة، والشاشات العريضة تُستعاد عند 900px+
+ */
+
+/* ── منع التمرير الأفقي ── */
+html.YourColorEdits-Class-Style,
+body.YourColorEdits-Class-Style {
+	overflow-x: hidden;
+	max-width: 100vw;
+}
+
+body.YourColorEdits-Class-Style #wpwrap,
+body.YourColorEdits-Class-Style #wpcontent,
+body.YourColorEdits-Class-Style #wpbody,
+body.YourColorEdits-Class-Style #wpbody-content {
+	max-width: 100%;
+	overflow-x: hidden;
+}
+
+body.YourColorEdits-Class-Style .wrap {
+	margin: 8px 6px 0;
+	max-width: 100%;
+}
+
+body.YourColorEdits-Class-Style.auto-fold #wpcontent {
+	padding-left: 0;
+}
+
+yourcolorapi--conatiner {
+	margin-inline-start: 0 !important;
+	max-width: 100%;
+	overflow-x: hidden;
+}
+
+/* ── عربية: لا كسر الكلمات من المنتصف (مباشر / الإمارات…) ── */
+body.YourColorEdits-Class-Style,
+body.YourColorEdits-Class-Style yourcolorapi--conatiner,
+body.YourColorEdits-Class-Style yourcolorapi--conatiner *:not(code):not(pre):not(.CodeMirror):not(.kayan-gradient-css-output):not(.kayan-shadow-css-output) {
+	word-break: normal !important;
+	overflow-wrap: normal !important;
+	hyphens: none !important;
+	-webkit-hyphens: none !important;
+}
+
+body.YourColorEdits-Class-Style .kayan-gradient-css-output,
+body.YourColorEdits-Class-Style .kayan-shadow-css-output,
+body.YourColorEdits-Class-Style .CodeMirror {
+	word-break: break-all;
+	overflow-wrap: anywhere;
+}
+
+/* ── خط أصغر قليلاً على الهاتف ── */
+body.YourColorEdits-Class-Style {
+	font-size: 14px;
+	-webkit-text-size-adjust: 100%;
+}
+
+/* ── رأس الصفحة ── */
+header.YS_Header {
+	min-height: auto;
+}
+
+header.YS_Header > .PluginName {
+	padding: 16px 14px;
+	font-size: 20px;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+header.YS_Header > .PluginName .Head--Text > h2 {
+	font-size: 18px;
+	line-height: 1.35;
+	word-break: normal;
+}
+
+header.YS_Header > .PluginName .Head--Text > p {
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+header.YS_Header > .PluginName > .Head--Text > em {
+	font-size: 22px;
+	margin-bottom: 12px;
+}
+
+.PluginName > .ByTabsLinks {
+	width: 100%;
+}
+
+.PluginName > .ByTabsLinks > li {
+	min-width: 0;
+	flex: 1 1 45%;
+}
+
+/* ── حاوية الإعدادات ── */
+.PagesModelConainer {
+	padding: 12px 10px 20px;
+}
+
+.-New-YTC-Pannel-Boxes {
+	padding: 14px 12px;
+	min-width: 0;
+}
+
+/* ── تبويبات الإعدادات الفرعية ── */
+.-Head-options-supages {
+	flex-direction: column;
+	margin: 0 -10px;
+	padding-inline-start: 10px;
+	max-height: none;
+}
+
+.-Active-Item-supages {
+	padding: 8px 0 16px;
+	padding-inline-end: 0;
+	margin-inline-end: 0;
+	width: 100%;
+}
+
+.-Active-Item-supages .UI-Menu-YTS-item {
+	min-width: 0;
+	width: 100%;
+}
+
+.-Active-Item-supages .UI-Menu-YTS-item > a {
+	flex-direction: row;
+	padding: 14px 16px;
+	font-size: 14px;
+	text-align: right;
+	justify-content: flex-start;
+	gap: 12px;
+}
+
+.-Active-Item-supages .UI-Menu-YTS-item > a > i {
+	font-size: 22px;
+	margin-bottom: 0;
+	height: auto;
+	flex-shrink: 0;
+}
+
+.-Pages-Taps {
+	padding: 8px 36px 16px;
+	margin: 0 -10px;
+}
+
+.-Pages-Taps:before,
+.-Pages-Taps:after {
+	height: 80px;
+	width: 36px;
+}
+
+.UI-Menu-YTS-item {
+	min-width: 120px;
+	margin-inline-end: 10px;
+}
+
+.UI-Menu-YTS-item > a {
+	padding: 14px 12px;
+	font-size: 13px;
+}
+
+.UI-Menu-YTS-item > a > i {
+	font-size: 26px;
+	margin-bottom: 8px;
+}
+
+/* ── حقول الإدخال: عنوان فوق الحقل ── */
+.-fix-inputs-area {
+	flex-direction: column;
+	align-items: stretch;
+	margin-bottom: 20px;
+}
+
+.-fix-forms-field-title {
+	margin-left: 0 !important;
+	margin-inline-start: 0 !important;
+	max-width: 100% !important;
+	min-width: 0 !important;
+	width: 100%;
+	padding: 0 0 6px;
+}
+
+.-fix-forms-field-title > h3 {
+	font-size: 15px !important;
+	padding-right: 14px;
+	line-height: 1.4;
+	word-break: normal;
+}
+
+.-before-insert-fix-fields .-fix-forms-field-title {
+	max-width: 100% !important;
+	min-width: 0 !important;
+}
+
+.-fix-inputs-area .wp-editor-wrap,
+.-fix-inputs-area input[type="text"],
+.-fix-inputs-area input[type="number"],
+.-fix-inputs-area textarea,
+.-fix-inputs-area select,
+.-fix-inputs-area .Select-Options-Items {
+	width: 100% !important;
+	min-width: 0 !important;
+	max-width: 100% !important;
+	flex: 1 1 100%;
+}
+
+yourcolorapi--conatiner input[type="text"],
+yourcolorapi--conatiner input[type="number"],
+.InputsAppender--Fields-BoxArea input[type="text"],
+.-fix-inputs-area input[type="text"],
+.-fix-inputs-area input[type="number"] {
+	height: 48px !important;
+	font-size: 14px !important;
+	padding: 0 14px !important;
+	border-radius: 12px !important;
+}
+
+yourcolorapi--conatiner textarea,
+.-fix-inputs-area textarea {
+	font-size: 14px !important;
+	min-height: 100px;
+}
+
+/* ── قوائم منسدلة واختيارات ── */
+.Select-Options-Items {
+	min-width: 0 !important;
+	width: 100%;
+}
+
+.YourColorEdits-Class-Style .Select-Options-Items > h2 {
+	font-size: 13px !important;
+	height: auto !important;
+	min-height: 48px;
+	padding: 12px !important;
+}
+
+.-Selected-Icons-Field .Select-Options-Items .-Select-DropDown {
+	min-width: 0 !important;
+	max-width: calc(100vw - 24px) !important;
+	width: calc(100vw - 24px) !important;
+	right: 0 !important;
+	left: auto !important;
+}
+
+.-sorter__id_sort {
+	flex-wrap: wrap;
+}
+
+.-sorter__id_sort > .-fix-inputs-area {
+	min-width: 0 !important;
+	max-width: 100% !important;
+	flex: 1 1 100%;
+	padding: 0;
+}
+
+/* ── مجموعات الحقول المتكررة ── */
+.InputsAppender--Fields-BoxArea {
+	padding: 12px;
+	min-width: 0;
+}
+
+.Title-MoreForms > h2 {
+	font-size: 16px;
+	word-break: normal;
+}
+
+.Title-MoreForms > h2 > em {
+	font-size: 17px;
+}
+
+/* ── ودجات الصفحة الرئيسية ── */
+.Master-Widgets_selected {
+	margin: 16px 0;
+	padding: 12px;
+}
+
+.-Master-Selected-Icon {
+	flex-direction: column;
+}
+
+.Master-Widgets_selected .RightWidgets-Select,
+.Master-Widgets_selected.-fullbar-showsin .RightWidgets-Select {
+	min-width: 0 !important;
+	width: 100% !important;
+	max-width: 100% !important;
+	margin-left: 0 !important;
+	margin-inline-start: 0 !important;
+	position: relative;
+	top: 0;
+	min-height: 240px;
+	max-height: 55vh;
+}
+
+.Master-Widgets_selected .-Selcted-widget-items,
+.Master-Widgets_selected.-fullbar-showsin .-Selcted-widget-items {
+	max-width: 100% !important;
+	min-height: auto;
+	padding: 12px;
+	position: relative;
+	top: 0;
+}
+
+.Master-Widgets_selected.-fullbar-showsin .RightWidgets-Select > ul > li {
+	min-width: 0;
+	flex: 1 1 100%;
+	margin: 0 0 12px;
+}
+
+.-widget-item-title- {
+	padding: 14px 50px 14px 12px !important;
+	flex-wrap: wrap;
+}
+
+.-widget-item-title- > h2 {
+	font-size: 15px !important;
+	flex-wrap: wrap;
+	word-break: normal;
+}
+
+.apbsortable > *:before {
+	right: 10px;
+	font-size: 18px;
+}
+
+.widget-fields-area {
+	padding: 12px 10px 80px;
+}
+
+.widget-fields-InnerElemnt {
+	max-width: calc(100vw - 8px) !important;
+	width: calc(100vw - 8px) !important;
+	margin: 4px auto;
+	max-height: calc(100vh - 8px);
+	overflow-y: auto;
+}
+
+.widget-fields-InnerElemnt > .HeadAlert--Popvoer {
+	padding: 12px 14px;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.widget-fields-InnerElemnt > .HeadAlert--Popvoer > h2 {
+	font-size: 16px;
+	flex-wrap: wrap;
+}
+
+.-widgets-fields-controllers {
+	flex-wrap: wrap;
+	gap: 8px;
+	padding: 10px 12px;
+}
+
+.-widgets-fields-controllers > .-popover-widgets-buttons {
+	flex: 1 1 auto;
+	min-width: 0;
+	font-size: 14px;
+	padding: 10px 12px;
+}
+
+/* ── شريط الحفظ ── */
+.YTSBottomBar {
+	position: sticky;
+	bottom: 0;
+	z-index: 100;
+	background: #fff;
+	margin: 24px -12px -12px;
+	padding: 12px;
+	border-top: 1px solid var(--diver);
+	justify-content: stretch;
+}
+
+.YTSBottomBar > button {
+	width: 100%;
+	justify-content: center;
+	font-size: 16px;
+	padding: 14px 16px;
+}
+
+/* ── نوافذ منبثقة ── */
+.Popver--CoursesAlert > .PopverInnerElemnt {
+	min-width: 0 !important;
+	width: calc(100vw - 20px) !important;
+	max-width: calc(100vw - 20px) !important;
+	max-height: calc(100vh - 20px);
+	overflow-y: auto;
+}
+
+.Popver--CoursesAlert > .PopverInnerElemnt > .ContentAlert--Popvoer {
+	padding: 16px;
+	font-size: 15px;
+}
+
+.Popver--CoursesAlert > .PopverInnerElemnt > .ALertConroller--Popvoer {
+	flex-wrap: wrap;
+	justify-content: stretch;
+	gap: 8px;
+}
+
+.Popver--CoursesAlert > .PopverInnerElemnt > .ALertConroller--Popvoer > a {
+	flex: 1 1 45%;
+	margin-inline-start: 0;
+	justify-content: center;
+}
+
+/* ── تصنيفات وضرائب ── */
+taptaxselect {
+	flex-direction: column;
+}
+
+taptaxselect > ul {
+	max-width: 100%;
+	min-height: 200px;
+	max-height: 50vh;
+}
+
+/* ── بحث المقالات ── */
+.-select--posts--top-area {
+	padding: 14px;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.-currrent-single-elements {
+	margin: 10px 0;
+	padding: 14px;
+	flex-wrap: wrap;
+}
+
+.-currrent-single-elements > .-currrent-single-elements-box-title > a {
+	font-size: 15px;
+	word-break: normal;
+}
+
+/* ── Kayan: SEO / تدرج / ظلال / ترتيب الأقسام ── */
+.kayan-seo-dashboard__score {
+	flex-direction: column;
+	text-align: center;
+	padding: 16px;
+	gap: 12px;
+}
+
+.kayan-seo-dashboard__score-meta h3 {
+	font-size: 18px;
+}
+
+.kayan-seo-dashboard__grid {
+	grid-template-columns: 1fr;
+}
+
+.kayan-gradient-toolbar {
+	flex-direction: column;
+	align-items: stretch;
+}
+
+.kayan-gradient-type select,
+.kayan-gradient-target select,
+.kayan-gradient-radial-controls select {
+	min-width: 0 !important;
+	width: 100%;
+}
+
+.kayan-gradient-css-output {
+	font-size: 10px;
+}
+
+.kayan-homepage-section-item {
+	grid-template-columns: 24px 1fr 36px;
+	gap: 8px;
+	padding: 10px;
+}
+
+.kayan-homepage-section-label {
+	font-size: 13px;
+	word-break: normal;
+}
+
+/* ── نصوص العناوين والوصف ── */
+yourcolorapi--conatiner .Title-Field-Disc,
+yourcolorapi--conatiner p,
+.-Title-Field-Context p,
+single--field > p {
+	font-size: 13px !important;
+	line-height: 1.55 !important;
+	word-break: normal;
+	overflow-wrap: normal;
+}
+
+yourcolorapi--conatiner .Title-Field-Disc a.button {
+	display: inline-block;
+	margin-top: 8px;
+	max-width: 100%;
+	white-space: normal;
+	text-align: center;
+	height: auto;
+	line-height: 1.4;
+	padding: 10px 14px;
+}
+
+/* ── جداول ولوحات WP داخل الإعدادات ── */
+.YourColorEdits-Class-Style .widefat {
+	font-size: 13px;
+}
+
+.YourColorEdits-Class-Style .widefat th,
+.YourColorEdits-Class-Style .widefat td {
+	word-break: normal;
+}
+
+/* ── عناصر عريضة إضافية ── */
+.YourColorEdits-Class-Style #dashboard-widgets .postbox-container {
+	min-width: 0 !important;
+	width: 100%;
+	padding: 0 6px 20px;
+}
+
+.Parent-Boxed--Context---overlays.--ActionType--SetProfileImage,
+.Boxed--Context---overlays {
+	min-width: 0 !important;
+	max-width: 100% !important;
+	width: 100% !important;
+}
+
+.--buttons--info-area,
+.-ThankYou-left-element {
+	min-width: 0 !important;
+	max-width: 100% !important;
+	width: 100% !important;
+}
+
+.-languages--top-bars {
+	flex-direction: column;
+	align-items: stretch;
+	gap: 10px;
+}
+
+.PageModelContain-content {
+	padding-right: 0;
+	border-right: 0;
+	min-width: 0;
+}
+
+/* ── استعادة تخطيط سطح المكتب ── */
+@media (min-width: 900px) {
+	body.YourColorEdits-Class-Style {
+		font-size: 16px;
+	}
+
+	body.YourColorEdits-Class-Style .wrap {
+		margin: 30px 30px 0 30px;
+	}
+
+	yourcolorapi--conatiner {
+		margin-inline-start: -20px !important;
+	}
+
+	header.YS_Header {
+		min-height: 180px;
+	}
+
+	header.YS_Header > .PluginName {
+		padding: 30px 40px;
+		font-size: 27px;
+		flex-direction: row;
+		align-items: center;
+	}
+
+	header.YS_Header > .PluginName .Head--Text > h2 {
+		font-size: inherit;
+	}
+
+	.PagesModelConainer {
+		padding: 40px;
+	}
+
+	.-New-YTC-Pannel-Boxes {
+		padding: 30px;
+	}
+
+	.-Head-options-supages {
+		flex-direction: row;
+		margin: 0 -40px;
+		padding-inline-start: 40px;
+		max-height: 190px;
+	}
+
+	.-Active-Item-supages .UI-Menu-YTS-item > a {
+		flex-direction: column;
+		padding: 30px;
+		font-size: 16px;
+	}
+
+	.-Active-Item-supages .UI-Menu-YTS-item > a > i {
+		font-size: 40px;
+		margin-bottom: 20px;
+	}
+
+	.-Pages-Taps {
+		padding: 10px 40px 40px;
+		margin: 0 -40px 0;
+	}
+
+	.UI-Menu-YTS-item {
+		min-width: 180px;
+	}
+
+	.UI-Menu-YTS-item > a {
+		padding: 30px;
+		font-size: 16px;
+	}
+
+	.-fix-inputs-area {
+		flex-direction: row;
+		align-items: center;
+		margin-bottom: 35px;
+	}
+
+	.-fix-forms-field-title {
+		margin-left: 30px !important;
+		max-width: 170px !important;
+		min-width: 170px !important;
+		width: auto;
+		padding: 15px 0;
+	}
+
+	.-fix-forms-field-title > h3 {
+		font-size: 18px !important;
+	}
+
+	.-before-insert-fix-fields .-fix-forms-field-title {
+		max-width: 250px !important;
+		min-width: 250px !important;
+	}
+
+	yourcolorapi--conatiner input[type="text"],
+	yourcolorapi--conatiner input[type="number"],
+	.-fix-inputs-area input[type="text"],
+	.-fix-inputs-area input[type="number"] {
+		height: 60px !important;
+		font-size: 16px !important;
+	}
+
+	.Select-Options-Items {
+		min-width: 320px !important;
+	}
+
+	.-Selected-Icons-Field .Select-Options-Items .-Select-DropDown {
+		min-width: 650px !important;
+		max-width: none !important;
+		width: auto !important;
+	}
+
+	.-sorter__id_sort > .-fix-inputs-area {
+		min-width: 278px !important;
+		max-width: 280px !important;
+		flex: 1;
+		padding: 0 10px;
+	}
+
+	.Master-Widgets_selected {
+		padding: 30px;
+	}
+
+	.Master-Widgets_selected:not(.-fullbar-showsin) .RightWidgets-Select {
+		min-width: 360px !important;
+		width: auto !important;
+		margin-left: 30px !important;
+		min-height: calc(100vh - 90px);
+		max-height: calc(100vh - 90px);
+	}
+
+	.Master-Widgets_selected:not(.-fullbar-showsin) .-Selcted-widget-items {
+		max-width: calc(100% - 390px);
+		min-height: 800px;
+		padding: 30px;
+		position: sticky;
+		top: 50px;
+	}
+
+	.-Master-Selected-Icon {
+		flex-direction: row;
+	}
+
+	.widget-fields-InnerElemnt {
+		max-width: 900px !important;
+		width: auto !important;
+	}
+
+	.widget-fields-area {
+		padding: 30px;
+	}
+
+	.YTSBottomBar {
+		position: static;
+		margin: 50px 0 0;
+		padding-top: 30px;
+		justify-content: flex-end;
+	}
+
+	.YTSBottomBar > button {
+		width: auto;
+		font-size: 18px;
+	}
+
+	.Popver--CoursesAlert > .PopverInnerElemnt {
+		min-width: 528px !important;
+		width: auto !important;
+		max-width: 90vw;
+	}
+
+	taptaxselect {
+		flex-direction: row;
+	}
+
+	.kayan-seo-dashboard__score {
+		flex-direction: row;
+		text-align: right;
+	}
+
+	.kayan-seo-dashboard__grid {
+		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	}
+
+	.kayan-gradient-toolbar {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: flex-end;
+	}
+
+	.kayan-gradient-type select,
+	.kayan-gradient-target select,
+	.kayan-gradient-radial-controls select {
+		min-width: 160px !important;
+		width: auto;
+	}
+
+	.YourColorEdits-Class-Style #dashboard-widgets .postbox-container {
+		min-width: 460px;
+		padding: 0 15px 30px;
+	}
+
+	.Parent-Boxed--Context---overlays.--ActionType--SetProfileImage {
+		min-width: 1200px;
+	}
+
+	.Boxed--Context---overlays {
+		min-width: 400px;
+		width: auto;
+	}
+
+	.--buttons--info-area {
+		min-width: 350px;
+		width: auto;
+	}
+
+	.-ThankYou-left-element {
+		min-width: 480px;
+		max-width: 480px;
+		width: auto;
+	}
+
+	.-languages--top-bars {
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.PageModelContain-content {
+		padding-right: 20px;
+		border-right: 1px solid var(--diver);
+	}
+}
+
+/* ── تنظيم عناوين الأقسام في الإعدادات ── */
+body.YourColorEdits-Class-Style .-Title-Field-Context,
+body.YourColorEdits-Class-Style single--field > .Title-Field-Disc {
+	background: linear-gradient(135deg, #f0f7ff 0%, #f8fafc 100%);
+	border: 1px solid #dbeafe;
+	border-radius: 14px;
+	padding: 14px 16px;
+	margin: 0 0 18px;
+	line-height: 1.6;
+}
+
+body.YourColorEdits-Class-Style .-Title-Field-Context h2,
+body.YourColorEdits-Class-Style single--field.Title > h2 {
+	font-size: 17px !important;
+	font-weight: 700 !important;
+	color: #0f172a;
+	margin: 0 0 6px !important;
+}
+
+body.YourColorEdits-Class-Style .-Title-Field-Context p,
+body.YourColorEdits-Class-Style .Title-Field-Disc {
+	font-size: 13px !important;
+	color: #475569 !important;
+	margin: 0 !important;
+}
+
+body.YourColorEdits-Class-Style .-Title-Field-Context a.button {
+	margin-top: 10px;
+}

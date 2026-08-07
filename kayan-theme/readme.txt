@@ -1,0 +1,94 @@
+=== KAYAN Theme ===
+Contributors: melsaad
+Requires at least: 6.0
+Tested up to: 6.7
+Requires PHP: 7.4
+Stable tag: 2.0.0
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Tags: rtl-language-support, custom-menu, featured-images, translation-ready
+
+قالب ووردبريس عربي احترافي لشركات الخدمات المنزلية في الخليج — تصميم RUKN v3 مع بنية KAYAN التحتية.
+
+== Description ==
+* تصميم RUKN v3 الكامل: 20 ودجت + نظام RuknContact الهرمي للتحكم بأزرار الاتصال/الواتساب (مقال ← تصنيف ← عام) + جدول محتويات جانبي RuknUX.
+* نظام Home2026: بيلدر رئيسية اختياري من 25 قسم جاهز.
+* أنواع محتوى: خدمات، تقييمات عملاء، فريق العمل، مدن، أسئلة شائعة، أعمال، أسعار.
+* بنية تحتية: KAYAN Track (تتبع الزوار والتحويلات + DNI)، أداء Core Web Vitals، مبدّل دول خليجي (i18n)، استقرار الإنتاج، تصدير/استيراد الإعدادات.
+* SEO: متوافق كلياً مع Rank Math (القالب لا يُخرج أي meta مكررة).
+* Font Awesome 6 Free مستضاف محلياً داخل القالب — بلا اعتماد على CDN خارجي وبلا أي أيقونات مدفوعة.
+
+== Changelog ==
+
+= 2.0.0 =
+* Phase 3.0: KAYAN Admin Platform Core — module registry, permissions/roles, reusable admin UI framework, dashboard foundation (widget slots only). No statistics, generation, or AI.
+
+= 1.9.0 =
+* Phase 2.7: Query Engine, Cache Engine, Settings Engine, Logger + developer docs under /docs. Core infrastructure only — no Admin Platform, generation, or UI redesign.
+
+= 1.8.0 =
+* Phase 2.6: Entity Relationship Engine + centralized Entity API + Dynamic Data Tags ({{service_name}}, {{city_name}}, …). Architecture/APIs only — no generation, no admin UI, no template redesign.
+
+= 1.7.1 =
+* Phase 2.5.1 architecture extensions: Template Engine, Block Engine (per-block AI prompts), Media Engine, Blueprint versioning with lock-safe upgrades, prefer existing CPTs over kayan_pseo when appropriate. Still no generation / no admin UI.
+
+= 1.7.0 =
+* Phase 2.5: Native Programmatic SEO Engine architecture (entities, patterns, rules, identity, blueprint, storage CPT, jobs, AI interface). No page/content generation yet. No admin UI redesign.
+
+= 1.6.0 =
+* Phase 2: Country Routing Engine (canonical language-first URLs `/en/{country}/…`) + Content Resolution Engine for all public CPTs/taxonomies.
+* Legacy `/{country}/en/…` automatic 301 redirects to canonical URLs.
+* Programmatic SEO entity registry (architecture foundation for large-scale pages).
+* Rank Math remains the only SEO engine — KAYAN extends via filters only (no competing meta/schema/sitemaps/hreflang tags).
+* No frontend/admin redesign, no data migration.
+
+= 1.5.0 =
+* Phase 1 platform core: kayan-platform pack (Country Engine, Language Engine, Context, Country Settings repository, Content Locale meta contracts, URL architecture helper, Rank Math–compatible SEO Bridge).
+* No frontend redesign, no URL/rewrite changes, no data migration.
+* Safe hreflang (ar/en/x-default) for home + blog posts only; full country matrix deferred until CPT routing is ready.
+
+= 1.4.2 =
+* تحميل Font Awesome بلا اعتماد على jQuery: كان يُحمَّل عبر data-loader-href الذي يحتاج jQuery ليحوّله إلى href، فأي فشل أو تأخّر في jQuery/الكاش = كل الأيقونات مربعات فارغة. صار يستخدم النمط القياسي غير الحاجب مع بديل noscript.
+* حزمة kayan-version الجديدة: شارة في شريط الأدمن تعرض الإصدار المُشغَّل فعلياً + فحص ذاتي يكشف الرفع الناقص (خطوط FA مفقودة، حزم قديمة باقية) — للتأكد بنظرة واحدة أن النسخة الصحيحة تعمل.
+
+= 1.4.1 =
+* حذف نظام الواتساب العائم الثاني بالكامل (فقاعة RuknContact + مربع المحادثة wa_mini) — كان يظهر زراً عائماً إضافياً فوق الأساسي. بقي نظام عائم واحد فقط.
+* إصلاح الأيقونات المدفوعة الحقيقية: أسهم لوحة التحكم (far fa-arrow-right/left غير موجودة في FA Free) صارت fa-solid، وكل أيقونات fa-light (نمط Pro لا وجود له في المجاني) استُبدلت ببدائل مجانية متوفرة فعلياً — تم التحقق بفحص ملفات الخطوط نفسها.
+* إصلاح خريطة الفوتر: حقل كود الخريطة (footer__map_embed) كان مفقوداً من لوحة الإعدادات فتظل الخريطة ثابتة على دبي. أُضيف الحقل، ويقبل الرابط أو كود <iframe> كاملاً، مع تعقيم آمن وقصر النطاقات على خرائط جوجل.
+* حزمة kayan-seed الجديدة: تكتب محتوى تصميم RUKN v3 الكامل (13 قسماً) فعلياً داخل حقول إعدادات الرئيسية بدل تركها فارغة — فتفتح الإعدادات وتجد النصوص أمامك جاهزة للتعديل. تعمل مرة واحدة تلقائياً، ولا تمس أي إعداد موجود، مع صفحة تحكم يدوية (المظهر ← محتوى الرئيسية الافتراضي).
+
+= 1.4.0 =
+* حذف نظام Home2026 بالكامل (حزمة kayan-homepage + 25 ودجت قسم + kayan_theme_colors + حارس اللودر) — كان سبب تراكب التصميمين على الرئيسية ولم يكن مستخدماً. رئيسية الموقع الآن = ودجات ركن حصراً بلا أي احتمال تراكب.
+* تنظيف كل المراجع اليتيمة للحزم المحذوفة من manifest الاستقرار.
+* إضافة ملف تعليمات الرفع الصحيح (حذف القديم + مسح الكاش) لحل مشكلة تشغيل النسخة القديمة على السيرفر.
+
+= 1.3.1 =
+* حذف نظام الأزرار العائمة القديم (--YC-service-requset-widget) نهائياً من الكود — لم يعد يُخفى بل أُزيل من post.php وsitemap.php وfooter JS. الأزرار العائمة الآن من نظام واحد أساسي فقط (fab-stack).
+
+= 1.3.0 =
+* أقسام مخصصة مستقلة مثل المقالات: الخدمات (services) + تقييمات العملاء (reviews) + الأسئلة (faqs) + خطط الأسعار (pricing) + سابقة الأعمال (portfolio) + قبل وبعد (before_after) — كلها بأرشيف مفعّل ودعم REST API وأيقونات Dashicons.
+* تصنيفان مشتركان: المدن (cities، هرمي، مرتبط بكل الأقسام + المقالات) + تصنيفات الخدمات (service_categories، للخدمات وسابقة الأعمال).
+* إصلاح الرئيسية الفارغة/المكررة: نظام Home2026 الثابت أصبح اختيارياً بالكامل ولا يستولي على الرئيسية — التصميم الافتراضي = رئيسية ودجات RUKN.
+* اسم الموقع أصبح ديناميكياً get_bloginfo('name') في كل مكان بدل "ركن التطور" الثابت — مناسب للاستخدام على عدة مواقع.
+* إصلاح تكرار زر الاتصال/الواتساب العائم: توحيد الأزرار العائمة ومنع تراكب زرّي واتساب.
+* fallback تلقائي لقالب المقال لأي نوع منشور بلا قالب مخصص (لا صفحات فارغة).
+* توجيه أرشيف آمن يدعم أرشيف أنواع المنشورات وأرشيف التصنيفات معاً.
+
+= 1.2.1 =
+* إصلاح خطأ فادح: ودجات Home2026 كانت تُحمّل قبل كلاس الأساس Kayan_Home_Section_Widget — أصبح اللودر يضمن توفره أولاً مع تخطٍّ آمن.
+* إصلاح تحذير PHP في schema عند وجود مقال بلا مؤلف صالح (مستخدم محذوف).
+
+= 1.2.0 =
+* دمج تحديثات تصميم 13 يوليو (RuknContact المحدث، الهيدر، 3 ودجات) مع استضافة Font Awesome محلياً.
+* إضافة نمذجة المحتوى: خدمات + تقييمات + نماذج حجز/عروض/مراجعات.
+* إضافة نظام Home2026 (بيلدر الرئيسية من 25 قسم) مع تفعيل اختياري لا يمس رئيسية الودجات.
+* أمان: إغلاق ثغرة LFI في AjaxCenter (قائمة سماح)، إعادة كتابة CustomGetDB بالكامل عبر $wpdb->prepare وإزالة اتصال mysqli المستقل، إصلاح XSS في صفحات البحث، نقل مفاتيح scrapestack وcurrencyfreaks إلى خيارات لوحة التحكم مع wp_remote_get.
+* نموذج التواصل: nonce ديناميكي متوافق مع الكاش + مصيدة سبام (honeypot) + حد إرسال 5/10 دقائق لكل IP + تعقيم كامل للمدخلات + تصحيح نص بريد قديم.
+* تحويل جميع الوسوم القصيرة <? إلى <?php (202 موضعاً) لتوافق كل الاستضافات.
+* توحيد Text Domain وإضافة screenshot وreadme.
+
+= 1.1.1 =
+* إصلاح الشاشة البيضاء في طبقة Lockdown (حراسة strpos + أنماط آمنة + منع إرجاع NULL).
+
+= 1.1.0 =
+* الدمج الأول: تصميم RUKN v3 فوق بنية KAYAN مع اعتماد Rank Math حصرياً واستبدال أيقونات LordIcon المدفوعة ببدائل مجانية وإزالة تحويل 404.
