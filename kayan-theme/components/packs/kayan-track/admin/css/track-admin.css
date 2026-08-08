@@ -19,7 +19,7 @@
   --grad: linear-gradient(135deg, #0056b3, #1a7fe0);
   --sh2: 0 4px 6px rgba(0,0,0,.05);
   --r: 12px;
-  --font: 'Tajawal', sans-serif;
+  --font: var(--kayan-font, 'YourColor', Arial, sans-serif);
 }
 
 * { box-sizing: border-box; }

@@ -1,10 +1,21 @@
 /**
  * KAYAN Admin Platform — structural UI framework styles (Phase 3.0).
  * Not a frontend theme redesign.
+ *
+ * Font faces (--kayan-font) are loaded as a separate dependency —
+ * see Kayan_Admin_Platform::enqueue_assets() — not via @import, since an
+ * @import's relative url() would resolve against the *page's* URL (wrong)
+ * once this file's content is also inlined as a fallback.
  */
 
 .kayan-admin-shell {
 	margin-top: 12px;
+	direction: rtl;
+	font-family: var(--kayan-font);
+}
+
+.kayan-admin-shell * {
+	font-family: inherit;
 }
 
 .kayan-admin-shell__layout {
@@ -186,7 +197,7 @@
 .kayan-admin-drawer {
 	flex-direction: column;
 	width: 360px;
-	margin-left: auto;
+	margin-inline-start: auto;
 	background: #fff;
 	box-shadow: -2px 0 8px rgba(0, 0, 0, 0.08);
 	padding: 16px;

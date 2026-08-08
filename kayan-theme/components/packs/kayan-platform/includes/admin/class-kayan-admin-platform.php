@@ -231,6 +231,17 @@ class Kayan_Admin_Platform {
 		$css = $base . '/assets/admin/kayan-admin.css';
 		$js  = $base . '/assets/admin/kayan-admin.js';
 
+		// خط لوحة التحكم الموحّد (--kayan-font) — نفس ملف components/styles/
+		// kayan-admin-font.css المستخدم في KAYAN Track أيضاً، ملف مستقل بدلاً
+		// من @import داخل kayan-admin.css لأن مسارات url() النسبية في @import
+		// تنكسر عند تضمين نفس المحتوى inline كنسخة احتياطية أدناه. لا نسخة
+		// inline لهذا الملف (خطوط .ttf ثنائية) — يتدهور بأمان إلى Arial عبر
+		// var(--kayan-font) إن تعذّر تحميله، فلا حاجة ماسة لذلك.
+		$font_css = get_template_directory() . '/components/styles/kayan-admin-font.css';
+		if ( file_exists( $font_css ) ) {
+			wp_enqueue_style( 'kayan-admin-font', get_template_directory_uri() . '/components/styles/kayan-admin-font.css', array(), $ver );
+		}
+
 		// Enqueue the real files (cacheable, normal path) AND inline the same
 		// content as a fallback on the same handle. If the external file
 		// request is ever blocked/interfered with by a host, CDN, security
@@ -239,7 +250,8 @@ class Kayan_Admin_Platform {
 		// applies because it ships inside the page response itself and
 		// needs no separate network request.
 		if ( file_exists( $css ) ) {
-			wp_enqueue_style( 'kayan-admin', $url . '/assets/admin/kayan-admin.css', array(), $ver );
+			$css_deps = file_exists( $font_css ) ? array( 'kayan-admin-font' ) : array();
+			wp_enqueue_style( 'kayan-admin', $url . '/assets/admin/kayan-admin.css', $css_deps, $ver );
 			$css_contents = file_get_contents( $css ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 			if ( is_string( $css_contents ) && '' !== $css_contents ) {
 				wp_add_inline_style( 'kayan-admin', $css_contents );

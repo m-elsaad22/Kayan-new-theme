@@ -2,14 +2,21 @@
 if ( ! current_user_can( 'manage_options' ) ) {
 	wp_die( 'Forbidden' );
 }
+
+// أصول محلية بالكامل — لا اعتماد على أي CDN خارجي (Google Fonts / cdnjs /
+// jsdelivr) حتى تعمل الصفحة كاملة (كل التابات) بدون اتصال إنترنت خارجي.
+// هذا الملف يُعرض كصفحة HTML خام (require + exit من admin_init) ولا يمر عبر
+// wp_head()/wp_footer()، لذا نستخدم wp_enqueue_script() + wp_print_scripts()
+// مباشرة لطباعة السكربت مع دعم wp_add_inline_script() القياسي، بدل <script src> خام.
+wp_enqueue_script( 'kayan-track-chartjs', kayan_track_pack_url() . 'admin/js/chart.umd.min.js', array(), '4.5.1', true );
 ?><!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>KAYAN Track</title>
-	<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="<?php echo esc_url( get_template_directory_uri() . '/components/styles/kayan-admin-font.css' ); ?>">
+	<link rel="stylesheet" href="<?php echo esc_url( get_template_directory_uri() . '/components/styles/FontAwesome/css/all.min.css' ); ?>">
 	<link rel="stylesheet" href="<?php echo esc_url( kayan_track_pack_url() . 'admin/css/track-admin.css' ); ?>">
 </head>
 <body class="kt-app">
@@ -43,7 +50,7 @@ if ( ! current_user_can( 'manage_options' ) ) {
 			<div id="kt-content"></div>
 		</main>
 	</div>
-	<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+	<?php wp_print_scripts( 'kayan-track-chartjs' ); ?>
 	<script>
 		window.KayanTrackAdmin = {
 			ajaxUrl: <?php echo wp_json_encode( admin_url( 'admin-ajax.php' ) ); ?>,

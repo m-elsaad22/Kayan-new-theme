@@ -78,6 +78,12 @@ class ThemeTree {
 		do_action('Initialize');
 	}
 }
+// تحميل ملف الترجمة العربية لنصوص منصة KAYAN (text domain 'kayan') —
+// languages/kayan-ar.mo. لا يمس Text Domain الأساسي للثيم ('yourcolor').
+add_action( 'after_setup_theme', function() {
+	load_theme_textdomain( 'kayan', get_template_directory() . '/languages' );
+} );
+
 $ThemeTree = new ThemeTree;
 add_action('init', array($ThemeTree, 'Initialize'));
 $ThemeStatic = new ThemeStatic();
