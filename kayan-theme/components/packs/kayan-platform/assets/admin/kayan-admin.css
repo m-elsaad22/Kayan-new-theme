@@ -211,7 +211,53 @@
 }
 
 @media (max-width: 782px) {
+	.kayan-admin-shell {
+		margin-top: 8px;
+	}
+
 	.kayan-admin-shell__layout {
+		grid-template-columns: 1fr;
+		gap: 12px;
+	}
+
+	.kayan-admin-shell__nav {
+		position: sticky;
+		top: 46px;
+		z-index: 2;
+		max-height: none;
+		overflow: visible;
+	}
+
+	.kayan-admin-shell__nav ul {
+		display: flex;
+		flex-wrap: nowrap;
+		gap: 4px;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		padding: 4px 8px;
+		scrollbar-width: thin;
+	}
+
+	.kayan-admin-shell__nav-item {
+		flex: 0 0 auto;
+	}
+
+	.kayan-admin-shell__nav-item a {
+		white-space: nowrap;
+		border-radius: 4px;
+		padding: 8px 10px;
+	}
+
+	.kayan-admin-shell__main {
+		padding: 12px 14px 20px;
+	}
+
+	.kayan-admin-shell__header {
+		flex-wrap: wrap;
+		align-items: flex-start;
+	}
+
+	.kayan-admin-dashboard__grid {
 		grid-template-columns: 1fr;
 	}
 }

@@ -273,7 +273,7 @@ class Kayan_Admin_Platform {
 						<?php
 						echo $this->ui->status( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 							array(
-								'label' => 'Phase 3',
+								'label' => 'Platform ' . ( defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '6.0.0' ),
 								'type'  => 'info',
 							)
 						);

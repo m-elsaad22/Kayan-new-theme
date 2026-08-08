@@ -1,10 +1,9 @@
 <?php
 /**
- * Real dashboard widget content for the modules completed in Phase 3.
+ * Real dashboard widget content for registered Admin Platform slots.
  *
- * Overrides only the widget ids already registered as placeholder slots in
- * Kayan_Admin_Dashboard (Phase 3.0) — no new widget IDs, no new registry.
- * PSEO / Queue / AI / Performance / Analytics stay placeholders (later phases).
+ * Overrides widget ids already registered as placeholder slots in
+ * Kayan_Admin_Dashboard — no new widget IDs, no new registry.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -105,6 +104,88 @@ class Kayan_Admin_Dashboard_Stats {
 				'callback'    => array( $this, 'render_ai' ),
 			)
 		);
+		$dashboard->register_widget(
+			'performance',
+			array(
+				'title'       => __( 'Performance', 'kayan' ),
+				'module'      => 'performance',
+				'capability'  => 'kayan_manage_performance',
+				'position'    => 70,
+				'placeholder' => false,
+				'callback'    => array( $this, 'render_performance' ),
+			)
+		);
+		$dashboard->register_widget(
+			'analytics',
+			array(
+				'title'       => __( 'Analytics', 'kayan' ),
+				'module'      => 'analytics',
+				'capability'  => 'kayan_manage_analytics',
+				'position'    => 80,
+				'placeholder' => false,
+				'callback'    => array( $this, 'render_analytics' ),
+			)
+		);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function render_performance() {
+		$enabled = function_exists( 'kayan_perf_is_enabled' ) ? kayan_perf_is_enabled() : false;
+		$status  = $enabled ? __( 'Optimizations active', 'kayan' ) : __( 'Disabled', 'kayan' );
+		$bits    = array();
+		if ( $enabled ) {
+			if ( empty( yc_get_option( 'kayan_perf_disable_preload' ) ) ) {
+				$bits[] = __( 'LCP preload', 'kayan' );
+			}
+			$bits[] = __( 'Resource hints', 'kayan' );
+		}
+		$html = '<p class="kayan-admin-stat">' . esc_html( $status ) . '</p>';
+		if ( $bits ) {
+			$html .= '<p class="description">' . esc_html( implode( ' · ', $bits ) ) . '</p>';
+		}
+		return $html;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function render_analytics() {
+		if ( ! function_exists( 'kayan_track_is_enabled' ) || ! kayan_track_is_enabled() ) {
+			return '<p class="description">' . esc_html__( 'KAYAN Track is disabled.', 'kayan' ) . '</p>';
+		}
+		if ( ! function_exists( 'kayan_track_table' ) || ! function_exists( 'kayan_track_date_range' ) ) {
+			return '<p class="description">' . esc_html__( 'Track helpers unavailable.', 'kayan' ) . '</p>';
+		}
+
+		global $wpdb;
+		$range = kayan_track_date_range( '7d' );
+		$table = kayan_track_table( 'conversions' );
+		$row   = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT COUNT(*) AS total,
+					SUM(click_type = 'call') AS calls,
+					SUM(click_type = 'whatsapp') AS whatsapp
+				FROM {$table}
+				WHERE is_duplicate = 0 AND created_at >= %s AND created_at <= %s",
+				$range['from'],
+				$range['to']
+			),
+			ARRAY_A
+		);
+
+		$total = isset( $row['total'] ) ? (int) $row['total'] : 0;
+		$calls = isset( $row['calls'] ) ? (int) $row['calls'] : 0;
+		$wa    = isset( $row['whatsapp'] ) ? (int) $row['whatsapp'] : 0;
+
+		return '<p class="kayan-admin-stat"><strong>' . esc_html( (string) $total ) . '</strong> ' . esc_html__( 'conversions (7d)', 'kayan' ) . '</p>'
+			. '<p class="description">' . esc_html( sprintf(
+				/* translators: 1: call clicks, 2: whatsapp clicks */
+				__( '%1$d calls · %2$d WhatsApp', 'kayan' ),
+				$calls,
+				$wa
+			) ) . '</p>';
 	}
 
 	/**

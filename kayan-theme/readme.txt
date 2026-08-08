@@ -3,7 +3,7 @@ Contributors: melsaad
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.4.2
+Stable tag: 2.4.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Tags: rtl-language-support, custom-menu, featured-images, translation-ready
@@ -19,6 +19,12 @@ Tags: rtl-language-support, custom-menu, featured-images, translation-ready
 * Font Awesome 6 Free مستضاف محلياً داخل القالب — بلا اعتماد على CDN خارجي وبلا أي أيقونات مدفوعة.
 
 == Changelog ==
+
+= 2.4.3 =
+* إصلاح شامل لكل ملحوظات لوحة التحكم والتغليف: إزالة المجلد المتداخل، استعادة kayan-seo و kayan-price-pay، حماية أصول kayan من التعطيل، AjaxCenter CamelCase، مسار AdminAjax، حارس category في syntax.php.
+* إعدادات القالب: تحميل CSS/JS عبر wp_enqueue_* بدون rand()، مع admin-mobile و admin-ui-fixes و fa-free-fixes.
+* KAYAN Platform: ترتيب تسجيل ودجات Dashboard، شارة الإصدار بدل Phase 3، ودجات Performance/Analytics، CSS موبايل.
+* الهيدر/الشعار/الأيقونات من مسار 1.4.11 المستقر + فحوصات kayan-version محدّثة.
 
 = 2.0.0 =
 * Phase 3.0: KAYAN Admin Platform Core — module registry, permissions/roles, reusable admin UI framework, dashboard foundation (widget slots only). No statistics, generation, or AI.

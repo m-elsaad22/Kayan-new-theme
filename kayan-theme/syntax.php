@@ -37,10 +37,12 @@ class ThemeStatic extends ThemeTree {
 			if( get_post_type() == 'post' ) {
 				$category = get_the_terms($post->ID, 'category', '');
 				$catTerms = array();
-				foreach( $category as $term ) {
-					$termviws = (int)get_term_meta($term->term_id,'views',1);
-					update_term_meta($term->term_id,'views',$termviws+1);
-					$catTerms[] = $term->term_id;
+				if ( is_array( $category ) ) {
+					foreach( $category as $term ) {
+						$termviws = (int)get_term_meta($term->term_id,'views',1);
+						update_term_meta($term->term_id,'views',$termviws+1);
+						$catTerms[] = $term->term_id;
+					}
 				}
 
 

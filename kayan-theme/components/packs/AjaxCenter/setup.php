@@ -20,14 +20,17 @@ class AjaxCenter {
 			# ═══ حماية LFI: الاسم يُقيَّد بالأحرف الآمنة ويُطابق قائمة ملفات المجلد الفعلية فقط ═══
 			$Action = sanitize_key( basename( (string) $Action ) );
 			$Allowed = array();
+			$AllowedMap = array();
 			foreach ( (array) glob( $AjaxCenterPath.'*.php' ) as $Allowed_file ) {
-				$Allowed[] = basename( $Allowed_file, '.php' );
+				$base = basename( $Allowed_file, '.php' );
+				$Allowed[] = $base;
+				$AllowedMap[ sanitize_key( $base ) ] = $base;
 			}
-			if ( '' === $Action || 'setup' === $Action || ! in_array( $Action, $Allowed, true ) ) {
+			if ( '' === $Action || 'setup' === $Action || ! isset( $AllowedMap[ $Action ] ) ) {
 				status_header( 404 );
 				die();
 			}
-	    	require( $AjaxCenterPath.$Action.'.php' );
+	    	require( $AjaxCenterPath.$AllowedMap[ $Action ].'.php' );
 	    	die();
 	    }
 	}

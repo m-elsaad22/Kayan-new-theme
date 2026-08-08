@@ -34,48 +34,130 @@ function remove_youtube_embed_scripts() {
 add_action( 'wp_enqueue_scripts', 'remove_youtube_embed_scripts', 999 );
 
 /**
- * تعطيل جميع السكريبتات والستايلات الزائدة مع الإبقاء على Rank Math SEO
- * KAYAN v1.4.2+ — Rank Math محمي من الحذف
+ * تعطيل السكربتات الزائدة مع حماية كاملة لـ Rank Math وتبعياته
+ * KAYAN v1.4.6+
  */
-function disable_all_scripts() {
-    global $wp_scripts, $wp_styles;
+function kayan_is_rank_math_active() {
+    return class_exists( 'RankMath' )
+        || class_exists( 'RankMath\\RankMath' )
+        || defined( 'RANK_MATH_VERSION' )
+        || function_exists( 'rank_math' );
+}
 
-    // Handles / prefixes that must survive the front-end purge.
-    // Rank Math SEO + KAYAN packs that enqueue via wp_enqueue_* (booking, UI, i18n, track, payment).
-    $protected_prefixes = array( 'rank-math', 'kayan-' );
-
-    $is_protected = static function ( $handle ) use ( $protected_prefixes ) {
-        foreach ( $protected_prefixes as $prefix ) {
-            if ( false !== strpos( (string) $handle, $prefix ) ) {
-                return true;
-            }
+function kayan_is_protected_asset_handle( $handle ) {
+    $handle = (string) $handle;
+    $protected_prefixes = array(
+        'rank-math',
+        'rank_math',
+        'seo-by-rank-math',
+        'kayan-',
+        'yourcolor-',
+        // تبعيات Rank Math / WP الأساسية التي يعتمد عليها الإضافة
+        'wp-i18n',
+        'wp-hooks',
+        'wp-element',
+        'wp-components',
+        'wp-api-fetch',
+        'wp-url',
+        'wp-data',
+        'wp-dom-ready',
+        'lodash',
+        'wp-polyfill',
+        'regenerator-runtime',
+    );
+    foreach ( $protected_prefixes as $prefix ) {
+        if ( 0 === strpos( $handle, $prefix ) ) {
+            return true;
         }
+    }
+    return false;
+}
+
+function kayan_is_protected_asset_src( $src ) {
+    if ( ! is_string( $src ) || '' === $src ) {
         return false;
-    };
-
-    foreach ( (array) $wp_scripts->queue as $handle ) {
-        if ( $is_protected( $handle ) ) {
-            continue;
+    }
+    $needles = array( 'rank-math', 'seo-by-rank-math', '/kayan-', 'fa-free-fixes' );
+    foreach ( $needles as $needle ) {
+        if ( false !== strpos( $src, $needle ) ) {
+            return true;
         }
-        wp_dequeue_script( $handle );
-        wp_deregister_script( $handle );
+    }
+    return false;
+}
+
+function disable_all_scripts() {
+    // في الأدمن لا نلمس أي شيء — Rank Math ولوحة التحكم يحتاجان كل الأصول
+    if ( is_admin() ) {
+        return;
     }
 
-    foreach ( (array) $wp_styles->queue as $handle ) {
-        if ( $is_protected( $handle ) ) {
-            continue;
+    global $wp_scripts, $wp_styles;
+
+    if ( isset( $wp_scripts->queue ) && is_array( $wp_scripts->queue ) ) {
+        foreach ( $wp_scripts->queue as $handle ) {
+            if ( kayan_is_protected_asset_handle( $handle ) ) {
+                continue;
+            }
+            $src = isset( $wp_scripts->registered[ $handle ]->src ) ? $wp_scripts->registered[ $handle ]->src : '';
+            if ( kayan_is_protected_asset_src( $src ) ) {
+                continue;
+            }
+            wp_dequeue_script( $handle );
         }
-        wp_dequeue_style( $handle );
+    }
+
+    if ( isset( $wp_styles->queue ) && is_array( $wp_styles->queue ) ) {
+        foreach ( $wp_styles->queue as $handle ) {
+            if ( kayan_is_protected_asset_handle( $handle ) ) {
+                continue;
+            }
+            $src = isset( $wp_styles->registered[ $handle ]->src ) ? $wp_styles->registered[ $handle ]->src : '';
+            if ( kayan_is_protected_asset_src( $src ) ) {
+                continue;
+            }
+            wp_dequeue_style( $handle );
+        }
     }
 }
 add_action('wp_enqueue_scripts', 'disable_all_scripts', 999999);
 
-add_action( 'wp_print_styles', 'wps_deregister_styles', 100 );
-function wps_deregister_styles() {
-    wp_dequeue_style( 'wp-block-library' );
+# Rank Math على الواجهة: الإخراج معطّل عبر kayan-seo/compatibility.php (تخزين فقط).
+# نحمي أصول Rank Math في الأدمن فقط — disable_all_scripts لا يعمل أصلاً في is_admin().
+# لا نُعيد فرض enqueue لأصول Rank Math على الفرونت (غير مطلوبة بعد تعطيل الواجهة).
+
+# لا تحذف ?ver= من أصول Rank Math (قد يسبب كاش قديم)
+function kayan_should_keep_asset_version( $src ) {
+    if ( ! is_string( $src ) || '' === $src ) {
+        return false;
+    }
+    $needles = array(
+        'rank-math',
+        'seo-by-rank-math',
+        '/kayan-',
+        'kayan-admin',
+        'Custom-Style',
+        'admin-mobile',
+        'admin-ui-fixes',
+        'fa-free-fixes',
+        'kayan-booking',
+        'kayan-cfm-',
+    );
+    foreach ( $needles as $needle ) {
+        if ( false !== strpos( $src, $needle ) ) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function remove_script_version($src) {
+    if ( ! is_string( $src ) ) {
+        return $src;
+    }
+    if ( kayan_should_keep_asset_version( $src ) ) {
+        return $src;
+    }
     if (strpos($src, 'ver=') !== false) {
         $src = remove_query_arg('ver', $src);
     }
@@ -84,12 +166,23 @@ function remove_script_version($src) {
 add_filter('script_loader_src', 'remove_script_version', 15, 1);
 
 function remove_css_version($src) {
+    if ( ! is_string( $src ) ) {
+        return $src;
+    }
+    if ( kayan_should_keep_asset_version( $src ) ) {
+        return $src;
+    }
     if (strpos($src, 'ver=') !== false) {
         $src = remove_query_arg('ver', $src);
     }
     return $src;
 }
 add_filter('style_loader_src', 'remove_css_version', 15, 1);
+
+add_action( 'wp_print_styles', 'wps_deregister_styles', 100 );
+function wps_deregister_styles() {
+    wp_dequeue_style( 'wp-block-library' );
+}
 
 function removeAppleTouchIcon() {
     remove_action('wp_head', 'wp_site_icon', 99);
