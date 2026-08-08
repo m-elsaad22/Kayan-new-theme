@@ -40,20 +40,30 @@ add_action( 'wp_enqueue_scripts', 'remove_youtube_embed_scripts', 999 );
 function disable_all_scripts() {
     global $wp_scripts, $wp_styles;
 
-    // الـ handles التي يجب حمايتها (Rank Math SEO)
-    $protected_prefix = 'rank-math';
+    // Handles / prefixes that must survive the front-end purge.
+    // Rank Math SEO + KAYAN packs that enqueue via wp_enqueue_* (booking, UI, i18n, track, payment).
+    $protected_prefixes = array( 'rank-math', 'kayan-' );
+
+    $is_protected = static function ( $handle ) use ( $protected_prefixes ) {
+        foreach ( $protected_prefixes as $prefix ) {
+            if ( false !== strpos( (string) $handle, $prefix ) ) {
+                return true;
+            }
+        }
+        return false;
+    };
 
     foreach ( (array) $wp_scripts->queue as $handle ) {
-        if ( strpos( $handle, $protected_prefix ) !== false ) {
-            continue; // احمِ Rank Math
+        if ( $is_protected( $handle ) ) {
+            continue;
         }
         wp_dequeue_script( $handle );
         wp_deregister_script( $handle );
     }
 
     foreach ( (array) $wp_styles->queue as $handle ) {
-        if ( strpos( $handle, $protected_prefix ) !== false ) {
-            continue; // احمِ Rank Math
+        if ( $is_protected( $handle ) ) {
+            continue;
         }
         wp_dequeue_style( $handle );
     }

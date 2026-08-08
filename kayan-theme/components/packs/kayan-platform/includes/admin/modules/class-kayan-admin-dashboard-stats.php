@@ -47,17 +47,20 @@ class Kayan_Admin_Dashboard_Stats {
 				'callback'    => array( $this, 'render_languages' ),
 			)
 		);
-		$dashboard->register_widget(
-			'rankmath',
-			array(
-				'title'       => __( 'Rank Math', 'kayan' ),
-				'module'      => 'rankmath',
-				'capability'  => 'kayan_manage_rankmath',
-				'position'    => 10,
-				'placeholder' => false,
-				'callback'    => array( $this, 'render_rankmath' ),
-			)
-		);
+		// Core slot id is `seo`; also refresh `rankmath` if present.
+		foreach ( array( 'seo', 'rankmath' ) as $seo_widget_id ) {
+			$dashboard->register_widget(
+				$seo_widget_id,
+				array(
+					'title'       => __( 'Rank Math', 'kayan' ),
+					'module'      => 'rankmath',
+					'capability'  => 'kayan_manage_rankmath',
+					'position'    => 10,
+					'placeholder' => false,
+					'callback'    => array( $this, 'render_rankmath' ),
+				)
+			);
+		}
 		$dashboard->register_widget(
 			'logs',
 			array(

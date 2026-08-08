@@ -23,8 +23,6 @@ if ( empty( $hide__description_show ) && ! class_exists( 'RankMath' ) && ! class
         echo '<meta name="description" content="' . esc_attr( $yc__desc ) . '">';
     }
 }
-		}
-
 
 		//
 // ═══ KAYAN v1.4.2+ — Title Management ═══

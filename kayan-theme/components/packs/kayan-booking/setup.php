@@ -181,7 +181,9 @@ if ( ! class_exists( 'Kayan_Booking' ) ) {
 		# ═══════════ الحقن التلقائي داخل محتوى المقال ═══════════
 
 		public function InjectWizard( $content ) {
-			if ( is_admin() || ! is_singular( array( 'post', 'services' ) ) || ! in_the_loop() || ! is_main_query() ) {
+			// ThemeStatic::Locate → Blade('@single') calls the_content() outside the main WP loop,
+			// so in_the_loop() is false on every singular view — keep is_singular / is_main_query only.
+			if ( is_admin() || ! is_singular( array( 'post', 'services' ) ) || ! is_main_query() ) {
 				return $content;
 			}
 

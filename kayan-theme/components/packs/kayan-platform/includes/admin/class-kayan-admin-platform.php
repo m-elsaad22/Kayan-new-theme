@@ -61,9 +61,13 @@ class Kayan_Admin_Platform {
 
 		$this->permissions->register();
 		$this->ui->register();
-		$this->dashboard->register();
+		// Feature modules must hook `kayan_admin_register_dashboard_widgets`
+		// BEFORE dashboard->register() fires that action — otherwise all
+		// Dashboard_Stats callbacks miss the event and every widget stays
+		// a Phase 3.0 placeholder forever.
 		$this->core_modules->register();
 		$this->feature_modules->register();
+		$this->dashboard->register();
 		$this->modules->register();
 
 		add_action( 'admin_menu', array( $this, 'register_menu' ), 9 );
