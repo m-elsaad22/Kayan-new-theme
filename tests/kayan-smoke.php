@@ -213,5 +213,49 @@ assert_true( false !== strpos( $cssfix, '.-Radio-Box-Item em' ) && false !== str
 $adminfix = file_get_contents( "$theme/components/packs/FieldsMachine/UI/css/admin-ui-fixes.css" );
 assert_true( false !== strpos( $adminfix, '.-Text-form-InnerTitle > descor:before' ), 'admin title descor override' );
 
+# ── Fragile "explode(get_template_directory())[1]" URL-building pattern ──
+# Broke silently (undefined array index -> empty/wrong asset URLs) on any
+# host where __FILE__'s path isn't a literal substring match of
+# get_template_directory() (symlinks, custom WP_CONTENT_DIR, Multisite
+# domain mapping). Must be gone everywhere, replaced with a
+# wp_normalize_path()-based diff + a hardcoded fallback.
+$explode_pattern_files = array();
+$rii2 = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $theme ) );
+foreach ( $rii2 as $file2 ) {
+	if ( ! $file2->isFile() || 'php' !== strtolower( $file2->getExtension() ) ) {
+		continue;
+	}
+	$src = file_get_contents( $file2->getPathname() );
+	if ( false !== strpos( $src, 'explode(get_template_directory()' ) || false !== strpos( $src, "explode( get_template_directory()" ) ) {
+		$explode_pattern_files[] = $file2->getPathname();
+	}
+}
+assert_true( 0 === count( $explode_pattern_files ), 'no more fragile explode(get_template_directory())[1] URL pattern anywhere (' . implode( ', ', $explode_pattern_files ) . ')' );
+
+foreach ( array(
+	'FieldsMachine/setup.php'      => 'components/packs/FieldsMachine',
+	'export-import/setup.php'      => 'components/packs/export-import',
+	'YourColorWidgets/setup.php'   => 'components/packs/YourColorWidgets',
+) as $rel => $fallback_suffix ) {
+	$src = file_get_contents( "$theme/components/packs/$rel" );
+	assert_true( false !== strpos( $src, 'wp_normalize_path' ), "$rel builds its URL via wp_normalize_path (robust against symlinks)" );
+	assert_true( false !== strpos( $src, $fallback_suffix ), "$rel has a hardcoded fallback URL if the path diff fails" );
+}
+
+# ── FieldsMachine admin CSS/JS: same inline-fallback pattern as
+# Kayan_Admin_Platform::enqueue_assets() — must survive the external file
+# request being blocked/interfered with by hosting/security/optimizers ──
+$fm2 = file_get_contents( "$theme/components/packs/FieldsMachine/Enqueues.php" );
+assert_true( false !== strpos( $fm2, 'wp_add_inline_style' ), 'FieldsMachine CSS has an inline fallback (wp_add_inline_style)' );
+assert_true( false !== strpos( $fm2, 'wp_add_inline_script' ), 'FieldsMachine JS (Custom-Setup.js) has an inline fallback (wp_add_inline_script)' );
+foreach ( array( 'codemirror.css', 'richtext.min.css', 'bootstrap-colorpicker.css', 'Custom-Style.css', 'admin-mobile.css', 'admin-ui-fixes.css', 'fa-free-fixes.css', 'flatpickr.min.css' ) as $needle ) {
+	assert_true( false !== strpos( $fm2, $needle ), "FieldsMachine still enqueues $needle" );
+}
+
+# ── CSRF fix: kayan_payment_verify_otp.php must nonce-check like its siblings ──
+$otp_file = file_get_contents( "$theme/components/packs/AjaxCenter/kayan_payment_verify_otp.php" );
+assert_true( false !== strpos( $otp_file, "wp_verify_nonce( sanitize_text_field( wp_unslash( \$_POST['kb_nonce'] ) ), 'kayan_booking_form' )" ), 'kayan_payment_verify_otp.php verifies kb_nonce like its sibling payment/booking endpoints' );
+assert_true( false !== strpos( $otp_file, '$kb_nonce_ok' ), 'kayan_payment_verify_otp.php uses the same $kb_nonce_ok convention as siblings' );
+
 echo "\n=== Result: $passed passed, $failed failed ===\n";
 exit( $failed > 0 ? 1 : 0 );

@@ -7,6 +7,54 @@ class YC__CFM_Enqueues {
 		$this->JS__URL = $this->YC__CFM->YC__CFM_URL.'UI/js/';
 		$this->Style__URL = $this->YC__CFM->YC__CFM_URL.'UI/css/';
 
+		// مسارات الملفات (وليس الروابط) — تُستخدم لقراءة المحتوى وحقنه inline
+		// كنسخة احتياطية إذا تعطّل تحميل الملف الخارجي (انظر enqueue_style_with_fallback).
+		$this->UI__Path    = $this->YC__CFM->YC__CFM_Path.'UI/';
+		$this->JS__Path    = $this->YC__CFM->YC__CFM_Path.'UI/js/';
+		$this->Style__Path = $this->YC__CFM->YC__CFM_Path.'UI/css/';
+	}
+
+	/**
+	 * يحمّل ملف CSS عبر wp_enqueue_style() العادي + يحقن نفس المحتوى inline
+	 * على نفس الـ handle كنسخة احتياطية (نفس أسلوب
+	 * Kayan_Admin_Platform::enqueue_assets()) — إذا تعطّل تحميل الملف
+	 * الخارجي (حجب من الاستضافة/الحماية/محسّن أصول)، التنسيق يبقى يعمل لأنه
+	 * جزء من استجابة الصفحة نفسها ولا يحتاج طلب شبكة منفصل.
+	 *
+	 * @param string $handle Style handle.
+	 * @param string $url    External URL.
+	 * @param string $path   Filesystem path (لقراءة المحتوى للنسخة inline).
+	 * @return void
+	 */
+	private function enqueue_style_with_fallback( $handle, $url, $path ) {
+		$ver = file_exists( $path ) ? (string) filemtime( $path ) : '2.4.1';
+		wp_enqueue_style( $handle, $url, array(), $ver );
+		if ( file_exists( $path ) ) {
+			$contents = file_get_contents( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			if ( is_string( $contents ) && '' !== $contents ) {
+				wp_add_inline_style( $handle, $contents );
+			}
+		}
+	}
+
+	/**
+	 * نفس فكرة enqueue_style_with_fallback() لكن لملفات JS.
+	 *
+	 * @param string $handle    Script handle.
+	 * @param string $url       External URL.
+	 * @param string $path      Filesystem path.
+	 * @param bool   $in_footer In footer?
+	 * @return void
+	 */
+	private function enqueue_script_with_fallback( $handle, $url, $path, $in_footer = true ) {
+		$ver = file_exists( $path ) ? (string) filemtime( $path ) : '2.4.1';
+		wp_enqueue_script( $handle, $url, array(), $ver, $in_footer );
+		if ( file_exists( $path ) ) {
+			$contents = file_get_contents( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			if ( is_string( $contents ) && '' !== $contents ) {
+				wp_add_inline_script( $handle, $contents );
+			}
+		}
 	}
 
 	/**
@@ -60,8 +108,8 @@ class YC__CFM_Enqueues {
 
 		wp_print_media_templates();
 
-		# CUSTOM JS
-			echo '<script src="'.$this->UI__URL.'Custom-Setup.js?'.rand().'" type="text/javascript"></script>';
+		# CUSTOM JS — نفس أسلوب النسخة الاحتياطية inline المستخدم للـ CSS أعلاه
+			$this->enqueue_script_with_fallback( 'kayan-cfm-custom-setup', $this->UI__URL.'Custom-Setup.js', $this->UI__Path.'Custom-Setup.js', true );
 
 	}
 
@@ -69,16 +117,21 @@ class YC__CFM_Enqueues {
 		if ( ! $this->should_load_admin_assets( $hook ) ) {
 			return;
 		}
-		echo '<link rel="stylesheet" type="text/css" media="all" href="'.$this->Style__URL.'codemirror.css" />';
-		echo '<link rel="stylesheet" type="text/css" media="all" href="'.$this->Style__URL.'richtext.min.css" />';
-		echo '<link rel="stylesheet" href="'.get_template_directory_uri().'/components/styles/FontAwesome/css/all.min.css">';
-		echo '<link href="'.$this->Style__URL.'bootstrap-colorpicker.css" rel="stylesheet">';
+		// FontAwesome الكامل (~100 كيلوبايت) يبقى بلا نسخة inline احتياطية عمداً —
+		// فقدانه يعني أيقونات مفقودة فقط، لا كسر تخطيط الصفحة، ولا يستحق مضاعفة
+		// وزن كل تحميل بهذا الحجم. باقي الملفات أدناه هي المسؤولة فعلياً عن شكل
+		// لوحة "إعدادات القالب" (بطاقات/مفاتيح تبديل/تباعد) فتحصل على نسخة inline.
+		echo '<link rel="stylesheet" href="'.esc_url( get_template_directory_uri().'/components/styles/FontAwesome/css/all.min.css' ).'">';
 
-		echo '<link rel="stylesheet" type="text/css" media="all" href="'.$this->UI__URL.'Custom-Style.css?'.rand().'" />';
-		echo '<link rel="stylesheet" type="text/css" media="all" href="'.$this->Style__URL.'admin-mobile.css?v=2.4.1" />';
-		echo '<link rel="stylesheet" type="text/css" media="all" href="'.$this->Style__URL.'admin-ui-fixes.css?v=2.4.1" />';
-		echo '<link rel="stylesheet" href="'.get_template_directory_uri().'/components/styles/fa-free-fixes.css?v=2.4.1">';
-		echo '<link href="'.$this->Style__URL.'flatpickr.min.css" rel="stylesheet">';
+		$this->enqueue_style_with_fallback( 'kayan-cfm-codemirror', $this->Style__URL.'codemirror.css', $this->Style__Path.'codemirror.css' );
+		$this->enqueue_style_with_fallback( 'kayan-cfm-richtext', $this->Style__URL.'richtext.min.css', $this->Style__Path.'richtext.min.css' );
+		$this->enqueue_style_with_fallback( 'kayan-cfm-colorpicker', $this->Style__URL.'bootstrap-colorpicker.css', $this->Style__Path.'bootstrap-colorpicker.css' );
+		$this->enqueue_style_with_fallback( 'kayan-cfm-custom', $this->UI__URL.'Custom-Style.css', $this->UI__Path.'Custom-Style.css' );
+		$this->enqueue_style_with_fallback( 'kayan-cfm-admin-mobile', $this->Style__URL.'admin-mobile.css', $this->Style__Path.'admin-mobile.css' );
+		$this->enqueue_style_with_fallback( 'kayan-cfm-admin-ui-fixes', $this->Style__URL.'admin-ui-fixes.css', $this->Style__Path.'admin-ui-fixes.css' );
+		$this->enqueue_style_with_fallback( 'kayan-cfm-fa-free-fixes', get_template_directory_uri().'/components/styles/fa-free-fixes.css', get_template_directory().'/components/styles/fa-free-fixes.css' );
+		$this->enqueue_style_with_fallback( 'kayan-cfm-flatpickr', $this->Style__URL.'flatpickr.min.css', $this->Style__Path.'flatpickr.min.css' );
+
 		# تأكيد تحميل jQuery UI Sortable من ووردبريس (لترتيب عناصر الرئيسية)
 		wp_enqueue_script( 'jquery-ui-sortable' );
 		wp_enqueue_script( 'jquery-ui-draggable' );

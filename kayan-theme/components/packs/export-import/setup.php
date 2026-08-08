@@ -6,9 +6,19 @@
 			# DIRECTORY PATH
 				$this->CurrentPath = trailingslashit( dirname( __FILE__ ) );
 
-			# DIRECTORY URL
-				$this->CurrentURL = explode(get_template_directory(), trailingslashit( dirname( __FILE__ ) ))[1];
-				$this->CurrentURL = get_template_directory_uri().$this->CurrentURL;
+			# DIRECTORY URL — لا نعتمد على تطابق نصي حرفي بين __FILE__ و
+			# get_template_directory() (ينهار مع symlinks / WP_CONTENT_DIR
+			# مخصص / Multisite domain mapping)، بل نطبّع المسارين ونطرح
+			# مسار الثيم، مع مسار افتراضي ثابت إن فشل الحساب.
+				$yc_ei_theme_dir = wp_normalize_path( get_template_directory() );
+				$yc_ei_file_dir  = wp_normalize_path( $this->CurrentPath );
+				$yc_ei_relative  = str_replace( $yc_ei_theme_dir, '', $yc_ei_file_dir );
+				if ( '' !== $yc_ei_relative && $yc_ei_relative !== $yc_ei_file_dir ) {
+					$this->CurrentURL = trailingslashit( get_template_directory_uri() ) . ltrim( $yc_ei_relative, '/' );
+				} else {
+					$this->CurrentURL = trailingslashit( get_template_directory_uri() ) . 'components/packs/export-import/';
+				}
+				unset( $yc_ei_theme_dir, $yc_ei_file_dir, $yc_ei_relative );
 
 			# STYLE URL	
 				$this->StyleURL = $this->CurrentURL.'/css/';

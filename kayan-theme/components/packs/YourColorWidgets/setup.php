@@ -9,9 +9,19 @@ class YC__WidgetsMachine {
 		# PLUGIN PATH.
 			$this->YC__WidgetsMachine_Path = trailingslashit( dirname( __FILE__ ) );
 
-		# PLUGIN URL.
-			$this->YC__WidgetsMachine_URL = explode(get_template_directory(), trailingslashit( dirname( __FILE__ ) ))[1];
-			$this->YC__WidgetsMachine_URL = get_template_directory_uri().$this->YC__WidgetsMachine_URL;
+		# PLUGIN URL — لا نعتمد على تطابق نصي حرفي بين __FILE__ و
+		# get_template_directory() (ينهار مع symlinks / WP_CONTENT_DIR مخصص /
+		# Multisite domain mapping)، بل نطبّع المسارين ونطرح مسار الثيم، مع
+		# مسار افتراضي ثابت إن فشل الحساب.
+			$yc_wm_theme_dir = wp_normalize_path( get_template_directory() );
+			$yc_wm_file_dir  = wp_normalize_path( $this->YC__WidgetsMachine_Path );
+			$yc_wm_relative  = str_replace( $yc_wm_theme_dir, '', $yc_wm_file_dir );
+			if ( '' !== $yc_wm_relative && $yc_wm_relative !== $yc_wm_file_dir ) {
+				$this->YC__WidgetsMachine_URL = trailingslashit( get_template_directory_uri() ) . ltrim( $yc_wm_relative, '/' );
+			} else {
+				$this->YC__WidgetsMachine_URL = trailingslashit( get_template_directory_uri() ) . 'components/packs/YourColorWidgets/';
+			}
+			unset( $yc_wm_theme_dir, $yc_wm_file_dir, $yc_wm_relative );
 
 		# FIELDS FOLDERS .	
 			$this->widgets_folders__List_path = $this->YC__WidgetsMachine_Path.'model-widgets/*/';
