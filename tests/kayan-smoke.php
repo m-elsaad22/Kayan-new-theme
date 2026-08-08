@@ -199,8 +199,12 @@ assert_true( file_exists( "$theme/components/packs/FieldsMachine/UI/css/admin-ui
 $fm = file_get_contents( "$theme/components/packs/FieldsMachine/Enqueues.php" );
 assert_true( false !== strpos( $fm, 'kayanInitSortables' ), 'admin sortable bootstrap present' );
 assert_true( false === strpos( $fm, '. -widget-open' ), 'sortable cancel selectors not broken' );
-assert_true( false !== strpos( $fm, 'should_load_admin_assets' ), 'FieldsMachine admin assets are page-scoped' );
-assert_true( false !== strpos( $fm, "stripos( \$page, 'yts-'" ) || false !== strpos( $fm, "stripos( $page, 'yts-'" ) || false !== strpos( $fm, "yts-" ), 'FieldsMachine scopes to yts pages' );
+// v2.4.1's "scope FieldsMachine assets to yts-* pages only" optimization broke
+// the Theme Options screen itself on a real install (some tab/page-arg
+// combination did not match the check) - reverted to unconditional loading,
+// same as the known-good v1.4.9 baseline. Assert it stays unconditional.
+assert_true( false !== strpos( $fm, 'should_load_admin_assets' ), 'FieldsMachine keeps the (now no-op) admin-assets gate for easy re-scoping later' );
+assert_true( false !== strpos( $fm, 'return true' ), 'FieldsMachine admin assets load unconditionally again (matches v1.4.9 known-good baseline)' );
 $js = file_get_contents( "$theme/components/packs/FieldsMachine/UI/Custom-Setup.js" );
 assert_true( false !== strpos( $js, 'kayanInitSortables' ), 'Custom-Setup calls kayanInitSortables' );
 $cssfix = file_get_contents( "$theme/components/packs/FieldsMachine/UI/Custom-Style.css" );

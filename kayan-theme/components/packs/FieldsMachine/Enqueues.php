@@ -10,39 +10,19 @@ class YC__CFM_Enqueues {
 	}
 
 	/**
-	 * أصول FieldsMachine فقط في صفحات إعدادات القالب (YTS / yts-*)
-	 * وشاشات تحرير المنشورات/التصنيفات — لا تُحمَّل على صفحات Rank Math وغيرها.
+	 * v2.4.1 كانت تُقيّد تحميل هذه الأصول بصفحات YTS/yts-* فقط (تحسين مأخوذ من
+	 * خط v1.4.10) — أُلغي هذا التقييد بعد ثبوت أنه يكسر لوحة "إعدادات القالب"
+	 * نفسها على مواقع حقيقية (بعض تبويبات/مسارات الصفحة لا تُطابق الفحص كما
+	 * هو متوقع). التحميل الآن غير مشروط دائماً — كما كان قبل v1.4.10 تماماً
+	 * (المرجع: KAYAN v1.4.9 الذي يعمل بلا أي مشكلة). فقدان تحسين بسيط في وزن
+	 * الصفحة أفضل بكثير من كسر لوحة تحكم القالب.
 	 */
 	private function should_load_admin_assets( $hook = '' ) {
-		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
-		if ( 'YTS' === $page || 'yts' === $page || 0 === stripos( $page, 'yts-' ) ) {
-			return true;
-		}
-		if ( is_string( $hook ) && '' !== $hook && false !== stripos( $hook, 'yts' ) ) {
-			return true;
-		}
-		if ( in_array( $hook, array( 'post.php', 'post-new.php', 'term.php', 'edit-tags.php' ), true ) ) {
-			return true;
-		}
-		# admin_footer لا يمرّر $hook — استخدم $pagenow / الشاشة الحالية
-		global $pagenow;
-		if ( in_array( (string) $pagenow, array( 'post.php', 'post-new.php', 'term.php', 'edit-tags.php' ), true ) ) {
-			return true;
-		}
-		if ( function_exists( 'get_current_screen' ) ) {
-			$screen = get_current_screen();
-			if ( $screen && ! empty( $screen->id ) && false !== stripos( (string) $screen->id, 'yts' ) ) {
-				return true;
-			}
-		}
-		return false;
+		unset( $hook );
+		return true;
 	}
 
 	public function YC__CFM_AdminFooter(){
-		if ( ! $this->should_load_admin_assets() ) {
-			return;
-		}
-
 		# echo '<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>';
 		echo '<script type="text/javascript" src="'.$this->JS__URL.'bootstrap.bundle.min.js"></script>';
 
