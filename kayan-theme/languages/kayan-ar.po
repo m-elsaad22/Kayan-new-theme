@@ -1,0 +1,1506 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: KAYAN Theme 2.4.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-08 00:00+0000\n"
+"PO-Revision-Date: 2026-08-08 00:00+0000\n"
+"Last-Translator: KAYAN Platform\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+"X-Domain: kayan\n"
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:135
+msgid "%d characters."
+msgstr "%d حرف."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:276
+msgid "%d dangling reference(s) found."
+msgstr "تم العثور على %d علاقة معلّقة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:160
+msgid "%d disabled"
+msgstr "%d معطّل"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:177
+msgid "%d external links — review for relevance."
+msgstr "%d روابط خارجية — راجع مدى ملاءمتها."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:179
+msgid "%d external links."
+msgstr "%d روابط خارجية."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-ui.php:504
+msgid "%d items"
+msgstr "%d عنصر"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:146
+msgid "%d legacy term(s) remaining."
+msgstr "تبقّى %d من المصطلحات القديمة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:182
+msgid "%d posts carry a PSEO blueprint."
+msgstr "%d منشورًا تحمل مخطط PSEO."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-core-modules.php:234
+msgid "%s module is registered in the Admin Platform. Feature UI arrives in a later phase."
+msgstr "وحدة %s مسجّلة في المنصة الإدارية. واجهة الميزة ستصل في مرحلة لاحقة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-ai.php:34 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:97
+msgid "AI"
+msgstr "الذكاء الاصطناعي"
+
+#: kayan-theme/components/packs/kayan-platform/includes/workflow/class-kayan-content-workflow.php:106
+msgid "AI Draft"
+msgstr "مسودة ذكاء اصطناعي"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:194
+msgid "AI Platform"
+msgstr "منصة الذكاء الاصطناعي"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:112
+msgid "AI Platform not available."
+msgstr "منصة الذكاء الاصطناعي غير متاحة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blocks.php:76
+msgid "AI content"
+msgstr "محتوى الذكاء الاصطناعي"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:225
+msgid "AI content generation arrives in Phase 5."
+msgstr "توليد المحتوى بالذكاء الاصطناعي يصل في المرحلة 5."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:225
+msgid "AI enabled"
+msgstr "الذكاء الاصطناعي مفعّل"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blocks.php:66
+msgid "AI-authored block content arrives in Phase 5. The Generator can already refresh derived fields (contact info, related entities) via Regenerate."
+msgstr "محتوى البلوكات المُؤلَّف بالذكاء الاصطناعي يصل في المرحلة 5. يمكن لمولّد المحتوى بالفعل تحديث الحقول المشتقة (بيانات التواصل، الكيانات المرتبطة) عبر إعادة التوليد."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-ai.php:156
+msgid "API key"
+msgstr "مفتاح API"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:234 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:169 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:140
+msgid "Actions"
+msgstr "إجراءات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:77 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:55
+msgid "Active"
+msgstr "نشط"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:169
+msgid "Active — SEO Bridge extending it"
+msgstr "نشط — جسر السيو يمتدّ منه"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:137
+msgid "Adapters connecting existing theme packs to the platform."
+msgstr "محوّلات تربط حزم الثيم الحالية بالمنصة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:260
+msgid "Add language"
+msgstr "إضافة لغة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-logs.php:81
+msgid "All channels"
+msgstr "كل القنوات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:192
+msgid "All gallery images have ALT text."
+msgstr "كل صور المعرض تحتوي نص ALT."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-logs.php:89
+msgid "All levels"
+msgstr "كل المستويات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:277
+msgid "All related references resolve."
+msgstr "كل المراجع المرتبطة تُحل بنجاح."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:292
+msgid "All source entities resolve."
+msgstr "كل الكيانات المصدر تُحل بنجاح."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:257
+msgid "All template blocks present."
+msgstr "كل بلوكات القالب موجودة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-relationships.php:31
+msgid "Allowed relationship matrix + related-entity browser."
+msgstr "مصفوفة العلاقات المسموحة + متصفّح الكيانات المرتبطة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-relationships.php:81
+msgid "Allowed to types"
+msgstr "الأنواع المسموح بها"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:130
+msgid "Almost no content present."
+msgstr "لا يوجد محتوى تقريبًا."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:161
+msgid "Another post shares the exact same title."
+msgstr "منشور آخر يشارك نفس العنوان تمامًا."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-ai.php:115
+msgid "Application code never talks to a provider directly — PSEO block regeneration and translation always go through this registry, so switching providers here never requires a code change."
+msgstr "الكود البرمجي لا يتواصل مباشرة مع أي مزوّد أبدًا — إعادة توليد بلوكات PSEO والترجمة تمر دائمًا عبر هذا السجل، لذا تبديل المزوّد هنا لا يتطلب أي تعديل في الكود."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-ui.php:459
+msgid "Apply"
+msgstr "تطبيق"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:217
+msgid "Approve"
+msgstr "اعتماد"
+
+#: kayan-theme/components/packs/kayan-platform/includes/workflow/class-kayan-content-workflow.php:108
+msgid "Approved"
+msgstr "معتمد"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:39
+msgid "Arabic (default) and English are built in. Register additional languages without editing code."
+msgstr "العربية (الافتراضية) والإنجليزية مدمجتان. سجّل لغات إضافية بلا تعديل الكود."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:189
+msgid "Arabic is the default and cannot be disabled. English is built in. Additional languages register through the existing kayan_platform_languages filter."
+msgstr "العربية هي اللغة الافتراضية ولا يمكن تعطيلها. الإنجليزية مدمجة. اللغات الإضافية تُسجَّل عبر فلتر kayan_platform_languages الحالي."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:221
+msgid "Archive"
+msgstr "أرشيف"
+
+#: kayan-theme/components/packs/kayan-platform/includes/workflow/class-kayan-content-workflow.php:113
+msgid "Archived"
+msgstr "مؤرشف"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-permissions.php:178
+msgid "Assign a KAYAN role to a user"
+msgstr "إسناد دور KAYAN لمستخدم"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-permissions.php:173
+msgid "Assign role"
+msgstr "إسناد الدور"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-templates.php:32
+msgid "Assignable page structures composed of blocks."
+msgstr "هياكل صفحات قابلة للإسناد مكوّنة من بلوكات."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-ai.php:138
+msgid "Auto (first available)"
+msgstr "تلقائي (أول متاح)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:165
+msgid "Back to countries"
+msgstr "العودة إلى الدول"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-import-export.php:36
+msgid "Backup or transfer platform-owned settings (not Theme Options)."
+msgstr "نسخ احتياطي أو نقل إعدادات المنصة (ليست إعدادات القالب)."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blocks.php:73
+msgid "Block"
+msgstr "بلوك"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-templates.php:77
+msgid "Block count"
+msgstr "عدد البلوكات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-templates.php:90
+msgid "Block order: %s"
+msgstr "ترتيب البلوك: %s"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blocks.php:29
+msgid "Blocks"
+msgstr "البلوكات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:246 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:255 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:257
+msgid "Blueprint completeness"
+msgstr "اكتمال المخطط"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:136
+msgid "Blueprint v"
+msgstr "إصدار المخطط "
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:38
+msgid "Blueprints"
+msgstr "المخططات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/integration/adapters/class-kayan-adapter-admin-bridges.php:90
+msgid "Bookings (existing)"
+msgstr "الحجوزات (موجودة)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:77
+msgid "Bridged"
+msgstr "مربوط"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:276 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:277
+msgid "Broken relationships"
+msgstr "علاقات معطوبة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-relationships.php:116
+msgid "Browse related"
+msgstr "تصفّح المرتبط"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:221
+msgid "Built-in"
+msgstr "مدمج"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:143
+msgid "Bulk Generate"
+msgstr "توليد جماعي"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-ui.php:454
+msgid "Bulk actions"
+msgstr "إجراءات جماعية"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-queue.php:35
+msgid "Bulk generation and regeneration jobs."
+msgstr "مهام التوليد الجماعي وإعادة التوليد."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:180
+msgid "Business address"
+msgstr "عنوان النشاط"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:179
+msgid "Business name"
+msgstr "اسم النشاط"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:106
+msgid "Cache Engine"
+msgstr "محرك التخزين المؤقت"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-settings.php:163
+msgid "Cache default TTL (seconds)"
+msgstr "مدة صلاحية التخزين المؤقت الافتراضية (بالثواني)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-queue.php:133
+msgid "Cancel"
+msgstr "إلغاء"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:291
+msgid "Cannot resolve: %s"
+msgstr "تعذّر الحل: %s"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-permissions.php:120 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-ai.php:105
+msgid "Capabilities"
+msgstr "الصلاحيات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-logs.php:79 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-logs.php:131
+msgid "Channel"
+msgstr "القناة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:265
+msgid "Check"
+msgstr "فحص"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:213
+msgid "Cities (slugs, empty = all)"
+msgstr "المدن (slugs، فارغ = الكل)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-logs.php:145
+msgid "Clear all logs"
+msgstr "مسح كل السجلات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-logs.php:142
+msgid "Clear all logs?"
+msgstr "مسح كل السجلات؟"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-platform.php:187
+msgid "Cleared."
+msgstr "تم المسح."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:229 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:138
+msgid "Code"
+msgstr "الكود"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:168
+msgid "Combinations"
+msgstr "التوليفات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-ai.php:94
+msgid "Configured"
+msgstr "مُهيّأ"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:133
+msgid "Content is thin."
+msgstr "المحتوى ضعيف/قصير."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:130 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:133 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:135
+msgid "Content length"
+msgstr "طول المحتوى"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-logs.php:134
+msgid "Context"
+msgstr "السياق"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:218
+msgid "Core tags resolve correctly."
+msgstr "الوسوم الأساسية تُحل بشكل صحيح."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-entities.php:75
+msgid "Count"
+msgstr "العدد"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:31 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:34
+msgid "Countries"
+msgstr "الدول"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:212
+msgid "Countries (comma-separated, empty = default)"
+msgstr "الدول (مفصولة بفواصل، فارغ = الافتراضي)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:128
+msgid "Countries / Languages registered (built-in + custom)."
+msgstr "الدول / اللغات المسجّلة (المدمجة + المخصصة)."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:131
+msgid "Countries come from the existing kayan-i18n registry. This screen edits the platform business profile only (phone, currency, SEO defaults) — it does not create or remove countries."
+msgstr "الدول تأتي من سجل kayan-i18n الحالي. هذه الشاشة تُحرّر ملف النشاط في المنصة فقط (الهاتف، العملة، إعدادات السيو الافتراضية) — لا تُنشئ أو تحذف دولًا."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:117
+msgid "Country"
+msgstr "الدولة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:89
+msgid "Country Router + Content Resolver own rewrites. kayan-i18n rewrites are skipped."
+msgstr "موجّه الدول + محلل المحتوى يمتلكان قواعد إعادة الكتابة. تُتخطى قواعد kayan-i18n."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:223 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:228 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:230
+msgid "Country consistency"
+msgstr "اتساق الدولة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:230
+msgid "Country meta matches entities."
+msgstr "ميتا الدولة تطابق الكيانات."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:234
+msgid "Create a rule"
+msgstr "إنشاء قاعدة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-queue.php:159
+msgid "Created/Updated/Skipped/Failed"
+msgstr "أُنشئ/حُدّث/تُخُطّي/فشل"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:142 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:181
+msgid "Currency"
+msgstr "العملة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:163
+msgid "Current WordPress core version."
+msgstr "إصدار ووردبريس الحالي."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:221
+msgid "Custom"
+msgstr "مخصص"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-core-modules.php:214
+msgid "Dashboard"
+msgstr "لوحة التحكم"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-core-modules.php:215
+msgid "Dashboard foundation is loading."
+msgstr "أساس لوحة التحكم قيد التحميل."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blocks.php:59
+msgid "Data source"
+msgstr "مصدر البيانات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-permissions.php:109
+msgid "Dedicated WP role"
+msgstr "دور ووردبريس مخصص"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:217 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-ai.php:96 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:119
+msgid "Default"
+msgstr "افتراضي"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:172
+msgid "Default country"
+msgstr "الدولة الافتراضية"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-ai.php:145
+msgid "Default provider"
+msgstr "المزوّد الافتراضي"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:149
+msgid "Default: %s"
+msgstr "الافتراضي: %s"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:149
+msgid "Delete"
+msgstr "حذف"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:265
+msgid "Details"
+msgstr "التفاصيل"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:231 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:253
+msgid "Direction"
+msgstr "الاتجاه"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:203
+msgid "Disable"
+msgstr "تعطيل"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:220 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:118 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-templates.php:67
+msgid "Disabled"
+msgstr "معطّل"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-import-export.php:169
+msgid "Download export (.json)"
+msgstr "تنزيل التصدير (.json)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:222 kayan-theme/components/packs/kayan-platform/includes/workflow/class-kayan-content-workflow.php:105
+msgid "Draft"
+msgstr "مسودة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:148 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:161 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:163
+msgid "Duplicate detection"
+msgstr "كشف التكرار"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:204 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:215 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:218
+msgid "Dynamic tag resolution"
+msgstr "حل الوسوم الديناميكية"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:137 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:162
+msgid "Edit"
+msgstr "تعديل"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:124
+msgid "Edit profile"
+msgstr "تعديل الملف"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:234
+msgid "Edit rule"
+msgstr "تعديل القاعدة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:178
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:203
+msgid "Enable"
+msgstr "تفعيل"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-settings.php:165
+msgid "Enable platform logging."
+msgstr "تفعيل تسجيل أحداث المنصة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:220 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:118 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-templates.php:67
+msgid "Enabled"
+msgstr "مفعّل"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-relationships.php:67
+msgid "Engine contract"
+msgstr "عقد المحرك"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-entities.php:30
+msgid "Entities"
+msgstr "الكيانات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-entities.php:114
+msgid "Entity inspector"
+msgstr "فاحص الكيانات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-entities.php:101
+msgid "Entity type"
+msgstr "نوع الكيان"
+
+#: kayan-theme/components/packs/kayan-platform/includes/pseo/class-kayan-pseo-scheduler.php:45
+msgid "Every 5 minutes (KAYAN PSEO Queue)"
+msgstr "كل 5 دقائق (طابور KAYAN PSEO)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/integration/adapters/class-kayan-adapter-admin-bridges.php:84
+msgid "Existing theme integration"
+msgstr "تكامل الثيم الحالي"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-import-export.php:49 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-import-export.php:172
+msgid "Export"
+msgstr "تصدير"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-import-export.php:159
+msgid "Export/import covers global platform settings, country profiles, and custom languages only. Theme Options (YTS), booking, payment, and tracking data are never touched."
+msgstr "التصدير/الاستيراد يغطي إعدادات المنصة العامة وملفات الدول واللغات المخصصة فقط. إعدادات القالب (YTS) وبيانات الحجز والدفع والتتبع لا تُمس إطلاقًا."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:177 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:179
+msgid "External links"
+msgstr "الروابط الخارجية"
+
+#: kayan-theme/components/packs/kayan-platform/includes/workflow/class-kayan-content-workflow.php:114
+msgid "Failed"
+msgstr "فشل"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:176
+msgid "Falls back to Theme Options phonenumber when empty."
+msgstr "يرجع إلى رقم هاتف إعدادات القالب عند الفراغ."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-entities.php:74
+msgid "Fields"
+msgstr "الحقول"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-ui.php:433
+msgid "Filter"
+msgstr "تصفية"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-relationships.php:113
+msgid "From ref"
+msgstr "من مرجع"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-relationships.php:80 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-relationships.php:112
+msgid "From type"
+msgstr "من نوع"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:118 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:184
+msgid "GTM ID"
+msgstr "معرّف GTM"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:139
+msgid "Generate all matching combinations now?"
+msgstr "توليد كل التوليفات المطابقة الآن؟"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:220
+msgid "Generate as"
+msgstr "توليد باسم"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:181
+msgid "Generated content"
+msgstr "المحتوى المُولَّد"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:35
+msgid "Generation rules, preview, bulk generation, and regeneration."
+msgstr "قواعد التوليد، المعاينة، التوليد الجماعي، وإعادة التوليد."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:141 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:143
+msgid "Heading structure"
+msgstr "بنية العناوين"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:141
+msgid "Hero headline (H1) is empty."
+msgstr "عنوان القسم الرئيسي (H1) فارغ."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:143
+msgid "Hero headline present."
+msgstr "عنوان القسم الرئيسي موجود."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:183
+msgid "Homepage SEO description"
+msgstr "وصف سيو الصفحة الرئيسية"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:182
+msgid "Homepage SEO title"
+msgstr "عنوان سيو الصفحة الرئيسية"
+
+#: kayan-theme/components/packs/kayan-platform/includes/workflow/class-kayan-content-workflow.php:107
+msgid "Human Review"
+msgstr "مراجعة بشرية"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:185 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:189 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:192
+msgid "Image ALT coverage"
+msgstr "تغطية نص ALT للصور"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-import-export.php:185
+msgid "Import"
+msgstr "استيراد"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-import-export.php:35
+msgid "Import / Export"
+msgstr "استيراد / تصدير"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-platform.php:186
+msgid "Import completed."
+msgstr "اكتمل الاستيراد."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-import-export.php:182
+msgid "Import file"
+msgstr "ملف الاستيراد"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-entities.php:31
+msgid "Inspect registered entity types and resolve a single entity."
+msgstr "افحص أنواع الكيانات المسجّلة وحل كيانًا واحدًا."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-ai.php:35
+msgid "Interchangeable AI providers for PSEO block regeneration and translation."
+msgstr "مزوّدو ذكاء اصطناعي قابلون للتبديل لإعادة توليد بلوكات PSEO والترجمة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:169 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:170
+msgid "Internal links"
+msgstr "الروابط الداخلية"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:169
+msgid "Internal links present."
+msgstr "الروابط الداخلية موجودة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-queue.php:155
+msgid "Job"
+msgstr "المهمة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-platform.php:95
+msgid "KAYAN"
+msgstr "KAYAN"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-dashboard.php:117
+msgid "KAYAN Admin Dashboard foundation is active. Widgets are registered as slots — no statistics in Phase 3.0."
+msgstr "أساس لوحة تحكم KAYAN نشط. الودجات مسجّلة كخانات — لا إحصاءات في المرحلة 3.0."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-platform.php:94 kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-platform.php:293
+msgid "KAYAN Platform"
+msgstr "منصة KAYAN"
+
+#: kayan-theme/components/packs/kayan-platform/includes/integration/adapters/class-kayan-adapter-admin-bridges.php:35
+msgid "KAYAN Track (existing)"
+msgstr "KAYAN Track (موجود)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-platform.php:295
+msgid "KAYAN modules"
+msgstr "وحدات KAYAN"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-permissions.php:33
+msgid "KAYAN roles, capabilities, and WordPress user assignment."
+msgstr "أدوار KAYAN وصلاحياتها وإسناد مستخدمي ووردبريس."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-entities.php:72
+msgid "Kind"
+msgstr "النوع"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-permissions.php:118 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:230 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-entities.php:71
+msgid "Label"
+msgstr "التسمية"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:248
+msgid "Label (Arabic)"
+msgstr "التسمية (عربي)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:247
+msgid "Label (English)"
+msgstr "التسمية (إنجليزي)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:246
+msgid "Language code"
+msgstr "رمز اللغة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:236 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:239 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:241
+msgid "Language consistency"
+msgstr "اتساق اللغة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:241
+msgid "Language is registered."
+msgstr "اللغة مسجّلة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-settings.php:157
+msgid "Language-first (/en/sa/…) — recommended"
+msgstr "اللغة أولاً (/en/sa/…) — موصى به"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:64
+msgid "Language-first canonical rewrite"
+msgstr "إعادة كتابة أساسية باللغة أولاً"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:38 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:42
+msgid "Languages"
+msgstr "اللغات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:215
+msgid "Languages (comma-separated)"
+msgstr "اللغات (مفصولة بفواصل)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-settings.php:158
+msgid "Legacy"
+msgstr "قديم"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:143
+msgid "Legacy city taxonomy"
+msgstr "تصنيف المدينة القديم"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:87
+msgid "Legacy i18n"
+msgstr "نظام اللغات القديم"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-logs.php:86 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-logs.php:132
+msgid "Level"
+msgstr "المستوى"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:67
+msgid "Locale SEO description override"
+msgstr "تجاوز وصف سيو حسب اللغة/الدولة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:66
+msgid "Locale SEO title override"
+msgstr "تجاوز عنوان سيو حسب اللغة/الدولة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:125
+msgid "Locale registry"
+msgstr "سجل اللغات/الدول"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:137
+msgid "Locked blocks"
+msgstr "بلوكات مقفلة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:116 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-settings.php:165
+msgid "Logger"
+msgstr "المُسجِّل"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-settings.php:164
+msgid "Logger ring-buffer size"
+msgstr "حجم المخزن الدائري للمُسجِّل"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-logs.php:31
+msgid "Logs"
+msgstr "السجلات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:35
+msgid "Manage per-country business profile: phone, WhatsApp, currency, SEO defaults."
+msgstr "إدارة ملف النشاط لكل دولة: الهاتف، واتساب، العملة، إعدادات السيو الافتراضية."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blocks.php:75
+msgid "Media"
+msgstr "الوسائط"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-logs.php:133
+msgid "Message"
+msgstr "الرسالة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:155
+msgid "Minimum supported: PHP 7.4."
+msgstr "الحد الأدنى المدعوم: PHP 7.4."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:68
+msgid "Missing CTA"
+msgstr "زر دعوة لاتخاذ إجراء مفقود"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:69
+msgid "Missing FAQ"
+msgstr "الأسئلة الشائعة مفقودة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:71
+msgid "Missing Pricing"
+msgstr "الأسعار مفقودة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:70
+msgid "Missing Reviews"
+msgstr "التقييمات مفقودة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:255
+msgid "Missing blocks: %s"
+msgstr "بلوكات مفقودة: %s"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:282 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:291 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:292
+msgid "Missing entities"
+msgstr "كيانات مفقودة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-ai.php:163
+msgid "Model (optional)"
+msgstr "النموذج (اختياري)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-platform.php:392
+msgid "Module not found."
+msgstr "الوحدة غير موجودة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-platform.php:411
+msgid "Module registered. Screen callback not set."
+msgstr "الوحدة مسجّلة. دالة عرض الشاشة غير مُحدَّدة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/workflow/class-kayan-content-workflow.php:112
+msgid "Needs Regeneration"
+msgstr "بحاجة لإعادة توليد"
+
+#: kayan-theme/components/packs/kayan-platform/includes/workflow/class-kayan-content-workflow.php:111
+msgid "Needs Update"
+msgstr "بحاجة لتحديث"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:318
+msgid "No SEO title or description supplied to Rank Math."
+msgstr "لا عنوان أو وصف سيو مُرسَل إلى Rank Math."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:111
+msgid "No cache driver available."
+msgstr "لا يوجد محرك تخزين مؤقت متاح."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:282
+msgid "No entities to check."
+msgstr "لا كيانات للفحص."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-entities.php:89
+msgid "No entity resolved for that type/ref."
+msgstr "لم يُحل أي كيان لهذا النوع/المرجع."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:185
+msgid "No gallery images to check."
+msgstr "لا صور معرض للفحص."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:143
+msgid "No generated pages yet. Use the Programmatic SEO module to create a rule and generate content."
+msgstr "لا صفحات مُولَّدة بعد. استخدم وحدة السيو البرمجي لإنشاء قاعدة وتوليد محتوى."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:170
+msgid "No internal links found."
+msgstr "لا روابط داخلية موجودة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-ui.php:79
+msgid "No items found."
+msgstr "لا عناصر موجودة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-queue.php:164
+msgid "No jobs yet. Bulk Generate from the Programmatic SEO module to enqueue one."
+msgstr "لا مهام بعد. استخدم التوليد الجماعي من وحدة السيو البرمجي لإضافة واحدة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:236
+msgid "No language meta set."
+msgstr "لا ميتا لغة مُحدَّدة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-logs.php:137 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:179
+msgid "No log entries yet."
+msgstr "لا مدخلات سجل بعد."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:196
+msgid "No provider configured"
+msgstr "لا مزوّد مُهيّأ"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-relationships.php:104
+msgid "No related entities found."
+msgstr "لا كيانات مرتبطة موجودة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:172
+msgid "No rules yet — create one below."
+msgstr "لا قواعد بعد — أنشئ واحدة أدناه."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:199
+msgid "No schema source data supplied (Rank Math still owns output schema)."
+msgstr "لا بيانات مصدر سكيما مُرسَلة (Rank Math لا يزال يملك سكيما الإخراج)."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:246
+msgid "No template assigned."
+msgstr "لا قالب مُسنَد."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:163
+msgid "No title duplicates found."
+msgstr "لا عناوين مكررة موجودة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:108
+msgid "None"
+msgstr "لا شيء"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:115 kayan-theme/components/packs/kayan-platform/includes/ai/class-kayan-ai-provider-null.php:24
+msgid "None configured"
+msgstr "لا شيء مُهيّأ"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:55
+msgid "Not active"
+msgstr "غير نشط"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:148 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:204
+msgid "Not checked."
+msgstr "لم يُفحص."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-ai.php:94
+msgid "Not configured"
+msgstr "غير مُهيّأ"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:77
+msgid "Not detected"
+msgstr "غير مكتشَف"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:170
+msgid "Not detected on this site"
+msgstr "غير مكتشَف على هذا الموقع"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:298
+msgid "Not required by this template."
+msgstr "غير مطلوب لهذا القالب."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-ai.php:160
+msgid "Not set"
+msgstr "غير مُحدَّد"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:65
+msgid "OG locale from platform language"
+msgstr "لغة OG من لغة المنصة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:189
+msgid "One or more gallery images are missing ALT text."
+msgstr "صورة واحدة أو أكثر في المعرض تفتقد نص ALT."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:59
+msgid "Open Rank Math"
+msgstr "فتح Rank Math"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:167
+msgid "Output status"
+msgstr "حالة الإخراج"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:152
+msgid "PHP version"
+msgstr "إصدار PHP"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:184
+msgid "PSEO queue"
+msgstr "طابور السيو البرمجي"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:166 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:211 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:135
+msgid "Pattern"
+msgstr "النمط"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:223
+msgid "Pattern is not country-specific."
+msgstr "النمط غير خاص بدولة معينة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:176
+msgid "Pending migrations will run automatically on the next request."
+msgstr "الترحيلات المعلّقة ستُنفَّذ تلقائيًا في الطلب التالي."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:95
+msgid "Permalinks"
+msgstr "الروابط الدائمة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-permissions.php:32
+msgid "Permissions"
+msgstr "الصلاحيات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blocks.php:58
+msgid "Phase 5"
+msgstr "المرحلة 5"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:141 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:176
+msgid "Phone"
+msgstr "الهاتف"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:97
+msgid "Plain"
+msgstr "بسيطة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:100
+msgid "Plain permalinks break language-first routing. Set a pretty permalink structure."
+msgstr "الروابط الدائمة البسيطة تكسر التوجيه بنظام اللغة أولاً. اضبط بنية روابط دائمة جميلة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:87
+msgid "Platform"
+msgstr "المنصة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-settings.php:174
+msgid "Platform settings"
+msgstr "إعدادات المنصة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-settings.php:71
+msgid "Platform-level behavior — not a replacement for Theme Options."
+msgstr "سلوك على مستوى المنصة — ليس بديلاً عن إعدادات القالب."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:228
+msgid "Post country meta does not match its entity country."
+msgstr "ميتا دولة المنشور لا تطابق دولة كيانه."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:134
+msgid "Post type"
+msgstr "نوع المنشور"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-templates.php:78
+msgid "Preferred for patterns"
+msgstr "مفضّل للأنماط"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:309
+msgid "Present."
+msgstr "موجود."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:97
+msgid "Pretty"
+msgstr "جميلة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:138
+msgid "Preview"
+msgstr "معاينة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-queue.php:94
+msgid "Process queue now"
+msgstr "معالجة الطابور الآن"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:34 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:75
+msgid "Programmatic SEO"
+msgstr "السيو البرمجي"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:124
+msgid "Programmatic SEO not available."
+msgstr "السيو البرمجي غير متاح."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-queue.php:158
+msgid "Progress"
+msgstr "التقدّم"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:119
+msgid "Protected"
+msgstr "محمي"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-ai.php:103
+msgid "Provider"
+msgstr "المزوّد"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-ai.php:173
+msgid "Provider configuration"
+msgstr "إعدادات المزوّد"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:197
+msgid "Providers are interchangeable — configure one in the AI module."
+msgstr "المزوّدون قابلون للتبديل — هيّئ واحدًا في وحدة الذكاء الاصطناعي."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:222 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:218
+msgid "Publish"
+msgstr "نشر"
+
+#: kayan-theme/components/packs/kayan-platform/includes/workflow/class-kayan-content-workflow.php:110
+msgid "Published"
+msgstr "منشور"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:84
+msgid "Purpose"
+msgstr "الغرض"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:139
+msgid "Quality"
+msgstr "الجودة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:163
+msgid "Quality report"
+msgstr "تقرير الجودة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:271
+msgid "Quality report — post #%d"
+msgstr "تقرير الجودة — منشور #%d"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-queue.php:34 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:86
+msgid "Queue"
+msgstr "الطابور"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:135
+msgid "Queue not available."
+msgstr "الطابور غير متاح."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:187
+msgid "Queued / failed jobs. The Scheduler processes the queue automatically."
+msgstr "المهام في الطابور / الفاشلة. المُجدوِل يعالج الطابور تلقائيًا."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-queue.php:160
+msgid "Queued at"
+msgstr "أُضيف للطابور في"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:75 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blocks.php:77 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:53
+msgid "Rank Math"
+msgstr "Rank Math"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:30
+msgid "Rank Math Integration"
+msgstr "تكامل Rank Math"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:83
+msgid "Rank Math filter"
+msgstr "فلتر Rank Math"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:57
+msgid "Rank Math is active. KAYAN extends it via filters — never competing head tags."
+msgstr "Rank Math نشط. تمتد KAYAN منه عبر الفلاتر — بلا أي وسوم رأس منافِسة أبدًا."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:58
+msgid "Rank Math is not detected on this site. Activate it to enable full SEO Bridge extensions."
+msgstr "لم يُكتشَف Rank Math على هذا الموقع. فعّله لتمكين امتدادات جسر السيو الكاملة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:80
+msgid "Rank Math is not detected. Theme schema pack runs unmodified until Rank Math is activated."
+msgstr "لم يُكتشَف Rank Math. حزمة سكيما القالب تعمل دون تعديل حتى تفعيل Rank Math."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:79
+msgid "Rank Math is the active SEO engine. Theme schema is silenced by the schema adapter."
+msgstr "Rank Math هو محرك السيو النشط. سكيما القالب مكتومة بواسطة محوّل السكيما."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:54
+msgid "Rank Math status"
+msgstr "حالة Rank Math"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-settings.php:160
+msgid "Read by kayan_platform_url_mode filter consumers."
+msgstr "تُقرَأ بواسطة مستخدمي فلتر kayan_platform_url_mode."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-ui.php:530
+msgid "Ready"
+msgstr "جاهز"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:64
+msgid "Recent Logs"
+msgstr "السجلات الأخيرة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-logs.php:32
+msgid "Recent platform log entries by channel and level."
+msgstr "أحدث مدخلات سجل المنصة حسب القناة والمستوى."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-entities.php:106
+msgid "Ref (ID / slug / country code)"
+msgstr "المرجع (معرّف / slug / رمز دولة)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:171 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:173
+msgid "Regenerate"
+msgstr "إعادة توليد"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:266
+msgid "Register a new language"
+msgstr "تسجيل لغة جديدة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-permissions.php:135
+msgid "Registered capabilities"
+msgstr "الصلاحيات المسجّلة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-core-modules.php:272
+msgid "Registration contract"
+msgstr "عقد التسجيل"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-relationships.php:122
+msgid "Related entity browser"
+msgstr "متصفّح الكيانات المرتبطة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-relationships.php:30
+msgid "Relationships"
+msgstr "العلاقات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:212
+msgid "Remove"
+msgstr "إزالة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-platform.php:185
+msgid "Removed."
+msgstr "تمت الإزالة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:310
+msgid "Required by template but empty."
+msgstr "مطلوب من القالب لكنه فارغ."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:222
+msgid "Reset to Draft"
+msgstr "إعادة إلى مسودة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-entities.php:108
+msgid "Resolve entity"
+msgstr "حل الكيان"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:223
+msgid "Restore"
+msgstr "استعادة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-queue.php:123
+msgid "Retry"
+msgstr "إعادة المحاولة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blocks.php:30
+msgid "Reusable, independently regeneratable page blocks."
+msgstr "بلوكات صفحات قابلة لإعادة الاستخدام وإعادة التوليد بشكل مستقل."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:119
+msgid "Ring buffer capacity: %d entries."
+msgstr "سعة المخزن الدائري: %d مدخلة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-permissions.php:117 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-permissions.php:171
+msgid "Role"
+msgstr "الدور"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:85
+msgid "Routing ownership"
+msgstr "ملكية التوجيه"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:31
+msgid "Routing, SEO, cache, and integration status checks."
+msgstr "فحوصات حالة التوجيه والسيو والتخزين المؤقت والتكامل."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:165
+msgid "Rule"
+msgstr "القاعدة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:210
+msgid "Rule label"
+msgstr "تسمية القاعدة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-queue.php:97
+msgid "Runs automatically every ~5 minutes via WP-Cron, plus a light admin fallback. No manual step is required."
+msgstr "يعمل تلقائيًا كل ~5 دقائق عبر WP-Cron، بالإضافة إلى احتياطي خفيف في لوحة التحكم. لا حاجة لأي خطوة يدوية."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:318 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:321 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:323
+msgid "SEO completeness"
+msgstr "اكتمال السيو"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:323
+msgid "SEO title and description supplied."
+msgstr "عنوان ووصف السيو مُرسَلان."
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:321
+msgid "SEO title or description missing."
+msgstr "عنوان أو وصف السيو مفقود."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-ui.php:137
+msgid "Save"
+msgstr "حفظ"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-ai.php:167
+msgid "Save AI settings"
+msgstr "حفظ إعدادات الذكاء الاصطناعي"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:187
+msgid "Save country profile"
+msgstr "حفظ ملف الدولة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:228
+msgid "Save rule"
+msgstr "حفظ القاعدة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-settings.php:168
+msgid "Save settings"
+msgstr "حفظ الإعدادات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-platform.php:183
+msgid "Saved successfully."
+msgstr "تم الحفظ بنجاح."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:222 kayan-theme/components/packs/kayan-platform/includes/workflow/class-kayan-content-workflow.php:109
+msgid "Scheduled"
+msgstr "مجدوَل"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-queue.php:97
+msgid "Scheduler"
+msgstr "المُجدوِل"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:171
+msgid "Schema migrations"
+msgstr "ترحيلات المخطط"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:198 kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:199
+msgid "Schema source completeness"
+msgstr "اكتمال مصدر السكيما"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:198
+msgid "Schema source data present."
+msgstr "بيانات مصدر السكيما موجودة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-ui.php:475
+msgid "Search…"
+msgstr "بحث…"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:215 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:216 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:219
+msgid "Send to Review"
+msgstr "إرسال للمراجعة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:214
+msgid "Services (slugs, empty = all)"
+msgstr "الخدمات (slugs، فارغ = الكل)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-settings.php:70
+msgid "Settings"
+msgstr "الإعدادات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-platform.php:184
+msgid "Something went wrong."
+msgstr "حدث خطأ ما."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:233 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-entities.php:73
+msgid "Source"
+msgstr "المصدر"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:232 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:85 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:265
+msgid "Status"
+msgstr "الحالة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:31
+msgid "Status of the SEO Bridge extending Rank Math (the only SEO engine)."
+msgstr "حالة جسر السيو الممتد من Rank Math (محرك السيو الوحيد)."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-relationships.php:70
+msgid "Storage meta key: %1$s. Bidirectional relations: %2$s."
+msgstr "مفتاح ميتا التخزين: %1$s. العلاقات ثنائية الاتجاه: %2$s."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:30
+msgid "System Health"
+msgstr "صحة النظام"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-templates.php:74
+msgid "Template"
+msgstr "القالب"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-templates.php:31
+msgid "Templates"
+msgstr "القوالب"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:134
+msgid "Theme Integration adapters"
+msgstr "محوّلات تكامل الثيم"
+
+#: kayan-theme/components/packs/kayan-platform/includes/integration/adapters/class-kayan-adapter-admin-bridges.php:40
+msgid "Theme Options (existing)"
+msgstr "إعدادات القالب (موجودة)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:96
+msgid "Theme schema pack"
+msgstr "حزمة سكيما القالب"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-settings.php:140
+msgid "These are platform-level settings. Contact details, currency, and theme appearance stay in Theme Options (YTS) — use the Countries module for per-country business profile."
+msgstr "هذه إعدادات على مستوى المنصة. تفاصيل التواصل والعملة ومظهر القالب تبقى في إعدادات القالب (YTS) — استخدم وحدة الدول لملف النشاط الخاص بكل دولة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/integration/adapters/class-kayan-adapter-admin-bridges.php:95
+msgid "This module bridges to an existing screen rather than duplicating it."
+msgstr "هذه الوحدة تربط إلى شاشة موجودة بدلاً من تكرارها."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-ui.php:531
+msgid "This module is registered. Implementation arrives in a later phase."
+msgstr "هذه الوحدة مسجّلة. التنفيذ سيصل في مرحلة لاحقة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:171
+msgid "This page is approved/published — regenerate its derived content anyway?"
+msgstr "هذه الصفحة معتمدة/منشورة — إعادة توليد محتواها المشتق رغم ذلك؟"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-logs.php:130
+msgid "Time (UTC)"
+msgstr "الوقت (UTC)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:133
+msgid "Title"
+msgstr "العنوان"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-relationships.php:114
+msgid "To type (optional)"
+msgstr "إلى نوع (اختياري)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/integration/adapters/class-kayan-adapter-admin-bridges.php:37
+msgid "Tracking remains in KAYAN Track. Admin Platform analytics module is a bridge only."
+msgstr "التتبع يبقى في KAYAN Track. وحدة التحليلات في المنصة الإدارية هي جسر فقط."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:202
+msgid "Translate"
+msgstr "ترجمة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-entities.php:70 kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-queue.php:156
+msgid "Type"
+msgstr "النوع"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:140
+msgid "URL path"
+msgstr "مسار الرابط"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-settings.php:154
+msgid "URL routing mode"
+msgstr "نمط توجيه الروابط"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:162
+msgid "Unknown"
+msgstr "غير معروف"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:239
+msgid "Unknown language code \"%s\"."
+msgstr "رمز لغة غير معروف \"%s\"."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:175
+msgid "Up to date. Migrations run automatically — no manual step required."
+msgstr "محدَّث. الترحيلات تعمل تلقائيًا — لا حاجة لأي خطوة يدوية."
+
+#: kayan-theme/components/packs/kayan-platform/includes/integration/adapters/class-kayan-adapter-admin-bridges.php:42
+msgid "Use existing Theme Options (YTS) for theme settings."
+msgstr "استخدم إعدادات القالب الحالية (YTS) لإعدادات الثيم."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:181
+msgid "Used by the Booking adapter when set."
+msgstr "يُستخدَم بواسطة محوّل الحجز عند ضبطه."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-permissions.php:170
+msgid "User"
+msgstr "المستخدم"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:110
+msgid "Using %s driver."
+msgstr "باستخدام محرك %s."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-templates.php:76
+msgid "Version"
+msgstr "الإصدار"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:39
+msgid "Versioned, block-based page contracts, workflow state, and quality score for generated content."
+msgstr "عقود صفحات مُصدَرة قائمة على البلوكات، وحالة سير العمل، ودرجة الجودة للمحتوى المُولَّد."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-pseo.php:182
+msgid "View in Blueprints"
+msgstr "عرض في المخططات"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-countries.php:177
+msgid "WhatsApp"
+msgstr "واتساب"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-dashboard.php:97
+msgid "Widget slot ready. Statistics will arrive in a later phase."
+msgstr "خانة الودجت جاهزة. الإحصاءات ستصل في مرحلة لاحقة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-permissions.php:119
+msgid "WordPress mapping"
+msgstr "ربط ووردبريس"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:160
+msgid "WordPress version"
+msgstr "إصدار ووردبريس"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blueprints.php:138
+msgid "Workflow"
+msgstr "سير العمل"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-blocks.php:57
+msgid "Yes"
+msgstr "نعم"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-platform.php:276
+msgid "You do not have permission to access the KAYAN Admin Platform."
+msgstr "لا تملك صلاحية الوصول إلى منصة KAYAN الإدارية."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-platform.php:287
+msgid "You do not have permission to access this module."
+msgstr "لا تملك صلاحية الوصول إلى هذه الوحدة."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:127
+msgid "generation rules"
+msgstr "قواعد التوليد"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-languages.php:257
+msgid "hreflang"
+msgstr "hreflang"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:69
+msgid "hreflang alternates (legacy filter name)"
+msgstr "بدائل hreflang (اسم الفلتر القديم)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-rankmath.php:68
+msgid "hreflang alternates (platform-built)"
+msgstr "بدائل hreflang (مبنية من المنصة)"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-system-health.php:90
+msgid "kayan-i18n owns routing (filtered off). Confirm this is intentional."
+msgstr "kayan-i18n يملك التوجيه (مُعطَّل بالفلتر). تأكد أن هذا مقصود."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:139
+msgid "queued"
+msgstr "في الطابور"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:148
+msgid "registered countries"
+msgstr "الدول المسجّلة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:159
+msgid "registered languages"
+msgstr "اللغات المسجّلة"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php:139
+msgid "running"
+msgstr "يعمل"
+
+#: kayan-theme/components/packs/kayan-platform/includes/quality/class-kayan-quality-engine.php:215
+msgid "{{%s}} resolved empty."
+msgstr "{{%s}} تم حلّه فارغًا."
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-permissions.php:155
+msgid "— Select role —"
+msgstr "— اختر الدور —"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-permissions.php:150
+msgid "— Select user —"
+msgstr "— اختر المستخدم —"
+
+#: kayan-theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-module-ai.php:160
+msgid "•••••••• (leave blank to keep current key)"
+msgstr "•••••••• (اترك فارغًا للإبقاء على المفتاح الحالي)"
+

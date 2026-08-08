@@ -1,0 +1,71 @@
+/**
+ * kayan-admin-font.css
+ *
+ * خط لوحة التحكم الموحّد لكل شاشات إدارة KAYAN (KAYAN Platform + KAYAN Track).
+ * الاسم المستعار "YourColor" (فعليًا Montserrat Arabic) — نفس الخط المستخدم
+ * أصلاً في شاشة "إعدادات القالب" (FieldsMachine/UI/Custom-Style.css)، مُستضاف
+ * محليًا بالكامل داخل الثيم بلا أي اعتماد على Google Fonts أو أي CDN خارجي.
+ *
+ * هذا الملف مخصص للوحات الإدارة فقط (wp-admin) — لا يُحمَّل على الواجهة
+ * الأمامية ولا يغيّر أي تعريف خط هناك.
+ */
+
+@font-face {
+	font-family: 'YourColor';
+	font-style: normal;
+	font-weight: 200;
+	font-display: swap;
+	src: url('../packs/FieldsMachine/UI/Font/YourColor/Montserrat-Arabic-ExtraLight.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'YourColor';
+	font-style: normal;
+	font-weight: 300;
+	font-display: swap;
+	src: url('../packs/FieldsMachine/UI/Font/YourColor/Montserrat-Arabic-Light.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'YourColor';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('../packs/FieldsMachine/UI/Font/YourColor/Montserrat-Arabic-Regular.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'YourColor';
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url('../packs/FieldsMachine/UI/Font/YourColor/Montserrat-Arabic-Medium.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'YourColor';
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url('../packs/FieldsMachine/UI/Font/YourColor/Montserrat-Arabic-Bold.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'YourColor';
+	font-style: normal;
+	font-weight: 800;
+	font-display: swap;
+	src: url('../packs/FieldsMachine/UI/Font/YourColor/Montserrat-Arabic-ExtraBold.ttf') format('truetype');
+}
+
+@font-face {
+	font-family: 'YourColor';
+	font-style: normal;
+	font-weight: 900;
+	font-display: swap;
+	src: url('../packs/FieldsMachine/UI/Font/YourColor/Montserrat-Arabic-Black.ttf') format('truetype');
+}
+
+:root {
+	--kayan-font: 'YourColor', Arial, sans-serif;
+}

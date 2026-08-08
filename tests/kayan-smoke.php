@@ -6,7 +6,7 @@
 error_reporting( E_ALL );
 ini_set( 'display_errors', '1' );
 
-$theme = dirname( __DIR__ ) . '/kayan-theme/kayan-theme';
+$theme = dirname( __DIR__ ) . '/kayan-theme';
 $failed = 0;
 $passed = 0;
 
@@ -155,7 +155,7 @@ assert_true( strlen( $admin_m ) > 1000, 'admin-mobile.css non-empty' );
 
 # 9) Version
 $style = file_get_contents( "$theme/style.css" );
-assert_true( false !== strpos( $style, 'Version: 1.4.11' ), 'style.css version 1.4.11' );
+assert_true( false !== strpos( $style, 'Version: 2.4.1' ), 'style.css version 2.4.1' );
 
 # Interactive price booking + floating CTA
 assert_true( file_exists( "$theme/components/packs/kayan-price-pay/setup.php" ), 'kayan-price-pay pack exists' );
@@ -170,37 +170,14 @@ assert_true( false === strpos( $footer, "ruknFab.classList.toggle('show',y>500)"
 $pay_js = file_get_contents( "$theme/components/packs/kayan-price-pay/assets/js/kayan-price-pay.js" );
 assert_true( false !== strpos( $pay_js, 'rukn-eltatawer-pay.tanceq.com' ), 'pay URL in JS' );
 
-# Rank Math = storage only via kayan-seo (unless kayan_seo_disable)
-assert_true( file_exists( "$theme/components/packs/kayan-seo/helpers.php" ), 'kayan-seo helpers exists' );
-assert_true( file_exists( "$theme/components/packs/kayan-seo/compatibility.php" ), 'kayan-seo compatibility exists' );
-assert_true( file_exists( "$theme/components/packs/kayan-seo/rank-math-bridge.php" ), 'kayan-seo bridge exists' );
+# Rank Math remains the sole SEO authority — v2.4.1 policy (kayan-seo removed)
+assert_true( ! is_dir( "$theme/components/packs/kayan-seo" ), 'kayan-seo pack removed (would override Rank Math frontend output)' );
 assert_true( ! file_exists( "$theme/components/packs/kayan-rankmath/setup.php" ), 'legacy kayan-rankmath force-enable removed' );
-$helpers = file_get_contents( "$theme/components/packs/kayan-seo/helpers.php" );
-assert_true( false !== strpos( $helpers, 'kayan_seo_disable' ), 'helpers reads kayan_seo_disable' );
-assert_true( false !== strpos( $helpers, 'kayan_seo_is_disabled' ), 'helpers exposes kayan_seo_is_disabled' );
-$compat = file_get_contents( "$theme/components/packs/kayan-seo/compatibility.php" );
-assert_true( false !== strpos( $compat, "rank_math/frontend/disable" ), 'RM frontend disable filter' );
-assert_true( false !== strpos( $compat, 'kayan_seo_is_disabled' ), 'compatibility respects kayan_seo_disable' );
-$bridge = file_get_contents( "$theme/components/packs/kayan-seo/rank-math-bridge.php" );
-assert_true( false !== strpos( $bridge, 'rank_math_title' ), 'bridge reads rank_math_title' );
-assert_true( false !== strpos( $bridge, 'rank_math_description' ), 'bridge reads rank_math_description' );
 $theme_seo_opts = file_get_contents( "$theme/components/packs/FieldsMachine/SetupFields/ThemeOptions/theme__seo.php" );
-assert_true( false !== strpos( $theme_seo_opts, "'kayan_seo_disable'" ), 'theme option kayan_seo_disable present' );
-
-# Unit: helpers behavior without WP option API stubs beyond get_option
-if ( ! function_exists( 'get_option' ) ) {
-	function get_option( $k, $d = false ) {
-		global $__kayan_test_opts;
-		return isset( $__kayan_test_opts[ $k ] ) ? $__kayan_test_opts[ $k ] : $d;
-	}
-}
-$GLOBALS['__kayan_test_opts'] = array();
-require_once "$theme/components/packs/kayan-seo/helpers.php";
-assert_true( kayan_seo_is_enabled() === true, 'KAYAN SEO enabled when option empty' );
-$GLOBALS['__kayan_test_opts']['kayan_seo_disable'] = '1';
-assert_true( kayan_seo_is_disabled() === true, 'KAYAN SEO disabled when option=1' );
-$GLOBALS['__kayan_test_opts']['kayan_seo_disable'] = '';
-assert_true( kayan_seo_is_enabled() === true, 'KAYAN SEO re-enabled when option cleared' );
+assert_true( false === strpos( $theme_seo_opts, "'kayan_seo_disable'" ), 'no kayan_seo_disable toggle field (kayan-seo removed)' );
+$theme_seo = file_get_contents( "$theme/components/packs/theme-seo/setup.php" );
+assert_true( false !== strpos( $theme_seo, "class_exists( 'RankMath' )" ), 'ThemeSeo defers to Rank Math when active' );
+assert_true( false !== strpos( $theme_seo, "current_theme_supports( 'title-tag' )" ), 'ThemeSeo never double-prints <title> when title-tag is supported' );
 
 # Rank Math / logo / sortable / wrap fixes
 $enq = file_get_contents( "$theme/components/packs/Enqueues/setup.php" );
@@ -210,17 +187,24 @@ assert_true( false === strpos( $enq, 'wp_deregister_script( $handle )' ), 'no de
 $header = file_get_contents( "$theme/components/packs/#header/part.php" );
 assert_true( false !== strpos( $header, 'has-logo-image' ), 'logo has-logo-image class' );
 assert_true( false !== strpos( $header, 'data-no-lazy' ), 'logo skips LiteSpeed lazy' );
-assert_true( false !== strpos( $header, 'fa-free-fixes.css?v=1.4.11' ), 'header asset version 1.4.11' );
+assert_true( false !== strpos( $header, 'fa-free-fixes.css?v=2.4.1' ), 'header asset version 2.4.1' );
 $schema = file_get_contents( "$theme/components/packs/schema/setup.php" );
-assert_true( false !== strpos( $schema, "add_action('wp_head', array( \$this,'insert__schema')" ), 'schema always registered for KAYAN SEO' );
-# Setup يجب ألا يخرج مبكراً بسبب وجود Rank Math (واجهة RM معطّلة)
-assert_true( false === strpos( $schema, 'kayan_is_rank_math_active' ), 'schema Setup ignores Rank Math plugin presence' );
+assert_true( false !== strpos( $schema, "add_action('wp_head', array( \$this,'insert__schema')" ), 'schema always registers the hook (actual gating happens via validate__schema option)' );
+# Kayan_Adapter_Schema (kayan-platform) forces validate__schema non-empty when Rank Math is
+# active, via the pre_option_validate__schema filter — schema/setup.php itself stays untouched
+# by design (single source of truth, no duplicated Rank Math detection logic).
+$schema_adapter = file_get_contents( "$theme/components/packs/kayan-platform/includes/integration/adapters/class-kayan-adapter-schema.php" );
+assert_true( false !== strpos( $schema_adapter, 'pre_option_validate__schema' ), 'Kayan_Adapter_Schema disables theme schema via validate__schema when Rank Math is active' );
 assert_true( file_exists( "$theme/components/packs/FieldsMachine/UI/css/admin-ui-fixes.css" ), 'admin-ui-fixes.css exists' );
 $fm = file_get_contents( "$theme/components/packs/FieldsMachine/Enqueues.php" );
 assert_true( false !== strpos( $fm, 'kayanInitSortables' ), 'admin sortable bootstrap present' );
 assert_true( false === strpos( $fm, '. -widget-open' ), 'sortable cancel selectors not broken' );
-assert_true( false !== strpos( $fm, 'should_load_admin_assets' ), 'FieldsMachine admin assets are page-scoped' );
-assert_true( false !== strpos( $fm, "stripos( \$page, 'yts-'" ) || false !== strpos( $fm, "stripos( $page, 'yts-'" ) || false !== strpos( $fm, "yts-" ), 'FieldsMachine scopes to yts pages' );
+// v2.4.1's "scope FieldsMachine assets to yts-* pages only" optimization broke
+// the Theme Options screen itself on a real install (some tab/page-arg
+// combination did not match the check) - reverted to unconditional loading,
+// same as the known-good v1.4.9 baseline. Assert it stays unconditional.
+assert_true( false !== strpos( $fm, 'should_load_admin_assets' ), 'FieldsMachine keeps the (now no-op) admin-assets gate for easy re-scoping later' );
+assert_true( false !== strpos( $fm, 'return true' ), 'FieldsMachine admin assets load unconditionally again (matches v1.4.9 known-good baseline)' );
 $js = file_get_contents( "$theme/components/packs/FieldsMachine/UI/Custom-Setup.js" );
 assert_true( false !== strpos( $js, 'kayanInitSortables' ), 'Custom-Setup calls kayanInitSortables' );
 $cssfix = file_get_contents( "$theme/components/packs/FieldsMachine/UI/Custom-Style.css" );
@@ -228,6 +212,122 @@ assert_true( false !== strpos( $cssfix, 'flex-direction: column' ), 'title field
 assert_true( false !== strpos( $cssfix, '.-Radio-Box-Item em' ) && false !== strpos( $cssfix, 'white-space: normal' ), 'radio labels wrap' );
 $adminfix = file_get_contents( "$theme/components/packs/FieldsMachine/UI/css/admin-ui-fixes.css" );
 assert_true( false !== strpos( $adminfix, '.-Text-form-InnerTitle > descor:before' ), 'admin title descor override' );
+
+# ── Fragile "explode(get_template_directory())[1]" URL-building pattern ──
+# Broke silently (undefined array index -> empty/wrong asset URLs) on any
+# host where __FILE__'s path isn't a literal substring match of
+# get_template_directory() (symlinks, custom WP_CONTENT_DIR, Multisite
+# domain mapping). Must be gone everywhere, replaced with a
+# wp_normalize_path()-based diff + a hardcoded fallback.
+$explode_pattern_files = array();
+$rii2 = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $theme ) );
+foreach ( $rii2 as $file2 ) {
+	if ( ! $file2->isFile() || 'php' !== strtolower( $file2->getExtension() ) ) {
+		continue;
+	}
+	$src = file_get_contents( $file2->getPathname() );
+	if ( false !== strpos( $src, 'explode(get_template_directory()' ) || false !== strpos( $src, "explode( get_template_directory()" ) ) {
+		$explode_pattern_files[] = $file2->getPathname();
+	}
+}
+assert_true( 0 === count( $explode_pattern_files ), 'no more fragile explode(get_template_directory())[1] URL pattern anywhere (' . implode( ', ', $explode_pattern_files ) . ')' );
+
+foreach ( array(
+	'FieldsMachine/setup.php'      => 'components/packs/FieldsMachine',
+	'export-import/setup.php'      => 'components/packs/export-import',
+	'YourColorWidgets/setup.php'   => 'components/packs/YourColorWidgets',
+) as $rel => $fallback_suffix ) {
+	$src = file_get_contents( "$theme/components/packs/$rel" );
+	assert_true( false !== strpos( $src, 'wp_normalize_path' ), "$rel builds its URL via wp_normalize_path (robust against symlinks)" );
+	assert_true( false !== strpos( $src, $fallback_suffix ), "$rel has a hardcoded fallback URL if the path diff fails" );
+}
+
+# ── FieldsMachine admin CSS/JS: same inline-fallback pattern as
+# Kayan_Admin_Platform::enqueue_assets() — must survive the external file
+# request being blocked/interfered with by hosting/security/optimizers ──
+$fm2 = file_get_contents( "$theme/components/packs/FieldsMachine/Enqueues.php" );
+assert_true( false !== strpos( $fm2, 'wp_add_inline_style' ), 'FieldsMachine CSS has an inline fallback (wp_add_inline_style)' );
+assert_true( false !== strpos( $fm2, 'wp_add_inline_script' ), 'FieldsMachine JS (Custom-Setup.js) has an inline fallback (wp_add_inline_script)' );
+foreach ( array( 'codemirror.css', 'richtext.min.css', 'bootstrap-colorpicker.css', 'Custom-Style.css', 'admin-mobile.css', 'admin-ui-fixes.css', 'fa-free-fixes.css', 'flatpickr.min.css' ) as $needle ) {
+	assert_true( false !== strpos( $fm2, $needle ), "FieldsMachine still enqueues $needle" );
+}
+
+# ── CSRF fix: kayan_payment_verify_otp.php must nonce-check like its siblings ──
+$otp_file = file_get_contents( "$theme/components/packs/AjaxCenter/kayan_payment_verify_otp.php" );
+assert_true( false !== strpos( $otp_file, "wp_verify_nonce( sanitize_text_field( wp_unslash( \$_POST['kb_nonce'] ) ), 'kayan_booking_form' )" ), 'kayan_payment_verify_otp.php verifies kb_nonce like its sibling payment/booking endpoints' );
+assert_true( false !== strpos( $otp_file, '$kb_nonce_ok' ), 'kayan_payment_verify_otp.php uses the same $kb_nonce_ok convention as siblings' );
+
+# ── Unified admin font (YourColor / Montserrat Arabic), 100% local ──
+assert_true( file_exists( "$theme/components/styles/kayan-admin-font.css" ), 'shared kayan-admin-font.css exists' );
+$font_css = file_get_contents( "$theme/components/styles/kayan-admin-font.css" );
+assert_true( substr_count( $font_css, '@font-face' ) === 7, 'kayan-admin-font.css declares all 7 YourColor weights' );
+assert_true( false !== strpos( $font_css, "--kayan-font: 'YourColor'" ), 'kayan-admin-font.css defines the --kayan-font custom property' );
+foreach ( array( 'ExtraLight', 'Light', 'Regular', 'Medium', 'Bold', 'ExtraBold', 'Black' ) as $weight ) {
+	$ttf = "$theme/components/packs/FieldsMachine/UI/Font/YourColor/Montserrat-Arabic-$weight.ttf";
+	assert_true( file_exists( $ttf ), "font file exists: Montserrat-Arabic-$weight.ttf" );
+	assert_true( false !== strpos( $font_css, "Montserrat-Arabic-$weight.ttf" ), "kayan-admin-font.css references Montserrat-Arabic-$weight.ttf" );
+}
+assert_true( false === strpos( $font_css, 'fonts.googleapis.com' ), 'kayan-admin-font.css has no Google Fonts dependency' );
+
+$admin_css = file_get_contents( "$theme/components/packs/kayan-platform/assets/admin/kayan-admin.css" );
+assert_true( false !== strpos( $admin_css, 'font-family: var(--kayan-font)' ), 'KAYAN Platform shell uses the shared --kayan-font' );
+$admin_platform_php = file_get_contents( "$theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-platform.php" );
+assert_true( false !== strpos( $admin_platform_php, 'kayan-admin-font.css' ), 'Kayan_Admin_Platform enqueues kayan-admin-font.css' );
+assert_true( false !== strpos( $admin_platform_php, "array( 'kayan-admin-font' )" ), 'kayan-admin.css declares kayan-admin-font as a dependency' );
+
+# ── RTL for KAYAN Platform screens ──
+assert_true( false !== strpos( $admin_css, 'direction: rtl' ), 'kayan-admin.css sets direction: rtl on .kayan-admin-shell' );
+assert_true( false === strpos( $admin_css, 'margin-left: auto' ), 'kayan-admin.css drawer no longer uses a physical margin-left (logical margin-inline-start instead)' );
+assert_true( false !== strpos( $admin_css, 'margin-inline-start: auto' ), 'kayan-admin.css drawer uses the RTL-safe logical property' );
+
+# ── KAYAN Track: zero external CDN dependencies, same local font ──
+$dashboard_app = file_get_contents( "$theme/components/packs/kayan-track/admin/views/dashboard-app.php" );
+foreach ( array( 'fonts.googleapis.com', 'cdnjs.cloudflare.com', 'cdn.jsdelivr.net' ) as $cdn ) {
+	assert_true( false === strpos( $dashboard_app, $cdn ), "KAYAN Track dashboard-app.php has no $cdn reference left" );
+}
+assert_true( false !== strpos( $dashboard_app, 'kayan-admin-font.css' ), 'KAYAN Track loads the shared local admin font' );
+assert_true( false !== strpos( $dashboard_app, "FontAwesome/css/all.min.css" ), 'KAYAN Track loads the local FontAwesome bundle' );
+assert_true( false !== strpos( $dashboard_app, "wp_enqueue_script( 'kayan-track-chartjs'" ), 'KAYAN Track enqueues chart.js via wp_enqueue_script (not a raw <script src>)' );
+assert_true( false !== strpos( $dashboard_app, "wp_print_scripts( 'kayan-track-chartjs' )" ), 'KAYAN Track prints the enqueued chart.js handle' );
+assert_true( file_exists( "$theme/components/packs/kayan-track/admin/js/chart.umd.min.js" ), 'local chart.umd.min.js exists' );
+assert_true( filesize( "$theme/components/packs/kayan-track/admin/js/chart.umd.min.js" ) > 100000, 'local chart.umd.min.js is a real, non-truncated build (> 100KB)' );
+$track_css = file_get_contents( "$theme/components/packs/kayan-track/admin/css/track-admin.css" );
+assert_true( false === strpos( $track_css, 'Tajawal' ), 'track-admin.css no longer references Tajawal' );
+assert_true( false !== strpos( $track_css, 'var(--kayan-font' ), 'track-admin.css uses the shared --kayan-font variable' );
+
+# ── Arabic translation (languages/kayan-ar.po + .mo, load_theme_textdomain) ──
+assert_true( file_exists( "$theme/languages/kayan-ar.mo" ), 'languages/kayan-ar.mo exists' );
+assert_true( file_exists( "$theme/languages/kayan-ar.po" ), 'languages/kayan-ar.po source exists' );
+$mo_data = file_get_contents( "$theme/languages/kayan-ar.mo" );
+$magic = unpack( 'Vmagic', substr( $mo_data, 0, 4 ) )['magic'];
+assert_true( dechex( $magic ) === '950412de', 'kayan-ar.mo has a valid GNU MO magic number' );
+$functions_php = file_get_contents( "$theme/functions.php" );
+assert_true( false !== strpos( $functions_php, "load_theme_textdomain( 'kayan', get_template_directory() . '/languages' )" ), 'functions.php calls load_theme_textdomain for the kayan domain' );
+assert_true( false !== strpos( $functions_php, "add_action( 'after_setup_theme'" ), 'load_theme_textdomain is hooked on after_setup_theme' );
+// Parse the compiled .mo with an independent, minimal reader (not relying on
+// system gettext/locale availability) and spot-check a handful of entries.
+function read_mo_entries( $path ) {
+	$data   = file_get_contents( $path );
+	$header = unpack( 'Vmagic/Vrevision/Vcount/VoffsetOriginals/VoffsetTranslations', substr( $data, 0, 20 ) );
+	$entries = array();
+	for ( $i = 0; $i < $header['count']; $i++ ) {
+		$o = unpack( 'Vlen/Voffset', substr( $data, $header['offsetOriginals'] + $i * 8, 8 ) );
+		$t = unpack( 'Vlen/Voffset', substr( $data, $header['offsetTranslations'] + $i * 8, 8 ) );
+		$entries[ substr( $data, $o['offset'], $o['len'] ) ] = substr( $data, $t['offset'], $t['len'] );
+	}
+	return $entries;
+}
+$mo_entries = read_mo_entries( "$theme/languages/kayan-ar.mo" );
+assert_true( count( $mo_entries ) >= 373, 'kayan-ar.mo contains at least 373 translated strings (' . count( $mo_entries ) . ' found)' );
+foreach ( array(
+	'Dashboard'    => 'لوحة التحكم',
+	'Settings'     => 'الإعدادات',
+	'Countries'    => 'الدول',
+	'Ready'        => 'جاهز',
+	'Save'         => 'حفظ',
+) as $en => $ar ) {
+	assert_true( isset( $mo_entries[ $en ] ) && $mo_entries[ $en ] === $ar, "kayan-ar.mo translates \"$en\" to \"$ar\"" );
+}
 
 echo "\n=== Result: $passed passed, $failed failed ===\n";
 exit( $failed > 0 ? 1 : 0 );

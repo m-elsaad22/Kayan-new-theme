@@ -103,11 +103,18 @@ $currency__shows = ( ( is_array( $currency__shows ) ) ) ? $currency__shows : arr
 	$Activable = false;
 	if( isset( $item__data['ActivePlan'] ) && $item__data['ActivePlan'] == 'on' || !isset( $item__data ) && !empty( get_post_meta($post->ID,'feature',true) ) ) $Activable = true;
 
-	# PRICE ITEM
-	echo '<div class="-PriceBox-v1-box '.( ( $Activable == true ) ? ' -ActivePlane'  : '' ).'">';
+	# PRICE ITEM — تفاعلي للاختيار + الدفع (v1.4.7)
+	$plan_title = ( isset( $item__data['Title'] ) && !empty( $item__data['Title'] ) ) ? $item__data['Title'] : $post->post_title;
+	$plan_amount = '';
+	if ( isset( $PriceArguments['discount_val'] ) ) {
+		$plan_amount = $PriceArguments['discount_val'];
+	} elseif ( isset( $PriceArguments['value'] ) ) {
+		$plan_amount = $PriceArguments['value'];
+	}
+	echo '<div class="-PriceBox-v1-box kpp-selectable'.( ( $Activable == true ) ? ' -ActivePlane is-active'  : '' ).'" role="button" tabindex="0" data-package="'.esc_attr( $plan_title ).'" data-amount="'.esc_attr( $plan_amount ).'" data-amount-raw="'.esc_attr( $plan_amount ).'" data-currency="'.esc_attr( $currency__found['item__id'] ).'">';
 
 		#Icon And title And content
-		echo '<h3>'.( ( isset( $item__data['Title'] ) && !empty( $item__data['Title'] ) ) ? $item__data['Title']  : $post->post_title ).'</h3>';
+		echo '<h3>'.esc_html( $plan_title ).'</h3>';
 
 		echo '<div class="-P-Plane--Content">'.$Content.'</div>';
 		if( isset( $icon_text ) && !empty( $icon_text ) ){

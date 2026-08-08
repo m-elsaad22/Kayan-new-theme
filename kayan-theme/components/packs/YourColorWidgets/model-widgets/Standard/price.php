@@ -97,9 +97,13 @@ class price extends YC__WidgetsMachine{
 		}
 
 		# ════════════════════════════════════════════════════════
-		# OUTPUT — نفس بنية التصميم الجديد
+		# OUTPUT — كروت تفاعلية + نموذج حجز/دفع (v1.4.7)
 		# ════════════════════════════════════════════════════════
+		$service_title = is_singular() ? get_the_title() : get_bloginfo( 'name' );
+		$uid = 'kpp_widget_' . uniqid();
+
 		echo '<div class="wrap">';
+		echo '<div class="kayan-price-booking kayan-price-booking--widget" id="kayan-price-booking" data-service="'.esc_attr( $service_title ).'">';
 
 			# رأس القسم
 			echo '<div class="shead rv">';
@@ -108,25 +112,43 @@ class price extends YC__WidgetsMachine{
 				if( !empty( $content ) ) echo '<p>'.$content.'</p>';
 			echo '</div>';
 
-			# شبكة كروت الأسعار
-			echo '<div class="price-grid">';
+			# شبكة كروت الأسعار — قابلة للاختيار
+			echo '<div class="price-grid kpp-packages" role="listbox" aria-label="باقات الأسعار">';
+				$ci = 0;
 				foreach ( $cards as $card ) {
-					echo '<div class="pcard rv">';
+					$amount = '';
+					if ( class_exists( 'Kayan_Price_Pay' ) ) {
+						$amount = Kayan_Price_Pay::extract_amount( $card['range'] );
+					} elseif ( preg_match( '/(\d+(?:[.,]\d+)?)/u', (string) $card['range'], $m ) ) {
+						$amount = str_replace( ',', '', $m[1] );
+					}
+					$active = ( 0 === $ci ) ? ' is-active' : '';
+					echo '<div class="pcard rv kpp-selectable kpp-package'.$active.'" role="option" tabindex="0" aria-pressed="'.( 0 === $ci ? 'true' : 'false' ).'" data-package="'.esc_attr( $card['title'] ).'" data-amount="'.esc_attr( $amount ).'" data-amount-raw="'.esc_attr( $card['range'] ).'" data-currency="'.esc_attr( $card['unit'] ).'">';
 						echo '<div class="pic">'.$card['icon'].'</div>';
-						echo '<h3>'.$card['title'].'</h3>';
-						if( !empty( $card['desc'] ) ) echo '<p>'.$card['desc'].'</p>';
+						echo '<h3 class="kpp-package-name">'.$card['title'].'</h3>';
+						if( !empty( $card['desc'] ) ) echo '<p class="kpp-package-desc">'.$card['desc'].'</p>';
 						if( !empty( $card['range'] ) ){
-							echo '<div class="range">';
+							echo '<div class="range kpp-package-price">';
 								echo '<b>'.$card['range'].'</b>';
 								if( !empty( $card['unit'] ) ) echo '<small>'.$card['unit'].'</small>';
 							echo '</div>';
 						}
-						echo '<a class="read" href="'.$card['url'].'" title="'.esc_attr( $card['title'] ).'">'.$read_text.' <i class="fas fa-arrow-left"></i></a>';
+						echo '<span class="read">اختر الباقة <i class="fas fa-check"></i></span>';
 					echo '</div>';
+					$ci++;
 				}
 			echo '</div>';
 
-		echo '</div>';
+			# نموذج الحجز المدمج + ادفع الآن
+			if ( class_exists( 'Kayan_Price_Pay' ) ) {
+				Kayan_Price_Pay::render_form( array(
+					'service' => $service_title,
+					'uid'     => $uid,
+				) );
+			}
+
+		echo '</div>'; # .kayan-price-booking--widget
+		echo '</div>'; # .wrap
 
 	}
 

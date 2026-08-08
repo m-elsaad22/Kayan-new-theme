@@ -3,22 +3,47 @@ Contributors: melsaad
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 2.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Tags: rtl-language-support, custom-menu, featured-images, translation-ready
 
-قالب ووردبريس عربي احترافي لشركات الخدمات المنزلية في الخليج — تصميم RUKN v3 مع بنية KAYAN التحتية.
+قالب ووردبريس عربي احترافي لشركات الخدمات المنزلية في الخليج — تصميم RUKN v3 الكامل مع منصة KAYAN Platform المتكاملة (Admin Platform، Programmatic SEO، AI، Workflow، Quality، Migration Engine) وحجز/دفع تفاعلي.
 
 == Description ==
 * تصميم RUKN v3 الكامل: 20 ودجت + نظام RuknContact الهرمي للتحكم بأزرار الاتصال/الواتساب (مقال ← تصنيف ← عام) + جدول محتويات جانبي RuknUX.
-* نظام Home2026: بيلدر رئيسية اختياري من 25 قسم جاهز.
 * أنواع محتوى: خدمات، تقييمات عملاء، فريق العمل، مدن، أسئلة شائعة، أعمال، أسعار.
+* حجز تفاعلي: اختيار باقة/سعر + نموذج حجز مدمج + تحويل لبوابة الدفع (kayan-price-pay)، وزر «احجز الآن» يظهر تلقائياً في صفحات الحجز فقط.
 * بنية تحتية: KAYAN Track (تتبع الزوار والتحويلات + DNI)، أداء Core Web Vitals، مبدّل دول خليجي (i18n)، استقرار الإنتاج، تصدير/استيراد الإعدادات.
-* SEO: متوافق كلياً مع Rank Math (القالب لا يُخرج أي meta مكررة).
-* Font Awesome 6 Free مستضاف محلياً داخل القالب — بلا اعتماد على CDN خارجي وبلا أي أيقونات مدفوعة.
+* منصة KAYAN الإدارية الكاملة (kayan-platform): Country/Language Engines، محرك التوجيه اللغوي، محرك المحتوى الديناميكي والعلاقات، Programmatic SEO (قوالب/بلوكات/مخططات/توليد/طابور/جدولة)، منصة AI بمزوّدين قابلين للتبديل، دورة حياة المحتوى (Workflow)، محرك الجودة، رسم بياني للاعتماديات، محرك ترحيل/إصدارات تلقائي، ولوحة تحكم إدارية موحّدة.
+* SEO: Rank Math هو المرجع الوحيد (عنوان/وصف/Canonical/OG/Twitter/سكيما/خرائط الموقع) — القالب لا يُخرج أو يُكرر أي مخرجات منافسة.
+* Font Awesome 6 Free مستضاف محلياً داخل القالب — بلا اعتماد على CDN خارجي وبلا أي أيقونات مدفوعة، مع منتقي أيقونات بحث ومعاينة في لوحة التحكم.
 
 == Changelog ==
+
+= 2.4.1 =
+* **توحيد نهائي**: دمج كل إصلاحات خط الإنتاج (v1.4.3–v1.4.11 أدناه) داخل نفس شجرة الثيم التي تحوي منصة kayan-platform — لم يعد هناك نسختان منفصلتان من الثيم في المستودع.
+* إصلاح عطل فادح (Fatal PHP parse error) في الهيدر (`#header/part.php`) وفي قائمة Mega Menu (`Taxonomy-posts.php`) كانا يمنعان تحميل أي صفحة بالكامل.
+* إصلاح شعار الهيدر/الفوتر: دعم كل صيغ تخزين الشعار + منع كسره بواسطة LazyLoad + أيقونة احتياطية عند فشل التحميل.
+* منتقي أيقونات Font Awesome 6 Free (بحث ومعاينة) بدل قائمة SVG شبه الفارغة، مطبّق في الحجز والخدمات والعروض.
+* حجز تفاعلي لاختيار الباقة/السعر (`kayan-price-pay`) + زر «احجز الآن» العائم يظهر فقط في صفحات فيها فعلاً قسم حجز/أسعار؛ أزرار الاتصال/واتساب تظهر فوراً بلا انتظار تمرير الصفحة.
+* إصلاح حقن معالج الحجز داخل صفحات الخدمة (كان لا يعمل إطلاقاً بسبب شرط غير متوافق مع محرك القوالب).
+* حماية أصول Rank Math وتبعياته من أي تعطيل عرضي، مع تفعيل Rank Math الكامل كمرجع SEO وحيد (حزمة `kayan-seo` القديمة التي كانت تعطّل واجهته حُذفت لتعارضها مع هذه السياسة).
+* أصول لوحة التحكم (FieldsMachine) صارت مقصورة على صفحات القالب فقط بدل التحميل على كل صفحات الإدارة.
+* إصلاحات أمان وقراءة إضافية: تعقيم مسارات SvgCenter/AjaxCenter الديناميكية، عدم تسريب مفاتيح API لمزوّدي AI في HTML لوحة التحكم.
+* راجع `kayan-theme/components/packs/kayan-platform/PHASE-INTEGRATION-2.4.1-REPORT.md` لتفاصيل كل ملف تم دمجه وكل قرار.
+
+= 2.4.0 =
+* Phase 6 (نهائية): تدقيق شامل للمشروع، تحسينات أداء آمنة، إصلاح أمان في وحدة AI الإدارية، توثيق نهائي كامل (دليل الترقية/النشر/قائمة الجاهزية للإنتاج)، تقرير نهائي بالنقاط والتوصيات.
+
+= 2.3.0 =
+* Phase 5: منصة AI بمزوّدين قابلين للتبديل (OpenAI/Claude/Gemini/Mistral)، دورة حياة محتوى صريحة (Workflow)، محرك جودة يتحقق قبل النشر، رسم بياني للاعتماديات يعلّم الصفحات المتأثرة بحاجتها لإعادة توليد، ترجمة بالذكاء الاصطناعي.
+
+= 2.2.0 =
+* Phase 4: محرك ترحيل/إصدارات تلقائي وآمن + منصة Programmatic SEO كاملة (توليد فعلي، طابور، جدولة، معاينة، توليد جماعي، إعادة توليد، وسوم بيانات ديناميكية).
+
+= 2.1.0 =
+* Phase 3 (كاملة): منصة إدارية وظيفية كاملة — الإعدادات، الدول، اللغات، الكيانات، العلاقات، الصلاحيات، السجلات، صحة النظام، الاستيراد/التصدير، تكامل Rank Math، القوالب/البلوكات/المخططات، الذكاء الاصطناعي (تهيئة).
 
 = 2.0.0 =
 * Phase 3.0: KAYAN Admin Platform Core — module registry, permissions/roles, reusable admin UI framework, dashboard foundation (widget slots only). No statistics, generation, or AI.
@@ -46,6 +71,42 @@ Tags: rtl-language-support, custom-menu, featured-images, translation-ready
 * Phase 1 platform core: kayan-platform pack (Country Engine, Language Engine, Context, Country Settings repository, Content Locale meta contracts, URL architecture helper, Rank Math–compatible SEO Bridge).
 * No frontend redesign, no URL/rewrite changes, no data migration.
 * Safe hreflang (ar/en/x-default) for home + blog posts only; full country matrix deferred until CPT routing is ready.
+
+= 1.4.11 =
+* أزرار عائمة فورية (اتصال/واتساب بلا انتظار تمرير الصفحة) + زر «احجز الآن» مشروط بوجود قسم حجز فعلي + إصلاح عرض الأسعار.
+
+= 1.4.10 =
+* حزمة إصدار جاهزة للتحميل والاختبار.
+
+= 1.4.9 =
+* خيار `kayan_seo_disable` لاستعادة واجهة Rank Math الأصلية عند الحاجة (استُبدل لاحقاً في v2.4.1 بجعل Rank Math نشطاً دائماً افتراضياً).
+
+= 1.4.8 =
+* ربط عناوين/أوصاف SEO بميتا Rank Math المخزّنة (استُبدل لاحقاً في v2.4.1 — انظر ملاحظة v2.4.1 أعلاه).
+
+= 1.4.7 =
+* حجز تفاعلي لاختيار الباقات + زر «احجز الآن» ثلاثي الأبعاد + دفع خارجي (`kayan-price-pay`).
+
+= 1.4.6 =
+* إصلاح شعار الهيدر/الفوتر (كل صيغ التخزين + منع كسره بـ LazyLoad) + Rank Math أقوى حماية للأصول.
+
+= 1.4.5 =
+* تفعيل Rank Math بالكامل: حماية أقوى للأصول، إيقاف schema المكرر من القالب عند وجود Rank Math، وعدم deregister لتبعياته.
+* إصلاح النصوص المقطوعة في لوحة التحكم: التفاف طبيعي بدل nowrap/overflow.
+* إصلاح ترتيب عناصر الرئيسية: jQuery UI Sortable يعمل بمقبض السحب ويُعاد تفعيله بعد إضافة ودجت.
+
+= 1.4.4 =
+* استبدال منتقي SVG-Icon شبه الفارغ بمنتقي Font Awesome 6 Free مرئي (بحث + معاينة) للخدمات والعروض.
+* دالة موحّدة kayan_icon_html(): تعرض FA/HTML/SvgCenter وتحوّل أنماط Pro (fa-light/fal/أسهم far) إلى Free.
+* إصلاح أوزان أيقونات لوحة التحكم (800→900) + fa-free-fixes.css في الأدمن والواجهة + تفعيل admin-mobile.css.
+* تحسين استجابة معالج الحجز على الموبايل (عمود واحد، أزرار لاصقة، شبكات كاملة العرض).
+
+= 1.4.3 =
+* إصلاح خطأ PHP قاتل في الهيدر (#header/part.php): قوس } زائد بعد بلوك Rank Math كان يسبب Parse error وشاشة بيضاء على كل الصفحات.
+* إصلاح حقن معالج الحجز: إزالة شرط in_the_loop غير المتوافق مع بنية Blade (@single تستدعي the_content خارج الحلقة).
+* حماية أصول kayan-* و yourcolor-* من disable_all_scripts حتى يعمل CSS/JS نظام الحجز والدفع.
+* إصلاح مطابقة AjaxCenter مع sanitize_key (TabsActions وغيرها كانت تُرفض 404).
+* توحيد مسار AdminAjax إلى /AjaxCenter/ + إصلاح TempURL + حماية get_the_terms من foreach على false + إصلاح Parse في Mega-Menu.
 
 = 1.4.2 =
 * تحميل Font Awesome بلا اعتماد على jQuery: كان يُحمَّل عبر data-loader-href الذي يحتاج jQuery ليحوّله إلى href، فأي فشل أو تأخّر في jQuery/الكاش = كل الأيقونات مربعات فارغة. صار يستخدم النمط القياسي غير الحاجب مع بديل noscript.

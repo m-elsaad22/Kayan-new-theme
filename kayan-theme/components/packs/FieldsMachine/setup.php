@@ -8,9 +8,20 @@ class YC__CFM {
 			# PLUGIN PATH.
 				$this->YC__CFM_Path = trailingslashit( dirname( __FILE__ ) );
 
-			# PLUGIN URL.
-				$this->YC__CFM_URL = explode(get_template_directory(), trailingslashit( dirname( __FILE__ ) ))[1];
-				$this->YC__CFM_URL = get_template_directory_uri().$this->YC__CFM_URL;
+			# PLUGIN URL — لا نعتمد على تطابق نصي حرفي بين __FILE__ و
+			# get_template_directory() (ينهار مع symlinks / WP_CONTENT_DIR
+			# مخصص / Multisite domain mapping). نطبّع المسارين ثم نطرح
+			# مسار الثيم من مسار الملف؛ إن فشل ذلك (المسار غير موجود
+			# كبادئة إطلاقاً) نستخدم مساراً افتراضياً ثابتاً بدل رابط فارغ/خاطئ.
+				$yc_cfm_theme_dir = wp_normalize_path( get_template_directory() );
+				$yc_cfm_file_dir  = wp_normalize_path( $this->YC__CFM_Path );
+				$yc_cfm_relative  = str_replace( $yc_cfm_theme_dir, '', $yc_cfm_file_dir );
+				if ( '' !== $yc_cfm_relative && $yc_cfm_relative !== $yc_cfm_file_dir ) {
+					$this->YC__CFM_URL = trailingslashit( get_template_directory_uri() ) . ltrim( $yc_cfm_relative, '/' );
+				} else {
+					$this->YC__CFM_URL = trailingslashit( get_template_directory_uri() ) . 'components/packs/FieldsMachine/';
+				}
+				unset( $yc_cfm_theme_dir, $yc_cfm_file_dir, $yc_cfm_relative );
 
 			# FIELDS EXTRACT.	
 				$this->Fields__List_path = $this->YC__CFM_Path.'SetupFields/*/';

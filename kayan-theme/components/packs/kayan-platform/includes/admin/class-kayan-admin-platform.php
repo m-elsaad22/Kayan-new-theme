@@ -198,11 +198,29 @@ class Kayan_Admin_Platform {
 	}
 
 	/**
+	 * Is the current admin request one of our own KAYAN Platform screens?
+	 *
+	 * Checks both the page hook (the normal way) and the raw `page` query
+	 * arg as a fallback, since some hosting/security/caching setups can
+	 * interfere with how `admin_enqueue_scripts` reports the hook suffix.
+	 *
+	 * @param string $hook Hook.
+	 * @return bool
+	 */
+	private function is_own_screen( $hook ) {
+		if ( false !== strpos( (string) $hook, self::MENU_SLUG ) ) {
+			return true;
+		}
+		$page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return self::MENU_SLUG === $page || 0 === strpos( $page, self::MENU_SLUG . '-' );
+	}
+
+	/**
 	 * @param string $hook Hook.
 	 * @return void
 	 */
 	public function enqueue_assets( $hook ) {
-		if ( false === strpos( (string) $hook, self::MENU_SLUG ) ) {
+		if ( ! $this->is_own_screen( $hook ) ) {
 			return;
 		}
 
@@ -213,11 +231,38 @@ class Kayan_Admin_Platform {
 		$css = $base . '/assets/admin/kayan-admin.css';
 		$js  = $base . '/assets/admin/kayan-admin.js';
 
+		// خط لوحة التحكم الموحّد (--kayan-font) — نفس ملف components/styles/
+		// kayan-admin-font.css المستخدم في KAYAN Track أيضاً، ملف مستقل بدلاً
+		// من @import داخل kayan-admin.css لأن مسارات url() النسبية في @import
+		// تنكسر عند تضمين نفس المحتوى inline كنسخة احتياطية أدناه. لا نسخة
+		// inline لهذا الملف (خطوط .ttf ثنائية) — يتدهور بأمان إلى Arial عبر
+		// var(--kayan-font) إن تعذّر تحميله، فلا حاجة ماسة لذلك.
+		$font_css = get_template_directory() . '/components/styles/kayan-admin-font.css';
+		if ( file_exists( $font_css ) ) {
+			wp_enqueue_style( 'kayan-admin-font', get_template_directory_uri() . '/components/styles/kayan-admin-font.css', array(), $ver );
+		}
+
+		// Enqueue the real files (cacheable, normal path) AND inline the same
+		// content as a fallback on the same handle. If the external file
+		// request is ever blocked/interfered with by a host, CDN, security
+		// plugin, or asset-optimizer (the UI otherwise silently degrades to
+		// unstyled HTML with no error), the inlined <style>/<script> still
+		// applies because it ships inside the page response itself and
+		// needs no separate network request.
 		if ( file_exists( $css ) ) {
-			wp_enqueue_style( 'kayan-admin', $url . '/assets/admin/kayan-admin.css', array(), $ver );
+			$css_deps = file_exists( $font_css ) ? array( 'kayan-admin-font' ) : array();
+			wp_enqueue_style( 'kayan-admin', $url . '/assets/admin/kayan-admin.css', $css_deps, $ver );
+			$css_contents = file_get_contents( $css ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			if ( is_string( $css_contents ) && '' !== $css_contents ) {
+				wp_add_inline_style( 'kayan-admin', $css_contents );
+			}
 		}
 		if ( file_exists( $js ) ) {
 			wp_enqueue_script( 'kayan-admin', $url . '/assets/admin/kayan-admin.js', array(), $ver, true );
+			$js_contents = file_get_contents( $js ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			if ( is_string( $js_contents ) && '' !== $js_contents ) {
+				wp_add_inline_script( 'kayan-admin', $js_contents );
+			}
 		}
 	}
 

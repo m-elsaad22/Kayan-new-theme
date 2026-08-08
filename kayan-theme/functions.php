@@ -14,7 +14,7 @@ class ThemeTree {
 			'POSTs'=>$_POST,
 		);
 		$this->TempPath = get_template_directory();
-		$this->TempURL = get_template_directory();
+		$this->TempURL = get_template_directory_uri();
 		$this->StylesURL = get_template_directory_uri().'/components/styles/';
 		$this->StylesPath = get_template_directory().'/components/styles/';
 		$this->folderpath = $this->TempPath.'/components/packs/*/';
@@ -78,6 +78,12 @@ class ThemeTree {
 		do_action('Initialize');
 	}
 }
+// تحميل ملف الترجمة العربية لنصوص منصة KAYAN (text domain 'kayan') —
+// languages/kayan-ar.mo. لا يمس Text Domain الأساسي للثيم ('yourcolor').
+add_action( 'after_setup_theme', function() {
+	load_theme_textdomain( 'kayan', get_template_directory() . '/languages' );
+} );
+
 $ThemeTree = new ThemeTree;
 add_action('init', array($ThemeTree, 'Initialize'));
 $ThemeStatic = new ThemeStatic();
