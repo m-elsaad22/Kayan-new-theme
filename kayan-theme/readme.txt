@@ -3,7 +3,7 @@ Contributors: melsaad
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 2.4.3
+Stable tag: 2.4.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Tags: rtl-language-support, custom-menu, featured-images, translation-ready
@@ -19,6 +19,10 @@ Tags: rtl-language-support, custom-menu, featured-images, translation-ready
 * Font Awesome 6 Free مستضاف محلياً داخل القالب — بلا اعتماد على CDN خارجي وبلا أي أيقونات مدفوعة.
 
 == Changelog ==
+
+= 2.4.4 =
+* لوحة منصة كيان بالعربية بالكامل + تصميم احترافي مناسب للهاتف (قائمة تنقل منسدلة، بطاقات، هوية كيان).
+* طبقة kayan-admin-ar لترجمة واجهة المنصة ووحدات التنقل.
 
 = 2.4.3 =
 * إصلاح شامل لكل ملحوظات لوحة التحكم والتغليف: إزالة المجلد المتداخل، استعادة kayan-seo و kayan-price-pay، حماية أصول kayan من التعطيل، AjaxCenter CamelCase، مسار AdminAjax، حارس category في syntax.php.
