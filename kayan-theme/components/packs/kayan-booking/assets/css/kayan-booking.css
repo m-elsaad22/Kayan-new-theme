@@ -144,8 +144,24 @@
 
 /* Mobile */
 @media (max-width: 640px) {
-	.kbw-inner { padding: 18px; border-radius: 12px; }
+	.kayan-booking-wizard { margin: 24px 0; max-width: 100%; }
+	.kbw-inner { padding: 16px; border-radius: 12px; box-shadow: 0 4px 18px rgba(15, 23, 42, .06); }
+	.kbw-progress { margin-bottom: 18px; }
 	.kbw-step-dot label { display: none; }
-	.kbw-nav { position: sticky; bottom: 0; background: #fff; padding-top: 10px; }
-	.kbw-btn { flex: 1; }
+	.kbw-step-dot span { width: 26px; height: 26px; font-size: 12px; }
+	.kbw-service-grid { grid-template-columns: 1fr; gap: 10px; }
+	.kbw-fields-group, .kbw-customer-grid { grid-template-columns: 1fr; gap: 12px; }
+	.kbw-nav {
+		position: sticky; bottom: 0; background: #fff; padding-top: 12px;
+		display: flex; gap: 8px; z-index: 5;
+	}
+	.kbw-btn { flex: 1; min-height: 46px; font-size: 15px; }
+	.kbw-pay-methods { grid-template-columns: 1fr; }
+	.kbw-step h3 { font-size: 16px; }
+	.kbw-summary, .kbw-success { padding: 14px; }
+}
+
+@media (max-width: 400px) {
+	.kbw-inner { padding: 14px; }
+	.kbw-choice { width: 100%; justify-content: flex-start; }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * kayan-version — التحقق من الإصدار المُشغَّل فعلياً + تشخيص ذاتي (v1.4.2)
+ * kayan-version — التحقق من الإصدار المُشغَّل فعلياً + تشخيص ذاتي (v2.4.3)
  * ═══════════════════════════════════════════════════════════════════
  * يعرض إصدار القالب في شريط الأدمن العلوي، ويفحص تلقائياً وجود
  * الملفات الحرجة (خطوط Font Awesome، الحزم) ليكشف أي رفع ناقص.
@@ -33,22 +33,34 @@ if ( ! function_exists( 'kayan_version_get' ) ) {
 			}
 		}
 		$checks['خطوط Font Awesome (webfonts)'] = $fonts_ok;
+		$checks['fa-free-fixes.css'] = file_exists( $dir . '/components/styles/fa-free-fixes.css' );
 
-		# الحزم الحرجة لإصدار 1.4.x
+		# حزم أساسية
 		$checks['حزمة الأقسام المخصصة (kayan-cpt)']   = is_dir( $dir . '/components/packs/kayan-cpt' );
 		$checks['حزمة تلقيم المحتوى (kayan-seed)']     = is_dir( $dir . '/components/packs/kayan-seed' );
 		$checks['نظام أزرار الاتصال (RuknContact)']    = is_dir( $dir . '/components/packs/RuknContact' );
+		$checks['KAYAN Platform']                     = is_dir( $dir . '/components/packs/kayan-platform' );
+		$checks['KAYAN SEO Bridge']                   = is_dir( $dir . '/components/packs/kayan-seo' );
+		$checks['KAYAN Price/Pay']                    = is_dir( $dir . '/components/packs/kayan-price-pay' );
+		$checks['نظام الحجز (kayan-booking)']         = is_dir( $dir . '/components/packs/kayan-booking' );
+		$checks['admin-mobile.css']                   = file_exists( $dir . '/components/packs/FieldsMachine/UI/css/admin-mobile.css' );
+		$checks['admin-ui-fixes.css']                 = file_exists( $dir . '/components/packs/FieldsMachine/UI/css/admin-ui-fixes.css' );
 
-		# يجب أن تكون محذوفة في 1.4.x — وجودها = نسخة قديمة
+		# يجب أن تكون محذوفة — وجودها = نسخة قديمة / رفع متداخل
 		$checks['نظام Home2026 محذوف (يجب ✅)']        = ! is_dir( $dir . '/components/packs/kayan-homepage' );
+		$checks['لا يوجد قالب متداخل kayan-theme/']   = ! is_dir( $dir . '/kayan-theme' );
 
-		# حقل كود الخريطة (أُضيف في 1.4.1)
+		# حقل كود الخريطة
 		$footer_opts = $dir . '/components/packs/FieldsMachine/SetupFields/ThemeOptions/footer_options.php';
-		$checks['حقل كود خريطة الفوتر (1.4.1+)'] = file_exists( $footer_opts ) && false !== strpos( file_get_contents( $footer_opts ), 'footer__map_embed' );
+		$checks['حقل كود خريطة الفوتر'] = file_exists( $footer_opts ) && false !== strpos( (string) file_get_contents( $footer_opts ), 'footer__map_embed' );
 
-		# فقاعة الواتساب المكررة (يجب أن تكون محذوفة في 1.4.1)
+		# فقاعة الواتساب المكررة (يجب أن تكون محذوفة)
 		$rukn = $dir . '/components/packs/RuknContact/setup.php';
-		$checks['فقاعة الواتساب المكررة محذوفة (يجب ✅)'] = file_exists( $rukn ) && false === strpos( file_get_contents( $rukn ), 'wa_mini' );
+		$checks['فقاعة الواتساب المكررة محذوفة (يجب ✅)'] = file_exists( $rukn ) && false === strpos( (string) file_get_contents( $rukn ), 'wa_mini' );
+
+		# الهيدر بلا Parse error شائع
+		$header = $dir . '/components/packs/#header/part.php';
+		$checks['هيدر بلا قوس زائد معروف'] = file_exists( $header ) && false === strpos( (string) file_get_contents( $header ), "}\n\t\t}\n\n\n\t\t//" );
 
 		return $checks;
 	}

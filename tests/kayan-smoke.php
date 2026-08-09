@@ -6,7 +6,7 @@
 error_reporting( E_ALL );
 ini_set( 'display_errors', '1' );
 
-$theme = dirname( __DIR__ ) . '/kayan-theme/kayan-theme';
+$theme = dirname( __DIR__ ) . '/kayan-theme';
 $failed = 0;
 $passed = 0;
 
@@ -38,10 +38,16 @@ $critical = array(
 	'components/styles/FontAwesome/css/all.min.css',
 	'components/styles/FontAwesome/webfonts/fa-solid-900.woff2',
 	'components/packs/FieldsMachine/UI/css/admin-mobile.css',
+	'components/packs/FieldsMachine/UI/css/admin-ui-fixes.css',
+	'components/packs/kayan-platform/setup.php',
+	'components/packs/kayan-seo/setup.php',
+	'components/packs/kayan-price-pay/setup.php',
+	'كيفية-الرفع-الصحيح-اقرأني.txt',
 );
 foreach ( $critical as $rel ) {
 	assert_true( file_exists( "$theme/$rel" ), "exists: $rel" );
 }
+assert_true( ! is_dir( "$theme/kayan-theme" ), 'no nested kayan-theme/ folder' );
 
 # 2) PHP lint all theme PHP files
 $lint_errors = array();
@@ -71,9 +77,12 @@ assert_true( false !== strpos( $header, 'fa-free-fixes.css' ), 'header loads fa-
 # 4) Enqueues protect kayan assets + admin mobile
 $enq = file_get_contents( "$theme/components/packs/Enqueues/setup.php" );
 assert_true( false !== strpos( $enq, 'kayan_is_protected_asset_handle' ), 'enqueue protect helper present' );
+assert_true( false !== strpos( $enq, 'kayan_should_keep_asset_version' ), 'keep kayan asset query versions' );
 $fm = file_get_contents( "$theme/components/packs/FieldsMachine/Enqueues.php" );
 assert_true( false !== strpos( $fm, 'admin-mobile.css' ), 'admin-mobile.css enqueued' );
 assert_true( false !== strpos( $fm, 'fa-free-fixes.css' ), 'admin fa-free-fixes enqueued' );
+assert_true( false !== strpos( $fm, 'wp_enqueue_style' ), 'FieldsMachine uses wp_enqueue_style' );
+assert_true( false === strpos( $fm, 'rand()' ), 'FieldsMachine no rand() cache bust' );
 
 # 5) Booking inject no longer requires in_the_loop
 $book = file_get_contents( "$theme/components/packs/kayan-booking/setup.php" );
@@ -153,9 +162,9 @@ assert_true( false !== strpos( $resp, 'max-width:768px' ) || false !== strpos( $
 $admin_m = file_get_contents( "$theme/components/packs/FieldsMachine/UI/css/admin-mobile.css" );
 assert_true( strlen( $admin_m ) > 1000, 'admin-mobile.css non-empty' );
 
-# 9) Version
+# 9) Version + packaging
 $style = file_get_contents( "$theme/style.css" );
-assert_true( false !== strpos( $style, 'Version: 1.4.11' ), 'style.css version 1.4.11' );
+assert_true( false !== strpos( $style, 'Version: 2.4.3' ), 'style.css version 2.4.3' );
 
 # Interactive price booking + floating CTA
 assert_true( file_exists( "$theme/components/packs/kayan-price-pay/setup.php" ), 'kayan-price-pay pack exists' );
@@ -167,6 +176,8 @@ $footer = file_get_contents( "$theme/components/packs/#footer/part.php" );
 assert_true( false !== strpos( $footer, 'KAYAN_BOOK_CTA_SLOT' ) || false !== strpos( $footer, 'kayanBookCta' ) || false !== strpos( $footer, 'احجز الآن' ), 'footer book CTA slot or markup' );
 assert_true( false !== strpos( $footer, 'fab-stack show' ) || false !== strpos( $footer, "ruknFab.classList.add('show')" ) || false !== strpos( $footer, 'ruknFab.classList.add("show")' ), 'FAB visible immediately (no scroll gate)' );
 assert_true( false === strpos( $footer, "ruknFab.classList.toggle('show',y>500)" ), 'FAB no longer gated behind y>500' );
+assert_true( false !== strpos( $footer, "/AjaxCenter" ), 'footer AdminAjax uses AjaxCenter case' );
+assert_true( false === strpos( $footer, "/ajaxcenter/" ), 'footer AdminAjax not lowercase ajaxcenter' );
 $pay_js = file_get_contents( "$theme/components/packs/kayan-price-pay/assets/js/kayan-price-pay.js" );
 assert_true( false !== strpos( $pay_js, 'rukn-eltatawer-pay.tanceq.com' ), 'pay URL in JS' );
 
@@ -210,7 +221,7 @@ assert_true( false === strpos( $enq, 'wp_deregister_script( $handle )' ), 'no de
 $header = file_get_contents( "$theme/components/packs/#header/part.php" );
 assert_true( false !== strpos( $header, 'has-logo-image' ), 'logo has-logo-image class' );
 assert_true( false !== strpos( $header, 'data-no-lazy' ), 'logo skips LiteSpeed lazy' );
-assert_true( false !== strpos( $header, 'fa-free-fixes.css?v=1.4.11' ), 'header asset version 1.4.11' );
+assert_true( false !== strpos( $header, 'fa-free-fixes.css?v=2.4.3' ), 'header asset version 2.4.3' );
 $schema = file_get_contents( "$theme/components/packs/schema/setup.php" );
 assert_true( false !== strpos( $schema, "add_action('wp_head', array( \$this,'insert__schema')" ), 'schema always registered for KAYAN SEO' );
 # Setup يجب ألا يخرج مبكراً بسبب وجود Rank Math (واجهة RM معطّلة)
@@ -228,6 +239,27 @@ assert_true( false !== strpos( $cssfix, 'flex-direction: column' ), 'title field
 assert_true( false !== strpos( $cssfix, '.-Radio-Box-Item em' ) && false !== strpos( $cssfix, 'white-space: normal' ), 'radio labels wrap' );
 $adminfix = file_get_contents( "$theme/components/packs/FieldsMachine/UI/css/admin-ui-fixes.css" );
 assert_true( false !== strpos( $adminfix, '.-Text-form-InnerTitle > descor:before' ), 'admin title descor override' );
+
+# AjaxCenter CamelCase map + syntax category guard + platform dashboard order
+$ajax = file_get_contents( "$theme/components/packs/AjaxCenter/setup.php" );
+assert_true( false !== strpos( $ajax, 'AllowedMap' ), 'AjaxCenter AllowedMap for CamelCase endpoints' );
+$syntax = file_get_contents( "$theme/syntax.php" );
+assert_true( false !== strpos( $syntax, 'is_array( $category )' ), 'syntax.php guards category foreach' );
+$platform = file_get_contents( "$theme/components/packs/kayan-platform/includes/admin/class-kayan-admin-platform.php" );
+assert_true( false !== strpos( $platform, 'feature_modules->register()' ), 'platform registers feature modules' );
+# Ensure feature modules run before dashboard->register()
+$feat_pos = strpos( $platform, '$this->feature_modules->register()' );
+$dash_pos = strpos( $platform, '$this->dashboard->register()' );
+assert_true( false !== $feat_pos && false !== $dash_pos && $feat_pos < $dash_pos, 'Dashboard_Stats hooks before dashboard register' );
+assert_true( false === strpos( $platform, "'Phase 3'" ), 'platform shell no hardcoded Phase 3 badge' );
+$stats = file_get_contents( "$theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php" );
+assert_true( false !== strpos( $stats, 'render_analytics' ), 'dashboard analytics widget wired' );
+assert_true( false !== strpos( $stats, 'render_performance' ), 'dashboard performance widget wired' );
+$admin_css = file_get_contents( "$theme/components/packs/kayan-platform/assets/admin/kayan-admin.css" );
+assert_true( false !== strpos( $admin_css, 'overflow-x: auto' ), 'platform admin mobile nav scroll' );
+$index = file_get_contents( "$theme/index.php" );
+assert_true( false === strpos( $index, 'TemplatePart' ), 'index.php no missing TemplatePart call' );
+assert_true( false !== strpos( $index, 'Blade' ), 'index.php uses Blade fallback' );
 
 echo "\n=== Result: $passed passed, $failed failed ===\n";
 exit( $failed > 0 ? 1 : 0 );

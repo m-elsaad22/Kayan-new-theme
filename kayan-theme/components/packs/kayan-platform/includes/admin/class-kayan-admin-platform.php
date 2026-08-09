@@ -61,9 +61,13 @@ class Kayan_Admin_Platform {
 
 		$this->permissions->register();
 		$this->ui->register();
-		$this->dashboard->register();
+		// Feature modules must hook `kayan_admin_register_dashboard_widgets`
+		// BEFORE dashboard->register() fires that action — otherwise all
+		// Dashboard_Stats callbacks miss the event and every widget stays
+		// a Phase 3.0 placeholder forever.
 		$this->core_modules->register();
 		$this->feature_modules->register();
+		$this->dashboard->register();
 		$this->modules->register();
 
 		add_action( 'admin_menu', array( $this, 'register_menu' ), 9 );
@@ -269,7 +273,7 @@ class Kayan_Admin_Platform {
 						<?php
 						echo $this->ui->status( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 							array(
-								'label' => 'Phase 3',
+								'label' => 'Platform ' . ( defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '6.0.0' ),
 								'type'  => 'info',
 							)
 						);
