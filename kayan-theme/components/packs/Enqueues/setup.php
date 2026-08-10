@@ -139,9 +139,11 @@ function kayan_should_keep_asset_version( $src ) {
         'Custom-Style',
         'admin-mobile',
         'admin-ui-fixes',
+        'admin-global-font',
         'fa-free-fixes',
         'kayan-booking',
         'kayan-cfm-',
+        'Montserrat-Arabic',
     );
     foreach ( $needles as $needle ) {
         if ( false !== strpos( $src, $needle ) ) {

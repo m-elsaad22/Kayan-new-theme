@@ -83,6 +83,12 @@ assert_true( false !== strpos( $fm, 'admin-mobile.css' ), 'admin-mobile.css enqu
 assert_true( false !== strpos( $fm, 'fa-free-fixes.css' ), 'admin fa-free-fixes enqueued' );
 assert_true( false !== strpos( $fm, 'wp_enqueue_style' ), 'FieldsMachine uses wp_enqueue_style' );
 assert_true( false === strpos( $fm, 'rand()' ), 'FieldsMachine no rand() cache bust' );
+assert_true( false !== strpos( $fm, 'YC__CFM_Admin_Global_Font' ), 'global admin font enqueue method' );
+assert_true( false !== strpos( $fm, 'kayan-admin-global-font' ), 'global admin font handle' );
+assert_true( file_exists( "$theme/components/packs/FieldsMachine/UI/css/admin-global-font.css" ), 'admin-global-font.css exists' );
+$global_font = file_get_contents( "$theme/components/packs/FieldsMachine/UI/css/admin-global-font.css" );
+assert_true( false !== strpos( $global_font, 'Montserrat-Arabic' ), 'global font uses Montserrat Arabic' );
+assert_true( false !== strpos( $global_font, 'font-family: YourColor' ), 'global font family YourColor' );
 
 # 5) Booking inject no longer requires in_the_loop
 $book = file_get_contents( "$theme/components/packs/kayan-booking/setup.php" );
@@ -164,7 +170,7 @@ assert_true( strlen( $admin_m ) > 1000, 'admin-mobile.css non-empty' );
 
 # 9) Version + packaging
 $style = file_get_contents( "$theme/style.css" );
-assert_true( false !== strpos( $style, 'Version: 2.4.3' ), 'style.css version 2.4.3' );
+assert_true( false !== strpos( $style, 'Version: 2.4.5' ), 'style.css version 2.4.5' );
 
 # Interactive price booking + floating CTA
 assert_true( file_exists( "$theme/components/packs/kayan-price-pay/setup.php" ), 'kayan-price-pay pack exists' );
@@ -221,7 +227,7 @@ assert_true( false === strpos( $enq, 'wp_deregister_script( $handle )' ), 'no de
 $header = file_get_contents( "$theme/components/packs/#header/part.php" );
 assert_true( false !== strpos( $header, 'has-logo-image' ), 'logo has-logo-image class' );
 assert_true( false !== strpos( $header, 'data-no-lazy' ), 'logo skips LiteSpeed lazy' );
-assert_true( false !== strpos( $header, 'fa-free-fixes.css?v=2.4.3' ), 'header asset version 2.4.3' );
+assert_true( false !== strpos( $header, 'fa-free-fixes.css?v=2.4.5' ), 'header asset version 2.4.5' );
 $schema = file_get_contents( "$theme/components/packs/schema/setup.php" );
 assert_true( false !== strpos( $schema, "add_action('wp_head', array( \$this,'insert__schema')" ), 'schema always registered for KAYAN SEO' );
 # Setup يجب ألا يخرج مبكراً بسبب وجود Rank Math (واجهة RM معطّلة)
@@ -252,11 +258,20 @@ $feat_pos = strpos( $platform, '$this->feature_modules->register()' );
 $dash_pos = strpos( $platform, '$this->dashboard->register()' );
 assert_true( false !== $feat_pos && false !== $dash_pos && $feat_pos < $dash_pos, 'Dashboard_Stats hooks before dashboard register' );
 assert_true( false === strpos( $platform, "'Phase 3'" ), 'platform shell no hardcoded Phase 3 badge' );
+assert_true( false !== strpos( $platform, 'kayan-admin-shell__mobile-nav' ), 'platform mobile nav select' );
+assert_true( false !== strpos( $platform, 'dir="rtl"' ), 'platform shell RTL' );
+$ar = file_get_contents( "$theme/components/packs/kayan-platform/includes/admin/kayan-admin-ar.php" );
+assert_true( false !== strpos( $ar, 'لوحة التحكم' ), 'admin AR labels include dashboard' );
+assert_true( false !== strpos( $ar, 'kayan_admin_filter_modules_ar' ), 'admin AR module filter' );
+$admin_css = file_get_contents( "$theme/components/packs/kayan-platform/assets/admin/kayan-admin.css" );
+assert_true( false !== strpos( $admin_css, '--kayan-admin-navy' ), 'platform admin brand tokens' );
+assert_true( false !== strpos( $admin_css, 'kayan-admin-shell__mobile-nav' ), 'platform CSS mobile nav' );
+$admin_js = file_get_contents( "$theme/components/packs/kayan-platform/assets/admin/kayan-admin.js" );
+assert_true( false !== strpos( $admin_js, 'data-kayan-mobile-nav' ), 'platform JS mobile nav handler' );
 $stats = file_get_contents( "$theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php" );
 assert_true( false !== strpos( $stats, 'render_analytics' ), 'dashboard analytics widget wired' );
 assert_true( false !== strpos( $stats, 'render_performance' ), 'dashboard performance widget wired' );
-$admin_css = file_get_contents( "$theme/components/packs/kayan-platform/assets/admin/kayan-admin.css" );
-assert_true( false !== strpos( $admin_css, 'overflow-x: auto' ), 'platform admin mobile nav scroll' );
+assert_true( false !== strpos( $admin_css, 'grid-template-columns: 1fr' ), 'platform admin mobile single column' );
 $index = file_get_contents( "$theme/index.php" );
 assert_true( false === strpos( $index, 'TemplatePart' ), 'index.php no missing TemplatePart call' );
 assert_true( false !== strpos( $index, 'Blade' ), 'index.php uses Blade fallback' );

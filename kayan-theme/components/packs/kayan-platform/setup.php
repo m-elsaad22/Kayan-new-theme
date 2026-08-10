@@ -99,6 +99,7 @@ require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-generator.php
 require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-renderer.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-scheduler.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/pseo/class-kayan-pseo-engine.php';
+require_once KAYAN_PLATFORM_DIR . '/includes/admin/kayan-admin-ar.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/admin/class-kayan-admin-permissions.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/admin/class-kayan-admin-module-registry.php';
 require_once KAYAN_PLATFORM_DIR . '/includes/admin/class-kayan-admin-ui.php';

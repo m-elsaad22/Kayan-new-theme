@@ -104,7 +104,7 @@ class Kayan_Admin_Dashboard {
 				array(
 					'title'  => (string) $widget['title'],
 					'content'=> $content,
-					'status' => 'ready',
+					'status' => __( 'Ready', 'kayan' ),
 					'class'  => 'kayan-admin-dashboard__widget kayan-admin-dashboard__widget--' . sanitize_html_class( $widget['id'] ),
 					'id'     => 'kayan-widget-' . $widget['id'],
 				)
