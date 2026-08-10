@@ -217,16 +217,14 @@ class Kayan_Admin_Platform {
 		$css = $base . '/assets/admin/kayan-admin.css';
 		$js  = $base . '/assets/admin/kayan-admin.js';
 
-		wp_enqueue_style(
-			'kayan-admin-fonts',
-			'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap',
-			array(),
-			null
-		);
+		$font_deps = array();
+		if ( wp_style_is( 'kayan-admin-global-font', 'registered' ) || wp_style_is( 'kayan-admin-global-font', 'enqueued' ) ) {
+			$font_deps[] = 'kayan-admin-global-font';
+		}
 
 		if ( file_exists( $css ) ) {
 			$css_ver = (string) filemtime( $css );
-			wp_enqueue_style( 'kayan-admin', $url . '/assets/admin/kayan-admin.css', array( 'kayan-admin-fonts' ), $css_ver );
+			wp_enqueue_style( 'kayan-admin', $url . '/assets/admin/kayan-admin.css', $font_deps, $css_ver );
 		}
 		if ( file_exists( $js ) ) {
 			$js_ver = (string) filemtime( $js );

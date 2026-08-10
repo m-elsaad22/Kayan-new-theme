@@ -39,7 +39,7 @@ if ( empty( $hide__theme_seo ) && class_exists( 'ThemeSeo' ) ) {
 		echo '<link rel="preload" as="style" href="'.esc_url( $yc__fa_url ).'" />';
 		echo '<link rel="stylesheet" href="'.esc_url( $yc__fa_url ).'" media="print" onload="this.media=\'all\';this.onload=null;" />';
 		echo '<noscript><link rel="stylesheet" href="'.esc_url( $yc__fa_url ).'" /></noscript>';
-		echo '<link rel="stylesheet" href="'.esc_url( get_template_directory_uri().'/components/styles/fa-free-fixes.css?v=2.4.4' ).'" />';
+		echo '<link rel="stylesheet" href="'.esc_url( get_template_directory_uri().'/components/styles/fa-free-fixes.css?v=2.4.5' ).'" />';
 		echo '<style id="kayan-logo-critical">a.logo,a.flogo{display:inline-flex!important;align-items:center;gap:8px;visibility:visible!important;opacity:1!important;z-index:5;position:relative}a.logo.has-logo-image .mark,a.flogo.has-logo-image .mark{display:none!important}a.logo img,a.flogo img,.kayan-logo-img{display:block!important;max-height:56px!important;max-width:min(55vw,240px)!important;width:auto!important;height:auto!important;visibility:visible!important;opacity:1!important;object-fit:contain!important}</style>';
 
 		echo ( ( IsSpeed() == false && ( is_single() || is_page() || ( isset( $Widgets__list ) && in_array( 'works_v1',$Widgets__list ) ) ) ) ) ? '<link rel="stylesheet" data-loader-href="https://unpkg.com/photoswipe@5.2.2/dist/photoswipe.css">' : '';

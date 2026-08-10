@@ -83,6 +83,12 @@ assert_true( false !== strpos( $fm, 'admin-mobile.css' ), 'admin-mobile.css enqu
 assert_true( false !== strpos( $fm, 'fa-free-fixes.css' ), 'admin fa-free-fixes enqueued' );
 assert_true( false !== strpos( $fm, 'wp_enqueue_style' ), 'FieldsMachine uses wp_enqueue_style' );
 assert_true( false === strpos( $fm, 'rand()' ), 'FieldsMachine no rand() cache bust' );
+assert_true( false !== strpos( $fm, 'YC__CFM_Admin_Global_Font' ), 'global admin font enqueue method' );
+assert_true( false !== strpos( $fm, 'kayan-admin-global-font' ), 'global admin font handle' );
+assert_true( file_exists( "$theme/components/packs/FieldsMachine/UI/css/admin-global-font.css" ), 'admin-global-font.css exists' );
+$global_font = file_get_contents( "$theme/components/packs/FieldsMachine/UI/css/admin-global-font.css" );
+assert_true( false !== strpos( $global_font, 'Montserrat-Arabic' ), 'global font uses Montserrat Arabic' );
+assert_true( false !== strpos( $global_font, 'font-family: YourColor' ), 'global font family YourColor' );
 
 # 5) Booking inject no longer requires in_the_loop
 $book = file_get_contents( "$theme/components/packs/kayan-booking/setup.php" );
@@ -164,7 +170,7 @@ assert_true( strlen( $admin_m ) > 1000, 'admin-mobile.css non-empty' );
 
 # 9) Version + packaging
 $style = file_get_contents( "$theme/style.css" );
-assert_true( false !== strpos( $style, 'Version: 2.4.4' ), 'style.css version 2.4.4' );
+assert_true( false !== strpos( $style, 'Version: 2.4.5' ), 'style.css version 2.4.5' );
 
 # Interactive price booking + floating CTA
 assert_true( file_exists( "$theme/components/packs/kayan-price-pay/setup.php" ), 'kayan-price-pay pack exists' );
@@ -221,7 +227,7 @@ assert_true( false === strpos( $enq, 'wp_deregister_script( $handle )' ), 'no de
 $header = file_get_contents( "$theme/components/packs/#header/part.php" );
 assert_true( false !== strpos( $header, 'has-logo-image' ), 'logo has-logo-image class' );
 assert_true( false !== strpos( $header, 'data-no-lazy' ), 'logo skips LiteSpeed lazy' );
-assert_true( false !== strpos( $header, 'fa-free-fixes.css?v=2.4.4' ), 'header asset version 2.4.4' );
+assert_true( false !== strpos( $header, 'fa-free-fixes.css?v=2.4.5' ), 'header asset version 2.4.5' );
 $schema = file_get_contents( "$theme/components/packs/schema/setup.php" );
 assert_true( false !== strpos( $schema, "add_action('wp_head', array( \$this,'insert__schema')" ), 'schema always registered for KAYAN SEO' );
 # Setup يجب ألا يخرج مبكراً بسبب وجود Rank Math (واجهة RM معطّلة)

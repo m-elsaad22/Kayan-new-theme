@@ -20,7 +20,7 @@
 .kayan-admin-shell {
 	margin: 12px 0 28px;
 	color: var(--kayan-admin-text);
-	font-family: "Cairo", "Tajawal", "Segoe UI", Tahoma, sans-serif;
+	font-family: YourColor, "Cairo", "Tajawal", "Segoe UI", Tahoma, sans-serif;
 	max-width: 1400px;
 }
 
