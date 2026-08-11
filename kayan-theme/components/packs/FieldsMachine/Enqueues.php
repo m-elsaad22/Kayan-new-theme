@@ -50,7 +50,7 @@ class YC__CFM_Enqueues {
 		}
 		$theme = wp_get_theme( get_template() );
 		$ver   = $theme ? $theme->get( 'Version' ) : '';
-		return $ver ? (string) $ver : '2.4.6';
+		return $ver ? (string) $ver : '2.4.7';
 	}
 
 	public function YC__CFM_AdminFooter(){
@@ -91,7 +91,31 @@ class YC__CFM_Enqueues {
 		wp_print_media_templates();
 	}
 
+	/**
+	 * خط YourColor (Montserrat Arabic) على كل صفحات لوحة التحكم.
+	 *
+	 * @param string $hook Hook.
+	 * @return void
+	 */
+	public function YC__CFM_Admin_Global_Font( $hook = '' ) {
+		unset( $hook );
+		$dir = $this->YC__CFM->YC__CFM_Path;
+		$css = $dir . 'UI/css/admin-global-font.css';
+		if ( ! file_exists( $css ) ) {
+			return;
+		}
+		wp_enqueue_style(
+			'kayan-admin-global-font',
+			$this->Style__URL . 'admin-global-font.css',
+			array(),
+			$this->asset_ver( $css )
+		);
+	}
+
 	public function YC__CFM_Admin_Enqueue( $hook = '' ){
+		# الخط العام يُحمَّل دائماً — بقية أصول FieldsMachine تبقى محصورة بصفحات YTS/التحرير
+		$this->YC__CFM_Admin_Global_Font( $hook );
+
 		if ( ! $this->should_load_admin_assets( $hook ) ) {
 			return;
 		}
@@ -103,7 +127,7 @@ class YC__CFM_Enqueues {
 		wp_enqueue_style( 'kayan-cfm-richtext', $this->Style__URL . 'richtext.min.css', array(), $this->asset_ver( $dir . '/UI/css/richtext.min.css' ) );
 		wp_enqueue_style( 'kayan-cfm-fontawesome', get_template_directory_uri() . '/components/styles/FontAwesome/css/all.min.css', array(), $this->asset_ver( get_template_directory() . '/components/styles/FontAwesome/css/all.min.css' ) );
 		wp_enqueue_style( 'kayan-cfm-colorpicker', $this->Style__URL . 'bootstrap-colorpicker.css', array(), $this->asset_ver( $dir . '/UI/css/bootstrap-colorpicker.css' ) );
-		wp_enqueue_style( 'kayan-cfm-custom-style', $this->UI__URL . 'Custom-Style.css', array( 'kayan-cfm-fontawesome' ), $ver );
+		wp_enqueue_style( 'kayan-cfm-custom-style', $this->UI__URL . 'Custom-Style.css', array( 'kayan-cfm-fontawesome', 'kayan-admin-global-font' ), $ver );
 		wp_enqueue_style( 'kayan-cfm-admin-mobile', $this->Style__URL . 'admin-mobile.css', array( 'kayan-cfm-custom-style' ), $this->asset_ver( $dir . '/UI/css/admin-mobile.css' ) );
 		wp_enqueue_style( 'kayan-cfm-admin-ui-fixes', $this->Style__URL . 'admin-ui-fixes.css', array( 'kayan-cfm-admin-mobile' ), $this->asset_ver( $dir . '/UI/css/admin-ui-fixes.css' ) );
 		wp_enqueue_style( 'kayan-cfm-fa-free-fixes', get_template_directory_uri() . '/components/styles/fa-free-fixes.css', array( 'kayan-cfm-fontawesome' ), $this->asset_ver( get_template_directory() . '/components/styles/fa-free-fixes.css' ) );

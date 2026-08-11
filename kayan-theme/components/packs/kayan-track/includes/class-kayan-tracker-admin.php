@@ -37,8 +37,8 @@ if ( ! class_exists( 'Kayan_Tracker_Admin' ) ) {
 
 		public function register_menu() {
 			add_menu_page(
-				'KAYAN Track',
-				'KAYAN Track',
+				'تتبع كيان',
+				'تتبع كيان',
 				'manage_options',
 				$this->slug,
 				array( $this, 'render_shell' ),
@@ -92,7 +92,7 @@ if ( ! class_exists( 'Kayan_Tracker_Admin' ) ) {
 				return;
 			}
 			echo '<div class="wrap kayan-track-wrap" id="kayan-track-app">';
-			echo '<iframe id="kayan-track-frame" src="' . esc_url( admin_url( 'admin.php?page=' . $this->slug . '&kt_view=app' ) ) . '" title="KAYAN Track"></iframe>';
+			echo '<iframe id="kayan-track-frame" src="' . esc_url( admin_url( 'admin.php?page=' . $this->slug . '&kt_view=app' ) ) . '" title="تتبع كيان"></iframe>';
 			echo '</div>';
 		}
 
