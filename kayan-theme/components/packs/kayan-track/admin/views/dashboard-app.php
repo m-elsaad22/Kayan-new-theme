@@ -28,9 +28,11 @@ if ( ! current_user_can( 'manage_options' ) ) {
 		</aside>
 		<main class="kt-main">
 			<div class="qf-bar" id="kt-filters">
-				<button type="button" class="qf-btn active" data-preset="today">اليوم</button>
+				<button type="button" class="qf-btn" data-preset="today">اليوم</button>
 				<button type="button" class="qf-btn" data-preset="yesterday">أمس</button>
-				<button type="button" class="qf-btn" data-preset="7d">آخر 7 أيام</button>
+				<button type="button" class="qf-btn" data-preset="7d">7 أيام</button>
+				<button type="button" class="qf-btn active" data-preset="30d">30 يوم</button>
+				<button type="button" class="qf-btn" data-preset="3m">3 أشهر</button>
 				<button type="button" class="qf-btn" data-preset="month">هذا الشهر</button>
 				<span class="date-range">
 					<input type="date" class="date-inp" id="kt-date-from">

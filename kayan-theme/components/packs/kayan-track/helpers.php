@@ -1,6 +1,6 @@
 <?php 
 if ( ! defined( 'KAYAN_TRACK_VERSION' ) ) {
-	define( 'KAYAN_TRACK_VERSION', '1.0.0' );
+	define( 'KAYAN_TRACK_VERSION', '1.1.0' );
 }
 
 if ( ! function_exists( 'kayan_track_pack_url' ) ) {
@@ -50,15 +50,20 @@ if ( ! function_exists( 'kayan_track_date_range' ) ) {
 		} elseif ( $preset === 'yesterday' ) {
 			$start = date( 'Y-m-d 00:00:00', strtotime( '-1 day', $now ) );
 			$end   = date( 'Y-m-d 23:59:59', strtotime( '-1 day', $now ) );
+		} elseif ( $preset === '7d' ) {
+			$start = date( 'Y-m-d 00:00:00', strtotime( '-6 days', $now ) );
 		} elseif ( $preset === '30d' ) {
 			$start = date( 'Y-m-d 00:00:00', strtotime( '-29 days', $now ) );
+		} elseif ( $preset === '3m' || $preset === '90d' ) {
+			$start = date( 'Y-m-d 00:00:00', strtotime( '-89 days', $now ) );
 		} elseif ( $preset === 'month' ) {
 			$start = date( 'Y-m-01 00:00:00', $now );
 		} elseif ( $preset === 'custom' && $from && $to ) {
 			$start = sanitize_text_field( $from ) . ' 00:00:00';
 			$end   = sanitize_text_field( $to ) . ' 23:59:59';
 		} else {
-			$start = date( 'Y-m-d 00:00:00', strtotime( '-6 days', $now ) );
+			# افتراضي: آخر 30 يوماً
+			$start = date( 'Y-m-d 00:00:00', strtotime( '-29 days', $now ) );
 		}
 
 		return array(

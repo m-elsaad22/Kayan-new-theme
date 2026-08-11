@@ -50,7 +50,7 @@ class YC__CFM_Enqueues {
 		}
 		$theme = wp_get_theme( get_template() );
 		$ver   = $theme ? $theme->get( 'Version' ) : '';
-		return $ver ? (string) $ver : '2.4.3';
+		return $ver ? (string) $ver : '2.4.6';
 	}
 
 	public function YC__CFM_AdminFooter(){

@@ -45,8 +45,10 @@
     if (!href) return '';
     var m = href.match(/^tel:\+?([0-9\s\-\(\)]+)/i);
     if (m) return m[1].replace(/[\s\-\(\)]/g, '');
-    var w = href.match(/wa\.me\/\+?([0-9]+)/i);
+    var w = href.match(/(?:wa\.me|whatsapp\.com\/send\?phone=|api\.whatsapp\.com\/send\?phone=)\/?\+?([0-9]+)/i);
     if (w) return w[1];
+    var w2 = href.match(/[?&]phone=(\+?[0-9]+)/i);
+    if (w2) return w2[1].replace(/\D/g, '');
     return '';
   }
 
@@ -94,21 +96,41 @@
     post('conversion', { click_type: type, phone: phone || '' });
   }
 
+  function isWhatsAppHref(h) {
+    return /wa\.me|whatsapp\.com|whatsapp:\/\//i.test(h || '');
+  }
+
   document.addEventListener('click', function (e) {
     var a = e.target.closest('a');
-    if (!a) return;
-    var h = a.href || '';
-    if (/^tel:/i.test(h)) trackConv('call', extPhone(h));
-    else if (/wa\.me|whatsapp\.com/i.test(h)) trackConv('whatsapp', extPhone(h));
-  }, { passive: true });
+    if (a) {
+      var h = a.getAttribute('href') || a.href || '';
+      if (/^tel:/i.test(h)) {
+        trackConv('call', extPhone(h));
+        return;
+      }
+      if (isWhatsAppHref(h)) {
+        trackConv('whatsapp', extPhone(h));
+        return;
+      }
+    }
+
+    var el = e.target.closest('[data-track], [data-call], .fab-call, .fab-wa, .btn-call, .btn-wa');
+    if (!el) return;
+    if (el.matches('[data-track]')) {
+      trackConv(el.getAttribute('data-track') || 'cta', el.getAttribute('data-phone') || '');
+      return;
+    }
+    var dc = (el.getAttribute('data-call') || '').toLowerCase();
+    if (dc === 'phone' || el.classList.contains('fab-call') || el.classList.contains('btn-call')) {
+      var href = el.getAttribute('href') || '';
+      trackConv('call', extPhone(href) || el.getAttribute('data-phone') || '');
+    } else if (dc === 'whatsapp' || el.classList.contains('fab-wa') || el.classList.contains('btn-wa')) {
+      var wh = el.getAttribute('href') || '';
+      trackConv('whatsapp', extPhone(wh) || el.getAttribute('data-phone') || '');
+    }
+  }, true);
 
   document.addEventListener('submit', function () { trackConv('form', ''); }, { passive: true });
-
-  document.addEventListener('click', function (e) {
-    var el = e.target.closest('[data-track]');
-    if (!el) return;
-    trackConv(el.getAttribute('data-track') || 'cta', el.getAttribute('data-phone') || '');
-  }, { passive: true });
 
   setTimeout(function () { post('visit'); }, 500);
 

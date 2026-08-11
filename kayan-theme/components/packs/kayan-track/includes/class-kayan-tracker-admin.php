@@ -104,7 +104,7 @@ if ( ! class_exists( 'Kayan_Tracker_Admin' ) ) {
 		}
 
 		private function filters_from_request() {
-			$preset = sanitize_key( isset( $_POST['preset'] ) ? $_POST['preset'] : '7d' );
+			$preset = sanitize_key( isset( $_POST['preset'] ) ? $_POST['preset'] : '30d' );
 			$from   = sanitize_text_field( isset( $_POST['date_from'] ) ? $_POST['date_from'] : '' );
 			$to     = sanitize_text_field( isset( $_POST['date_to'] ) ? $_POST['date_to'] : '' );
 			return kayan_track_date_range( $preset, $from, $to );
@@ -243,7 +243,10 @@ if ( ! class_exists( 'Kayan_Tracker_Admin' ) ) {
 			}
 			if ( $search ) {
 				$like    = '%' . $wpdb->esc_like( $search ) . '%';
-				$where  .= ' AND (ip LIKE %s OR phone_raw LIKE %s OR city LIKE %s OR page_title LIKE %s)';
+				$where  .= ' AND (ip LIKE %s OR phone_raw LIKE %s OR city LIKE %s OR page_title LIKE %s OR page_url LIKE %s OR traffic_src LIKE %s OR browser LIKE %s)';
+				$args[]  = $like;
+				$args[]  = $like;
+				$args[]  = $like;
 				$args[]  = $like;
 				$args[]  = $like;
 				$args[]  = $like;
@@ -590,18 +593,45 @@ if ( ! class_exists( 'Kayan_Tracker_Admin' ) ) {
 		public function ajax_export_csv() {
 			$this->verify();
 			global $wpdb;
-			$range = $this->filters_from_request();
-			$table = kayan_track_table( 'conversions' );
-			$rows  = $wpdb->get_results(
+			$range  = $this->filters_from_request();
+			$table  = kayan_track_table( 'conversions' );
+			$type   = sanitize_key( isset( $_POST['click_type'] ) ? $_POST['click_type'] : '' );
+			$device = sanitize_key( isset( $_POST['device'] ) ? $_POST['device'] : '' );
+			$search = sanitize_text_field( isset( $_POST['search'] ) ? $_POST['search'] : '' );
+
+			$where = 'WHERE is_duplicate = 0 AND created_at >= %s AND created_at <= %s';
+			$args  = array( $range['from'], $range['to'] );
+
+			if ( $type ) {
+				$where .= ' AND click_type = %s';
+				$args[] = $type;
+			}
+			if ( $device ) {
+				$where .= ' AND device_type = %s';
+				$args[] = $device;
+			}
+			if ( $search ) {
+				$like    = '%' . $wpdb->esc_like( $search ) . '%';
+				$where  .= ' AND (ip LIKE %s OR phone_raw LIKE %s OR city LIKE %s OR page_title LIKE %s OR page_url LIKE %s)';
+				$args[]  = $like;
+				$args[]  = $like;
+				$args[]  = $like;
+				$args[]  = $like;
+				$args[]  = $like;
+			}
+
+			$list_args   = $args;
+			$list_args[] = 5000;
+
+			$rows = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT * FROM {$table} WHERE is_duplicate = 0 AND created_at >= %s AND created_at <= %s ORDER BY created_at DESC LIMIT 5000",
-					$range['from'],
-					$range['to']
+					"SELECT * FROM {$table} {$where} ORDER BY created_at DESC LIMIT %d",
+					$list_args
 				),
 				ARRAY_A
 			);
 
-			$csv = "id,click_type,phone,ip,country,city,device,page_title,page_url,traffic_src,created_at\n";
+			$csv = "id,click_type,phone,ip,country,city,device,browser,page_title,page_url,traffic_src,created_at\n";
 			foreach ( $rows as $row ) {
 				$csv .= implode(
 					',',
@@ -613,6 +643,7 @@ if ( ! class_exists( 'Kayan_Tracker_Admin' ) ) {
 						'"' . str_replace( '"', '""', $row['country'] ) . '"',
 						'"' . str_replace( '"', '""', $row['city'] ) . '"',
 						$row['device_type'],
+						isset( $row['browser'] ) ? $row['browser'] : '',
 						'"' . str_replace( '"', '""', $row['page_title'] ) . '"',
 						'"' . str_replace( '"', '""', $row['page_url'] ) . '"',
 						$row['traffic_src'],
