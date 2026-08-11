@@ -1,7 +1,14 @@
 (function () {
   'use strict';
   var CFG = window.KayanTrackAdmin || {};
-  var state = { tab: 'overview', preset: '7d', dateFrom: '', dateTo: '', charts: {} };
+  var state = {
+    tab: 'overview',
+    preset: '30d',
+    dateFrom: '',
+    dateTo: '',
+    charts: {},
+    conv: { page: 1, search: '', click_type: '', device: '' }
+  };
 
   function $(sel, ctx) { return (ctx || document).querySelector(sel); }
   function $all(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
@@ -45,7 +52,8 @@
       btn.addEventListener('click', function () {
         $all('.qf-btn').forEach(function (b) { b.classList.remove('active'); });
         btn.classList.add('active');
-        state.preset = btn.getAttribute('data-preset') || '7d';
+        state.preset = btn.getAttribute('data-preset') || '30d';
+        if (state.tab === 'conversions') state.conv.page = 1;
         loadTab();
       });
     });
@@ -56,6 +64,7 @@
         state.dateFrom = ($('#kt-date-from') || {}).value || '';
         state.dateTo = ($('#kt-date-to') || {}).value || '';
         $all('.qf-btn').forEach(function (b) { b.classList.remove('active'); });
+        if (state.tab === 'conversions') state.conv.page = 1;
         loadTab();
       });
     }
@@ -139,56 +148,209 @@
     return h + '</tbody></table>';
   }
 
-  function renderConversions(data) {
-    var rows = data.rows || [];
-    var html = '<div class="kt-toolbar">' +
-      '<input type="search" class="kt-search" id="kt-conv-search" placeholder="بحث IP / مدينة / صفحة">' +
-      '<select id="kt-conv-type"><option value="">كل الأنواع</option><option value="call">اتصال</option><option value="whatsapp">واتساب</option><option value="form">نموذج</option></select>' +
-      '<button class="kt-btn" id="kt-export-csv"><i class="fas fa-download"></i> تصدير CSV</button>' +
-      '<button class="kt-btn ghost" id="kt-share-report"><i class="fas fa-share-alt"></i> مشاركة</button>' +
-      '</div><table class="kt-tbl"><thead><tr>' +
-      '<th>النوع</th><th>IP</th><th>المدينة</th><th>الجهاز</th><th>الصفحة</th><th>الوقت</th><th></th></tr></thead><tbody>';
-    rows.forEach(function (r) {
-      html += '<tr class="' + (r.is_suspicious === '1' ? 'suspicious' : '') + '">' +
-        '<td data-label="النوع">' + esc(r.click_type) + '</td>' +
-        '<td data-label="IP">' + esc(r.ip) + '</td>' +
-        '<td data-label="المدينة">' + esc(r.city) + '</td>' +
-        '<td data-label="الجهاز">' + esc(r.device_type) + '</td>' +
-        '<td data-label="الصفحة">' + esc(r.page_title) + '</td>' +
-        '<td data-label="الوقت">' + esc(r.created_at) + '</td>' +
-        '<td><button class="kt-btn sm danger kt-block-ip" data-ip="' + esc(r.ip) + '">حظر</button></td></tr>';
-    });
-    html += '</tbody></table><div class="kt-toolbar"><span>صفحة ' + data.page + ' / ' + data.pages + '</span></div>';
-    $('#kt-content').innerHTML = html;
-    bindBlockIp();
-    var search = $('#kt-conv-search');
-    if (search) search.addEventListener('change', function () { loadConversions(1, search.value); });
-    var exp = $('#kt-export-csv');
-    if (exp) exp.addEventListener('click', function () {
-      ajax('kayan_track_export_csv', {}).then(function (res) {
-        if (!res.success) return toast('فشل التصدير');
-        var blob = new Blob([res.data.csv], { type: 'text/csv;charset=utf-8' });
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'kayan-conversions.csv';
-        a.click();
-      });
-    });
-    var share = $('#kt-share-report');
-    if (share) share.addEventListener('click', function () {
-      ajax('kayan_track_generate_report', { title: 'تقرير التحويلات' }).then(function (res) {
-        if (res.success && res.data.url) {
-          prompt('رابط التقرير:', res.data.url);
-        }
-      });
-    });
+  function typeBadge(type) {
+    var t = String(type || '').toLowerCase();
+    if (t === 'whatsapp' || t === 'wa' || t === 'tsapp') {
+      return '<span class="kt-badge kt-badge-wa"><i class="fab fa-whatsapp"></i> whatsapp</span>';
+    }
+    if (t === 'call' || t === 'phone') {
+      return '<span class="kt-badge kt-badge-call"><i class="fas fa-phone"></i> call</span>';
+    }
+    if (t === 'form') {
+      return '<span class="kt-badge kt-badge-form"><i class="fas fa-wpforms"></i> form</span>';
+    }
+    return '<span class="kt-badge">' + esc(type || '-') + '</span>';
   }
 
-  function loadConversions(page, search) {
-    setLoading();
-    ajax('kayan_track_conversions', { page_num: page || 1, search: search || '' }).then(function (res) {
-      if (res.success) renderConversions(res.data);
+  function sourceBadge(src) {
+    var s = String(src || 'direct').toLowerCase();
+    var cls = 'kt-src-direct';
+    if (s === 'organic') cls = 'kt-src-organic';
+    else if (s === 'referral') cls = 'kt-src-referral';
+    else if (s === 'social') cls = 'kt-src-social';
+    else if (s === 'paid' || s === 'google_ads' || s === 'campaign') cls = 'kt-src-paid';
+    return '<span class="kt-src ' + cls + '">' + esc(s) + '</span>';
+  }
+
+  function deviceCell(r) {
+    var dev = r.device_type || '-';
+    var br = r.browser || '';
+    var icon = 'fa-desktop';
+    if (dev === 'mobile') icon = 'fa-mobile-alt';
+    else if (dev === 'tablet') icon = 'fa-tablet-alt';
+    return '<span class="kt-device"><i class="fas ' + icon + '"></i> ' + esc(dev) + (br ? ' <small>' + esc(br) + '</small>' : '') + '</span>';
+  }
+
+  function pageCell(r) {
+    var title = r.page_title || '-';
+    var url = r.page_url || '';
+    var short = url;
+    try {
+      if (url) {
+        var u = new URL(url, (CFG.homeUrl || location.origin));
+        short = (u.hostname + u.pathname).replace(/\/$/, '');
+        if (short.length > 42) short = short.slice(0, 40) + '…';
+      }
+    } catch (e) {
+      if (short.length > 42) short = short.slice(0, 40) + '…';
+    }
+    return '<div class="kt-page-cell"><strong>' + esc(title) + '</strong>' +
+      (url ? '<a class="kt-page-url" href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(short) + '</a>' : '') +
+      '</div>';
+  }
+
+  function renderConversions(data) {
+    var rows = data.rows || [];
+    var total = data.total || 0;
+    var page = data.page || 1;
+    var pages = data.pages || 1;
+    var html = '<div class="kt-toolbar kt-conv-toolbar">' +
+      '<input type="search" class="kt-search" id="kt-conv-search" placeholder="IP / مدينة / صفحة" value="' + esc(state.conv.search || '') + '">' +
+      '<select id="kt-conv-type">' +
+        '<option value="">كل الأنواع</option>' +
+        '<option value="call"' + (state.conv.click_type === 'call' ? ' selected' : '') + '>اتصال</option>' +
+        '<option value="whatsapp"' + (state.conv.click_type === 'whatsapp' ? ' selected' : '') + '>واتساب</option>' +
+        '<option value="form"' + (state.conv.click_type === 'form' ? ' selected' : '') + '>نموذج</option>' +
+      '</select>' +
+      '<select id="kt-conv-device">' +
+        '<option value="">كل الأجهزة</option>' +
+        '<option value="mobile"' + (state.conv.device === 'mobile' ? ' selected' : '') + '>موبايل</option>' +
+        '<option value="desktop"' + (state.conv.device === 'desktop' ? ' selected' : '') + '>سطح المكتب</option>' +
+        '<option value="tablet"' + (state.conv.device === 'tablet' ? ' selected' : '') + '>تابلت</option>' +
+      '</select>' +
+      '<button type="button" class="kt-btn" id="kt-conv-apply"><i class="fas fa-filter"></i> تطبيق</button>' +
+      '<button type="button" class="kt-btn ghost" id="kt-export-excel"><i class="fas fa-file-excel"></i> Excel</button>' +
+      '<button type="button" class="kt-btn ghost" id="kt-export-csv"><i class="fas fa-file-csv"></i> CSV</button>' +
+      '<span class="kt-total">إجمالي: <strong>' + esc(total) + '</strong> تحويل</span>' +
+      '</div>';
+
+    if (!rows.length) {
+      html += '<div class="kt-empty">لا توجد تحويلات في هذه الفترة</div>';
+    } else {
+      html += '<div class="kt-table-wrap"><table class="kt-tbl kt-conv-tbl"><thead><tr>' +
+        '<th>التحويل</th><th>المصدر</th><th>الجهاز / المتصفح</th><th>المدينة</th><th>IP</th><th>الصفحة</th><th>الوقت</th><th></th>' +
+        '</tr></thead><tbody>';
+      rows.forEach(function (r) {
+        html += '<tr class="' + (r.is_suspicious === '1' || r.is_suspicious === 1 ? 'suspicious' : '') + '">' +
+          '<td data-label="التحويل">' + typeBadge(r.click_type) + '</td>' +
+          '<td data-label="المصدر">' + sourceBadge(r.traffic_src) + '</td>' +
+          '<td data-label="الجهاز">' + deviceCell(r) + '</td>' +
+          '<td data-label="المدينة">' + esc(r.city || '-') + '</td>' +
+          '<td data-label="IP" class="kt-ip-cell"><span dir="ltr">' + esc(r.ip || '-') + '</span> ' +
+            '<button type="button" class="kt-icon-ban kt-block-ip" data-ip="' + esc(r.ip) + '" title="حظر IP"><i class="fas fa-ban"></i></button></td>' +
+          '<td data-label="الصفحة">' + pageCell(r) + '</td>' +
+          '<td data-label="الوقت" dir="ltr">' + esc(r.created_at || '') + '</td>' +
+          '<td data-label=""><i class="fas fa-bolt kt-bolt" title="تحويل"></i></td>' +
+          '</tr>';
+      });
+      html += '</tbody></table></div>';
+    }
+
+    html += '<div class="kt-pager">' + renderPager(page, pages) + '</div>';
+    $('#kt-content').innerHTML = html;
+    bindBlockIp();
+    bindConversionControls(page);
+  }
+
+  function renderPager(page, pages) {
+    if (pages <= 1) return '<span class="kt-page-info">صفحة ' + page + ' / ' + pages + '</span>';
+    var h = '';
+    var start = Math.max(1, page - 2);
+    var end = Math.min(pages, start + 4);
+    start = Math.max(1, end - 4);
+    if (page > 1) h += '<button type="button" class="kt-page-btn" data-page="' + (page - 1) + '">‹</button>';
+    for (var i = start; i <= end; i++) {
+      h += '<button type="button" class="kt-page-btn' + (i === page ? ' active' : '') + '" data-page="' + i + '">' + i + '</button>';
+    }
+    if (page < pages) h += '<button type="button" class="kt-page-btn" data-page="' + (page + 1) + '">›</button>';
+    return h;
+  }
+
+  function bindConversionControls() {
+    var search = $('#kt-conv-search');
+    var type = $('#kt-conv-type');
+    var device = $('#kt-conv-device');
+    var apply = $('#kt-conv-apply');
+
+    function readFilters() {
+      state.conv.search = search ? search.value.trim() : '';
+      state.conv.click_type = type ? type.value : '';
+      state.conv.device = device ? device.value : '';
+    }
+
+    if (apply) {
+      apply.addEventListener('click', function () {
+        readFilters();
+        state.conv.page = 1;
+        loadConversions(1);
+      });
+    }
+    if (search) {
+      search.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          readFilters();
+          state.conv.page = 1;
+          loadConversions(1);
+        }
+      });
+    }
+    if (type) {
+      type.addEventListener('change', function () {
+        readFilters();
+        state.conv.page = 1;
+        loadConversions(1);
+      });
+    }
+    if (device) {
+      device.addEventListener('change', function () {
+        readFilters();
+        state.conv.page = 1;
+        loadConversions(1);
+      });
+    }
+
+    $all('.kt-page-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var p = parseInt(btn.getAttribute('data-page'), 10) || 1;
+        state.conv.page = p;
+        loadConversions(p);
+      });
     });
+
+    function downloadExport(filename) {
+      ajax('kayan_track_export_csv', {
+        click_type: state.conv.click_type || '',
+        device: state.conv.device || '',
+        search: state.conv.search || ''
+      }).then(function (res) {
+        if (!res.success) return toast('فشل التصدير');
+        var blob = new Blob(['\uFEFF' + res.data.csv], { type: 'text/csv;charset=utf-8' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        a.click();
+      });
+    }
+
+    var exp = $('#kt-export-csv');
+    if (exp) exp.addEventListener('click', function () { downloadExport('kayan-conversions.csv'); });
+    var excel = $('#kt-export-excel');
+    if (excel) excel.addEventListener('click', function () { downloadExport('kayan-conversions.xls'); });
+  }
+
+  function loadConversions(page) {
+    setLoading();
+    state.conv.page = page || state.conv.page || 1;
+    ajax('kayan_track_conversions', {
+      page_num: state.conv.page,
+      search: state.conv.search || '',
+      click_type: state.conv.click_type || '',
+      device: state.conv.device || ''
+    }).then(function (res) {
+      if (res.success) renderConversions(res.data);
+      else toast('تعذّر تحميل التحويلات');
+    }).catch(function () { toast('خطأ في الاتصال'); });
   }
 
   function renderNumbers(data) {
@@ -409,7 +571,7 @@
     if (tab === 'overview') {
       ajax('kayan_track_overview', {}).then(function (res) { if (res.success) renderOverview(res.data); });
     } else if (tab === 'conversions') {
-      loadConversions(1);
+      loadConversions(state.conv.page || 1);
     } else if (tab === 'numbers') {
       ajax('kayan_track_numbers_list', {}).then(function (res) { if (res.success) renderNumbers(res.data); });
     } else if (tab === 'pages') {

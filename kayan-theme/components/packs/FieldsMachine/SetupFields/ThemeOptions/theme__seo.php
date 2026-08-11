@@ -9,7 +9,7 @@ $metaboxes = array(
 			'id'=> 'kayan_seo_disable',
 			'type'=>'SwitchBox',
 			'title'=> 'تعطيل KAYAN SEO (استعادة واجهة Rank Math)',
-			'disc'=>'عند التفعيل: يتوقف KAYAN SEO عن طباعة العنوان/الميتا/السكيما، وتعود واجهة Rank Math للطباعة في head. لا تشغّل الاثنين معاً على الواجهة لتفادي التكرار. الإضافة Rank Math تبقى Active في كل الأحوال.'
+			'disc'=>'KAYAN SEO واجهة لـ Rank Math (نفس الميتا rank_math_title / rank_math_description + بلوك تحت المقال). عند التفعيل: يُخفى بلوك KAYAN ويتوقف إخراج القالب، وتعود واجهة Rank Math للطباعة في head. لا تشغّل الاثنين معاً على الواجهة. الإضافة Rank Math تبقى Active دائماً.'
 		),
 		array(
 			'id'=> 'hide__theme_seo',

@@ -1,16 +1,18 @@
 <?php
 /**
- * kayan-seo — طبقة SEO الخاصة بـ KAYAN
+ * kayan-seo — واجهة SEO تابعة لـ Rank Math (ليست بديلاً)
  *
  * السياسة الافتراضية:
- * - Rank Math Active للتخزين.
- * - واجهة Rank Math معطّلة بينما KAYAN SEO يعمل.
- * - لاستعادة واجهة Rank Math: فعّل kayan_seo_disable (لا تشغّل الاثنين معاً على الواجهة).
+ * - Rank Math Active للتخزين (نفس الجداول/الميتا).
+ * - ميتا بوكس KAYAN تحت المقال يكتب rank_math_title / rank_math_description.
+ * - إخراج واجهة Rank Math في الفرونت معطّل بينما KAYAN SEO يعمل (تفادي تكرار head).
+ * - لاستعادة واجهة Rank Math بالكامل: فعّل kayan_seo_disable.
  */
 
 require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/compatibility.php';
 require_once __DIR__ . '/rank-math-bridge.php';
+require_once __DIR__ . '/admin-metabox.php';
 
 if ( ! function_exists( 'kayan_seo_bootstrap' ) ) {
 	function kayan_seo_bootstrap() {

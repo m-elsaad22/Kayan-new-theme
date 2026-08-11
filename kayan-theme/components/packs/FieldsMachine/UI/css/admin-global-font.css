@@ -1,0 +1,181 @@
+/**
+ * خط لوحة تحكم ووردبريس بالكامل — Montserrat Arabic (YourColor)
+ * نفس خط kn-eltatawer / إعدادات القالب.
+ */
+
+@font-face {
+	font-family: YourColor;
+	font-style: normal;
+	font-weight: 200;
+	font-display: swap;
+	src: url("../Font/YourColor/Montserrat-Arabic-ExtraLight.ttf") format("truetype");
+}
+
+@font-face {
+	font-family: YourColor;
+	font-style: normal;
+	font-weight: 300;
+	font-display: swap;
+	src: url("../Font/YourColor/Montserrat-Arabic-Light.ttf") format("truetype");
+}
+
+@font-face {
+	font-family: YourColor;
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("../Font/YourColor/Montserrat-Arabic-Regular.ttf") format("truetype");
+}
+
+@font-face {
+	font-family: YourColor;
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url("../Font/YourColor/Montserrat-Arabic-Medium.ttf") format("truetype");
+}
+
+@font-face {
+	font-family: YourColor;
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url("../Font/YourColor/Montserrat-Arabic-Bold.ttf") format("truetype");
+}
+
+@font-face {
+	font-family: YourColor;
+	font-style: normal;
+	font-weight: 800;
+	font-display: swap;
+	src: url("../Font/YourColor/Montserrat-Arabic-ExtraBold.ttf") format("truetype");
+}
+
+@font-face {
+	font-family: YourColor;
+	font-style: normal;
+	font-weight: 900;
+	font-display: swap;
+	src: url("../Font/YourColor/Montserrat-Arabic-Black.ttf") format("truetype");
+}
+
+body.wp-admin,
+body.wp-admin #wpwrap,
+body.wp-admin #wpcontent,
+body.wp-admin #wpbody,
+body.wp-admin #wpbody-content,
+body.wp-admin #wpfooter,
+body.wp-admin .wrap,
+body.wp-admin .wrap h1,
+body.wp-admin .wrap h2,
+body.wp-admin .wrap h3,
+body.wp-admin .form-table,
+body.wp-admin .form-table th,
+body.wp-admin .form-table td,
+body.wp-admin .wp-list-table,
+body.wp-admin .wp-list-table th,
+body.wp-admin .wp-list-table td,
+body.wp-admin .subsubsub,
+body.wp-admin .subsubsub a,
+body.wp-admin .button,
+body.wp-admin .button-primary,
+body.wp-admin .button-secondary,
+body.wp-admin .page-title-action,
+body.wp-admin input,
+body.wp-admin select,
+body.wp-admin textarea,
+body.wp-admin label,
+body.wp-admin p,
+body.wp-admin .notice,
+body.wp-admin .updated,
+body.wp-admin .error,
+body.wp-admin .tablenav,
+body.wp-admin .search-box input,
+body.wp-admin .row-actions,
+body.wp-admin .row-actions a,
+body.wp-admin .postbox,
+body.wp-admin .postbox h2,
+body.wp-admin .meta-box-sortables,
+body.wp-admin .misc-pub-section,
+body.wp-admin #screen-meta,
+body.wp-admin #screen-meta-links,
+body.wp-admin .screen-meta-toggle,
+body.wp-admin .wp-core-ui,
+body.wp-admin .wp-core-ui select,
+body.wp-admin .media-frame,
+body.wp-admin .media-frame-content,
+body.wp-admin .attachment-details,
+body.wp-admin .compat-item,
+body.wp-admin .components-button,
+body.wp-admin .components-base-control,
+body.wp-admin .interface-interface-skeleton,
+body.wp-admin .edit-post-layout,
+body.wp-admin .editor-styles-wrapper,
+#wpadminbar,
+#wpadminbar * ,
+#adminmenumain,
+#adminmenuwrap,
+#adminmenu,
+#adminmenu a,
+#adminmenu .wp-submenu a,
+#adminmenu .wp-submenu-head,
+#adminmenu .wp-menu-name,
+#adminmenu .awaiting-mod,
+#adminmenu .update-plugins,
+.kayan-admin-shell,
+.kayan-admin-shell * {
+	font-family: YourColor, "Segoe UI", Tahoma, Arial, sans-serif !important;
+}
+
+/* لا تكسر أيقونات ووردبريس / Font Awesome */
+body.wp-admin .dashicons,
+body.wp-admin .dashicons-before:before,
+#adminmenu .dashicons,
+#adminmenu .dashicons-before:before,
+#wpadminbar .ab-icon,
+#wpadminbar .ab-icon:before,
+#wpadminbar .ab-item:before {
+	font-family: dashicons !important;
+}
+
+body.wp-admin .fa,
+body.wp-admin .fas,
+body.wp-admin .far,
+body.wp-admin .fal,
+body.wp-admin .fa-solid,
+body.wp-admin .fa-regular,
+body.wp-admin .fa-light,
+body.wp-admin i[class*="fa-"] {
+	font-family: "Font Awesome 6 Free" !important;
+}
+
+body.wp-admin .fab,
+body.wp-admin .fa-brands {
+	font-family: "Font Awesome 6 Brands" !important;
+}
+
+body.wp-admin code,
+body.wp-admin kbd,
+body.wp-admin pre,
+body.wp-admin .CodeMirror,
+body.wp-admin .CodeMirror * {
+	font-family: Consolas, Monaco, monospace !important;
+}
+
+/* أوزان أوضح للعناوين مثل شاشة kn-eltatawer */
+body.wp-admin .wrap > h1,
+body.wp-admin .wrap h1.wp-heading-inline {
+	font-weight: 700 !important;
+	letter-spacing: 0;
+}
+
+body.wp-admin #adminmenu .wp-menu-name,
+body.wp-admin #adminmenu a {
+	font-weight: 500;
+}
+
+body.wp-admin .button,
+body.wp-admin .button-primary,
+body.wp-admin .page-title-action {
+	font-weight: 600 !important;
+}

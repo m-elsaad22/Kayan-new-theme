@@ -7,7 +7,7 @@ if ( ! current_user_can( 'manage_options' ) ) {
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>KAYAN Track</title>
+	<title>تتبع كيان</title>
 	<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 	<link rel="stylesheet" href="<?php echo esc_url( kayan_track_pack_url() . 'admin/css/track-admin.css' ); ?>">
@@ -15,7 +15,7 @@ if ( ! current_user_can( 'manage_options' ) ) {
 <body class="kt-app">
 	<div class="kt-shell">
 		<aside class="kt-sidebar">
-			<div class="kt-brand"><i class="fas fa-chart-line"></i> KAYAN Track</div>
+			<div class="kt-brand"><i class="fas fa-chart-line"></i> تتبع كيان</div>
 			<nav class="kt-nav">
 				<button type="button" class="kt-nav-btn active" data-tab="overview"><i class="fas fa-home"></i> نظرة عامة</button>
 				<button type="button" class="kt-nav-btn" data-tab="numbers"><i class="fas fa-phone"></i> الأرقام</button>
@@ -28,9 +28,11 @@ if ( ! current_user_can( 'manage_options' ) ) {
 		</aside>
 		<main class="kt-main">
 			<div class="qf-bar" id="kt-filters">
-				<button type="button" class="qf-btn active" data-preset="today">اليوم</button>
+				<button type="button" class="qf-btn" data-preset="today">اليوم</button>
 				<button type="button" class="qf-btn" data-preset="yesterday">أمس</button>
-				<button type="button" class="qf-btn" data-preset="7d">آخر 7 أيام</button>
+				<button type="button" class="qf-btn" data-preset="7d">7 أيام</button>
+				<button type="button" class="qf-btn active" data-preset="30d">30 يوم</button>
+				<button type="button" class="qf-btn" data-preset="3m">3 أشهر</button>
 				<button type="button" class="qf-btn" data-preset="month">هذا الشهر</button>
 				<span class="date-range">
 					<input type="date" class="date-inp" id="kt-date-from">

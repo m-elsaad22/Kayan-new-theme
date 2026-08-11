@@ -217,12 +217,23 @@ class Kayan_Admin_Platform {
 		$css = $base . '/assets/admin/kayan-admin.css';
 		$js  = $base . '/assets/admin/kayan-admin.js';
 
+		$font_deps = array();
+		if ( wp_style_is( 'kayan-admin-global-font', 'registered' ) || wp_style_is( 'kayan-admin-global-font', 'enqueued' ) ) {
+			$font_deps[] = 'kayan-admin-global-font';
+		}
+
 		if ( file_exists( $css ) ) {
-			wp_enqueue_style( 'kayan-admin', $url . '/assets/admin/kayan-admin.css', array(), $ver );
+			$css_ver = (string) filemtime( $css );
+			wp_enqueue_style( 'kayan-admin', $url . '/assets/admin/kayan-admin.css', $font_deps, $css_ver );
 		}
 		if ( file_exists( $js ) ) {
-			wp_enqueue_script( 'kayan-admin', $url . '/assets/admin/kayan-admin.js', array(), $ver, true );
+			$js_ver = (string) filemtime( $js );
+			wp_enqueue_script( 'kayan-admin', $url . '/assets/admin/kayan-admin.js', array(), $js_ver, true );
 		}
+
+		// Soften default WP chrome around the Platform shell on mobile.
+		$inline = 'body.toplevel_page_kayan-platform #wpcontent,body[class*="kayan-platform"] #wpcontent{background:#f3f5f8}body.toplevel_page_kayan-platform #wpbody-content,body[class*="kayan-platform"] #wpbody-content{padding-bottom:40px}';
+		wp_add_inline_style( 'kayan-admin', $inline );
 	}
 
 	/**
@@ -247,9 +258,42 @@ class Kayan_Admin_Platform {
 		}
 
 		$nav = $this->modules->nav_modules();
+		$ver = defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '6.0.0';
 		?>
-		<div class="wrap kayan-admin-shell" data-kayan-admin>
-			<h1><?php echo esc_html__( 'KAYAN Platform', 'kayan' ); ?></h1>
+		<div class="wrap kayan-admin-shell" data-kayan-admin dir="rtl" lang="ar">
+			<header class="kayan-admin-shell__top">
+				<div class="kayan-admin-shell__brand">
+					<span class="kayan-admin-shell__brand-mark" aria-hidden="true">K</span>
+					<div class="kayan-admin-shell__brand-text">
+						<h1><?php echo esc_html__( 'KAYAN Platform', 'kayan' ); ?></h1>
+						<p><?php echo esc_html__( 'لوحة إدارة المنصة', 'kayan' ); ?></p>
+					</div>
+				</div>
+				<?php
+				echo $this->ui->status( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					array(
+						'label' => sprintf(
+							/* translators: %s: platform version */
+							__( 'الإصدار %s', 'kayan' ),
+							$ver
+						),
+						'type'  => 'info',
+					)
+				);
+				?>
+			</header>
+
+			<label class="kayan-admin-shell__mobile-nav-label" for="kayan-admin-mobile-nav">
+				<?php echo esc_html__( 'الانتقال إلى', 'kayan' ); ?>
+			</label>
+			<select id="kayan-admin-mobile-nav" class="kayan-admin-shell__mobile-nav" data-kayan-mobile-nav>
+				<?php foreach ( $nav as $id => $item ) : ?>
+					<option value="<?php echo esc_url( $this->module_url( $id ) ); ?>" <?php selected( $id, $module_id ); ?>>
+						<?php echo esc_html( (string) $item['label'] ); ?>
+					</option>
+				<?php endforeach; ?>
+			</select>
+
 			<div class="kayan-admin-shell__layout">
 				<aside class="kayan-admin-shell__nav" aria-label="<?php esc_attr_e( 'KAYAN modules', 'kayan' ); ?>">
 					<ul>
@@ -270,14 +314,6 @@ class Kayan_Admin_Platform {
 				<main class="kayan-admin-shell__main">
 					<header class="kayan-admin-shell__header">
 						<h2><?php echo esc_html( (string) ( $module['label'] ?? $module_id ) ); ?></h2>
-						<?php
-						echo $this->ui->status( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-							array(
-								'label' => 'Platform ' . ( defined( 'KAYAN_PLATFORM_VERSION' ) ? KAYAN_PLATFORM_VERSION : '6.0.0' ),
-								'type'  => 'info',
-							)
-						);
-						?>
 					</header>
 					<div class="kayan-admin-shell__content">
 						<?php echo $this->status_message(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

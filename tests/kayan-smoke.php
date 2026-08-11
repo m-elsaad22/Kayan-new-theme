@@ -83,6 +83,12 @@ assert_true( false !== strpos( $fm, 'admin-mobile.css' ), 'admin-mobile.css enqu
 assert_true( false !== strpos( $fm, 'fa-free-fixes.css' ), 'admin fa-free-fixes enqueued' );
 assert_true( false !== strpos( $fm, 'wp_enqueue_style' ), 'FieldsMachine uses wp_enqueue_style' );
 assert_true( false === strpos( $fm, 'rand()' ), 'FieldsMachine no rand() cache bust' );
+assert_true( false !== strpos( $fm, 'YC__CFM_Admin_Global_Font' ), 'global admin font enqueue method' );
+assert_true( false !== strpos( $fm, 'kayan-admin-global-font' ), 'global admin font handle' );
+assert_true( file_exists( "$theme/components/packs/FieldsMachine/UI/css/admin-global-font.css" ), 'admin-global-font.css exists' );
+$global_font = file_get_contents( "$theme/components/packs/FieldsMachine/UI/css/admin-global-font.css" );
+assert_true( false !== strpos( $global_font, 'Montserrat-Arabic' ), 'global font uses Montserrat Arabic' );
+assert_true( false !== strpos( $global_font, 'font-family: YourColor' ), 'global font family YourColor' );
 
 # 5) Booking inject no longer requires in_the_loop
 $book = file_get_contents( "$theme/components/packs/kayan-booking/setup.php" );
@@ -164,7 +170,7 @@ assert_true( strlen( $admin_m ) > 1000, 'admin-mobile.css non-empty' );
 
 # 9) Version + packaging
 $style = file_get_contents( "$theme/style.css" );
-assert_true( false !== strpos( $style, 'Version: 2.4.3' ), 'style.css version 2.4.3' );
+assert_true( false !== strpos( $style, 'Version: 2.4.7' ), 'style.css version 2.4.7' );
 
 # Interactive price booking + floating CTA
 assert_true( file_exists( "$theme/components/packs/kayan-price-pay/setup.php" ), 'kayan-price-pay pack exists' );
@@ -181,10 +187,11 @@ assert_true( false === strpos( $footer, "/ajaxcenter/" ), 'footer AdminAjax not 
 $pay_js = file_get_contents( "$theme/components/packs/kayan-price-pay/assets/js/kayan-price-pay.js" );
 assert_true( false !== strpos( $pay_js, 'rukn-eltatawer-pay.tanceq.com' ), 'pay URL in JS' );
 
-# Rank Math = storage only via kayan-seo (unless kayan_seo_disable)
+# Rank Math = storage via kayan-seo interface (unless kayan_seo_disable)
 assert_true( file_exists( "$theme/components/packs/kayan-seo/helpers.php" ), 'kayan-seo helpers exists' );
 assert_true( file_exists( "$theme/components/packs/kayan-seo/compatibility.php" ), 'kayan-seo compatibility exists' );
 assert_true( file_exists( "$theme/components/packs/kayan-seo/rank-math-bridge.php" ), 'kayan-seo bridge exists' );
+assert_true( file_exists( "$theme/components/packs/kayan-seo/admin-metabox.php" ), 'kayan-seo admin metabox exists' );
 assert_true( ! file_exists( "$theme/components/packs/kayan-rankmath/setup.php" ), 'legacy kayan-rankmath force-enable removed' );
 $helpers = file_get_contents( "$theme/components/packs/kayan-seo/helpers.php" );
 assert_true( false !== strpos( $helpers, 'kayan_seo_disable' ), 'helpers reads kayan_seo_disable' );
@@ -195,8 +202,33 @@ assert_true( false !== strpos( $compat, 'kayan_seo_is_disabled' ), 'compatibilit
 $bridge = file_get_contents( "$theme/components/packs/kayan-seo/rank-math-bridge.php" );
 assert_true( false !== strpos( $bridge, 'rank_math_title' ), 'bridge reads rank_math_title' );
 assert_true( false !== strpos( $bridge, 'rank_math_description' ), 'bridge reads rank_math_description' );
+$metabox = file_get_contents( "$theme/components/packs/kayan-seo/admin-metabox.php" );
+assert_true( false !== strpos( $metabox, "update_post_meta( \$post_id, 'rank_math_title'" ), 'metabox writes rank_math_title' );
+assert_true( false !== strpos( $metabox, "update_post_meta( \$post_id, 'rank_math_description'" ), 'metabox writes rank_math_description' );
+assert_true( false !== strpos( $metabox, 'rank_math/metabox/add_seo_metabox' ), 'metabox hides Rank Math UI while KAYAN active' );
+$seo_setup = file_get_contents( "$theme/components/packs/kayan-seo/setup.php" );
+assert_true( false !== strpos( $seo_setup, 'admin-metabox.php' ), 'setup loads admin-metabox' );
 $theme_seo_opts = file_get_contents( "$theme/components/packs/FieldsMachine/SetupFields/ThemeOptions/theme__seo.php" );
 assert_true( false !== strpos( $theme_seo_opts, "'kayan_seo_disable'" ), 'theme option kayan_seo_disable present' );
+
+# KAYAN Track conversions UI
+assert_true( file_exists( "$theme/components/packs/kayan-track/setup.php" ), 'kayan-track pack exists' );
+$track_js = file_get_contents( "$theme/components/packs/kayan-track/admin/js/track-admin.js" );
+assert_true( false !== strpos( $track_js, "preset: '30d'" ), 'track admin default preset 30d' );
+assert_true( false !== strpos( $track_js, 'kt-badge-wa' ), 'track conversions WhatsApp badge' );
+assert_true( false !== strpos( $track_js, 'kt-badge-call' ), 'track conversions call badge' );
+assert_true( false !== strpos( $track_js, 'sourceBadge' ), 'track conversions source column' );
+assert_true( false !== strpos( $track_js, 'click_type:' ), 'track conversions type filter wired' );
+assert_true( false !== strpos( $track_js, 'kt-conv-device' ), 'track conversions device filter' );
+$track_app = file_get_contents( "$theme/components/packs/kayan-track/admin/views/dashboard-app.php" );
+assert_true( false !== strpos( $track_app, 'data-preset="30d"' ), 'track UI has 30d preset' );
+assert_true( false !== strpos( $track_app, 'data-preset="3m"' ), 'track UI has 3m preset' );
+$track_helpers = file_get_contents( "$theme/components/packs/kayan-track/helpers.php" );
+assert_true( false !== strpos( $track_helpers, "=== '7d'" ), 'track date range handles 7d' );
+assert_true( false !== strpos( $track_helpers, "=== '3m'" ), 'track date range handles 3m' );
+$tracker_js = file_get_contents( "$theme/components/packs/kayan-track/assets/tracker.js" );
+assert_true( false !== strpos( $tracker_js, 'isWhatsAppHref' ), 'frontend tracker catches WhatsApp variants' );
+assert_true( false !== strpos( $tracker_js, 'fab-call' ), 'frontend tracker catches FAB call buttons' );
 
 # Unit: helpers behavior without WP option API stubs beyond get_option
 if ( ! function_exists( 'get_option' ) ) {
@@ -221,7 +253,7 @@ assert_true( false === strpos( $enq, 'wp_deregister_script( $handle )' ), 'no de
 $header = file_get_contents( "$theme/components/packs/#header/part.php" );
 assert_true( false !== strpos( $header, 'has-logo-image' ), 'logo has-logo-image class' );
 assert_true( false !== strpos( $header, 'data-no-lazy' ), 'logo skips LiteSpeed lazy' );
-assert_true( false !== strpos( $header, 'fa-free-fixes.css?v=2.4.3' ), 'header asset version 2.4.3' );
+assert_true( false !== strpos( $header, 'fa-free-fixes.css?v=2.4.7' ), 'header asset version 2.4.7' );
 $schema = file_get_contents( "$theme/components/packs/schema/setup.php" );
 assert_true( false !== strpos( $schema, "add_action('wp_head', array( \$this,'insert__schema')" ), 'schema always registered for KAYAN SEO' );
 # Setup يجب ألا يخرج مبكراً بسبب وجود Rank Math (واجهة RM معطّلة)
@@ -252,11 +284,20 @@ $feat_pos = strpos( $platform, '$this->feature_modules->register()' );
 $dash_pos = strpos( $platform, '$this->dashboard->register()' );
 assert_true( false !== $feat_pos && false !== $dash_pos && $feat_pos < $dash_pos, 'Dashboard_Stats hooks before dashboard register' );
 assert_true( false === strpos( $platform, "'Phase 3'" ), 'platform shell no hardcoded Phase 3 badge' );
+assert_true( false !== strpos( $platform, 'kayan-admin-shell__mobile-nav' ), 'platform mobile nav select' );
+assert_true( false !== strpos( $platform, 'dir="rtl"' ), 'platform shell RTL' );
+$ar = file_get_contents( "$theme/components/packs/kayan-platform/includes/admin/kayan-admin-ar.php" );
+assert_true( false !== strpos( $ar, 'لوحة التحكم' ), 'admin AR labels include dashboard' );
+assert_true( false !== strpos( $ar, 'kayan_admin_filter_modules_ar' ), 'admin AR module filter' );
+$admin_css = file_get_contents( "$theme/components/packs/kayan-platform/assets/admin/kayan-admin.css" );
+assert_true( false !== strpos( $admin_css, '--kayan-admin-navy' ), 'platform admin brand tokens' );
+assert_true( false !== strpos( $admin_css, 'kayan-admin-shell__mobile-nav' ), 'platform CSS mobile nav' );
+$admin_js = file_get_contents( "$theme/components/packs/kayan-platform/assets/admin/kayan-admin.js" );
+assert_true( false !== strpos( $admin_js, 'data-kayan-mobile-nav' ), 'platform JS mobile nav handler' );
 $stats = file_get_contents( "$theme/components/packs/kayan-platform/includes/admin/modules/class-kayan-admin-dashboard-stats.php" );
 assert_true( false !== strpos( $stats, 'render_analytics' ), 'dashboard analytics widget wired' );
 assert_true( false !== strpos( $stats, 'render_performance' ), 'dashboard performance widget wired' );
-$admin_css = file_get_contents( "$theme/components/packs/kayan-platform/assets/admin/kayan-admin.css" );
-assert_true( false !== strpos( $admin_css, 'overflow-x: auto' ), 'platform admin mobile nav scroll' );
+assert_true( false !== strpos( $admin_css, 'grid-template-columns: 1fr' ), 'platform admin mobile single column' );
 $index = file_get_contents( "$theme/index.php" );
 assert_true( false === strpos( $index, 'TemplatePart' ), 'index.php no missing TemplatePart call' );
 assert_true( false !== strpos( $index, 'Blade' ), 'index.php uses Blade fallback' );

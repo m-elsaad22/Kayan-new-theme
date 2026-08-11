@@ -1,5 +1,5 @@
 /**
- * KAYAN Admin Platform — minimal UI framework behaviors (Phase 3.0).
+ * KAYAN Admin Platform — Arabic/mobile UI behaviors.
  */
 (function () {
 	'use strict';
@@ -16,6 +16,16 @@
 		var root = document.querySelector('[data-kayan-admin]');
 		if (!root) {
 			return;
+		}
+
+		var mobileNav = root.querySelector('[data-kayan-mobile-nav]');
+		if (mobileNav) {
+			mobileNav.addEventListener('change', function () {
+				var url = mobileNav.value;
+				if (url) {
+					window.location.href = url;
+				}
+			});
 		}
 
 		root.querySelectorAll('[data-kayan-tab]').forEach(function (tab) {
